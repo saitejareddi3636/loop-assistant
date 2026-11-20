@@ -1,0 +1,16 @@
+# Isolated from api/requirements*.txt — install into benchmarks/.venv only.
+numpy>=1.26
+soundfile>=0.12
+jiwer>=3.0
+psutil>=5.9
+pyyaml>=6.0
+matplotlib>=3.8
+onnxruntime>=1.16
+huggingface_hub>=0.23
+tokenizers>=0.19
+# STT backends
+useful-moonshine-onnx==20251121
+onnx-asr[cpu,hub]>=0.7.0
+# TTS (same stack as production for fair Pocket TTS numbers)
+pocket-tts>=4.0.0
+scipy>=1.5

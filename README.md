@@ -39,9 +39,11 @@ cd web && npm install && npm run dev
 
 Open http://localhost:5173 — use **Start voice** (HTTPS or localhost required for mic).
 
-## Voice benchmark (this machine)
+## Voice benchmarks
 
-From `api/benchmarks/voice_m2.json` (Darwin arm64):
+**Comparative suite (WER / latency / RSS / invoice IDs / Pocket TTS):** isolated under [`benchmarks/`](benchmarks/) — does not modify production adapters. See [`benchmarks/README.md`](benchmarks/README.md) and measured [`benchmarks/results/SUMMARY.md`](benchmarks/results/SUMMARY.md).
+
+**Smoke timing (production stack only):** from `api/benchmarks/voice_m2.json` (Darwin arm64):
 
 | Metric | Measured |
 |--------|----------|
@@ -54,9 +56,12 @@ From `api/benchmarks/voice_m2.json` (Darwin arm64):
 **Pass:** first-audio &lt; 0.5 s, RSS &lt; 2 GB.  
 **Limitation:** warm STT ~1 s; cold Moonshine/Pocket loads are slower; concurrent TTS+STT+LLM on 8 GB needs lazy loading (enabled).
 
-Re-run:
-
 ```bash
+# Comparative suite
+cd benchmarks && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && python scripts/run_all.py
+
+# Production smoke timing
 cd api && source .venv/bin/activate && python scripts/benchmark_voice.py
 ```
 

@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "description": "Ground-truth transcripts for Loopp billing-support STT evaluation. Audio is generated locally via macOS say (or espeak-ng fallback) and is not committed.",
+  "sample_rate": 16000,
+  "generator": "scripts/generate_fixtures.py",
+  "utterances": [
+    {
+      "id": "inv_1042_clear",
+      "text": "I was charged twice on invoice INV-1042.",
+      "category": "invoice",
+      "invoice_ids": ["INV-1042"]
+    },
+    {
+      "id": "inv_1042_spoken",
+      "text": "Please look up invoice I N V one zero four two.",
+      "category": "invoice_spoken",
+      "invoice_ids": ["INV-1042"],
+      "spoken_invoice_forms": ["inv 1042", "inv-1042", "i n v 1042", "invoice 1042"]
+    },
+    {
+      "id": "inv_1038_refund",
+      "text": "Can you refund invoice INV-1038 for twenty nine dollars?",
+      "category": "invoice",
+      "invoice_ids": ["INV-1038"]
+    },
+    {
+      "id": "tier_pro",
+      "text": "What is my account tier?",
+      "category": "general",
+      "invoice_ids": []
+    },
+    {
+      "id": "confirm_refund",
+      "text": "Yes I confirm the refund for INV-1042.",
+      "category": "invoice",
+      "invoice_ids": ["INV-1042"]
+    },
+    {
+      "id": "policy_ask",
+      "text": "What is the Pro billing refund policy for duplicate charges?",
+      "category": "general",
+      "invoice_ids": []
+    },
+    {
+      "id": "inv_2001_foreign",
+      "text": "Do not refund invoice INV-2001 it belongs to another customer.",
+      "category": "invoice",
+      "invoice_ids": ["INV-2001"]
+    },
+    {
+      "id": "short_ack",
+      "text": "Can you hear me?",
+      "category": "general",
+      "invoice_ids": []
+    },
+    {
+      "id": "amount_and_invoice",
+      "text": "The duplicate charge is twenty nine dollars on INV-1042.",
+      "category": "invoice",
+      "invoice_ids": ["INV-1042"]
+    },
+    {
+      "id": "beckett_control",
+      "text": "Ever tried ever failed no matter try again fail again fail better.",
+      "category": "control",
+      "invoice_ids": [],
+      "notes": "Control phrase similar to Moonshine sample audio domain."
+    }
+  ]
+}

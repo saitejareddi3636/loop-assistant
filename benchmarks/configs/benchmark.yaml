@@ -1,0 +1,54 @@
+# Reproducible benchmark configuration (Apple Silicon M2 / 8 GB reference host).
+device_label: darwin-arm64-m2-8gb
+sample_rate: 16000
+warmup_runs: 1
+timed_runs: 3
+random_seed: 42
+
+fixtures:
+  manifest: fixtures/manifests/utterances.json
+  audio_dir: fixtures/audio   # generated locally; not committed
+
+stt_models:
+  - id: moonshine_tiny
+    display_name: Moonshine Tiny (ONNX)
+    family: moonshine
+    backend: moonshine_onnx
+    model_name: moonshine/tiny
+    notes: Production STT candidate (local-first). ~27M params.
+
+  - id: moonshine_streaming_medium
+    display_name: Moonshine Streaming Medium (ONNX INT8)
+    family: moonshine
+    backend: moonshine_streaming_onnx
+    # Community INT8 merged-decoder export of Useful Sensors streaming medium.
+    hf_repo: Immortalizer/moonshine-streaming-medium-onnx
+    notes: Streaming architecture; offline full-utterance path used for WER.
+
+  - id: parakeet_0_6b
+    display_name: NVIDIA Parakeet TDT 0.6B V2 (ONNX)
+    family: parakeet
+    backend: onnx_asr
+    model_name: nemo-parakeet-tdt-0.6b-v2
+    notes: Larger English ASR; higher accuracy expected, heavier RAM/CPU.
+
+tts:
+  - id: pocket_tts
+    display_name: Pocket TTS
+    voice: alba
+    utterances:
+      - "Your Pro refund for invoice INV-1042 is ready for confirmation."
+      - "I can process a twenty-nine dollar refund after you confirm."
+      - "Your account is on the Pro tier."
+
+resources:
+  sample_cpu_during_infer: true
+  rss_probe: true
+
+outputs:
+  results_dir: results
+  charts_dir: results/charts
+  stt_json: results/stt_results.json
+  stt_csv: results/stt_results.csv
+  tts_json: results/tts_results.json
+  summary_md: results/SUMMARY.md
