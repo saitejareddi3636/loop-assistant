@@ -1,0 +1,920 @@
+{
+  "suite": "loopp-stt-benchmark",
+  "device_label": "darwin-arm64-m2-8gb",
+  "host": {
+    "system": "Darwin",
+    "release": "25.2.0",
+    "machine": "arm64",
+    "processor": "arm",
+    "python": "3.13.3",
+    "cpu_count_logical": 8,
+    "ram_total_gb": 8.0,
+    "timestamp_utc": "2026-11-20T19:31:54.239117+00:00"
+  },
+  "config": {
+    "warmup_runs": 1,
+    "timed_runs": 3,
+    "sample_rate": 16000,
+    "random_seed": 42,
+    "fixture_engine_note": "Synthetic speech from macOS say / espeak; not real callers."
+  },
+  "models": [
+    {
+      "model_id": "moonshine_tiny",
+      "display_name": "Moonshine Tiny (ONNX)",
+      "notes": "Production STT candidate (local-first). ~27M params.",
+      "load_s": 1.868,
+      "rss_mb_before_load": 67.9,
+      "rss_mb_after_load": 234.8,
+      "rss_mb_delta": 167.0,
+      "wer_mean": 0.2717,
+      "wer_median": 0.2429,
+      "latency_s_mean": 0.6847,
+      "latency_s_median": 0.6634,
+      "invoice_id_hit_rate_mean": 1.0,
+      "utterances": [
+        {
+          "id": "inv_1042_clear",
+          "category": "invoice",
+          "reference": "I was charged twice on invoice INV-1042.",
+          "hypothesis": "I was charged twice on Invoice Invi 1042.",
+          "wer": 0.2857,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.8654,
+            0.7245,
+            0.6211
+          ],
+          "latency_s_mean": 0.737,
+          "latency_s_stdev": 0.1001,
+          "resources_mean": {
+            "rss_mb_peak_mean": 420.2,
+            "cpu_percent_peak_mean": 331.4
+          }
+        },
+        {
+          "id": "inv_1042_spoken",
+          "category": "invoice_spoken",
+          "reference": "Please look up invoice I N V one zero four two.",
+          "hypothesis": "Please look up invoice, i env1042.",
+          "wer": 0.5455,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.5879,
+            0.8017,
+            0.8239
+          ],
+          "latency_s_mean": 0.7378,
+          "latency_s_stdev": 0.1064,
+          "resources_mean": {
+            "rss_mb_peak_mean": 391.5,
+            "cpu_percent_peak_mean": 345.6
+          }
+        },
+        {
+          "id": "inv_1038_refund",
+          "category": "invoice",
+          "reference": "Can you refund invoice INV-1038 for twenty nine dollars?",
+          "hypothesis": "Can you refund invoice, INV1038 for $29?",
+          "wer": 0.4444,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1038"
+            ],
+            "found": [
+              "INV-1038"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1038"
+            ]
+          },
+          "latency_s_runs": [
+            0.6759,
+            0.7072,
+            0.6185
+          ],
+          "latency_s_mean": 0.6672,
+          "latency_s_stdev": 0.0367,
+          "resources_mean": {
+            "rss_mb_peak_mean": 393.4,
+            "cpu_percent_peak_mean": 345.0
+          }
+        },
+        {
+          "id": "tier_pro",
+          "category": "general",
+          "reference": "What is my account tier?",
+          "hypothesis": "What is my account here?",
+          "wer": 0.2,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.6276,
+            0.6493,
+            0.6764
+          ],
+          "latency_s_mean": 0.6511,
+          "latency_s_stdev": 0.0199,
+          "resources_mean": {
+            "rss_mb_peak_mean": 395.2,
+            "cpu_percent_peak_mean": 251.8
+          }
+        },
+        {
+          "id": "confirm_refund",
+          "category": "invoice",
+          "reference": "Yes I confirm the refund for INV-1042.",
+          "hypothesis": "Yes, I confirmed the refund for INV1042.",
+          "wer": 0.2857,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.6265,
+            0.6365,
+            0.6571
+          ],
+          "latency_s_mean": 0.6401,
+          "latency_s_stdev": 0.0128,
+          "resources_mean": {
+            "rss_mb_peak_mean": 397.0,
+            "cpu_percent_peak_mean": 396.8
+          }
+        },
+        {
+          "id": "policy_ask",
+          "category": "general",
+          "reference": "What is the Pro billing refund policy for duplicate charges?",
+          "hypothesis": "What is the pro-billing refund policy for duplicate charges?",
+          "wer": 0.2,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.7262,
+            0.6707,
+            0.6421
+          ],
+          "latency_s_mean": 0.6796,
+          "latency_s_stdev": 0.0349,
+          "resources_mean": {
+            "rss_mb_peak_mean": 395.3,
+            "cpu_percent_peak_mean": 338.0
+          }
+        },
+        {
+          "id": "inv_2001_foreign",
+          "category": "invoice",
+          "reference": "Do not refund invoice INV-2001 it belongs to another customer.",
+          "hypothesis": "Do not refund invoice INV 2001 it belongs to another customer.",
+          "wer": 0.2,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-2001"
+            ],
+            "found": [
+              "INV-2001"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-2001"
+            ]
+          },
+          "latency_s_runs": [
+            0.6756,
+            0.7063,
+            0.5974
+          ],
+          "latency_s_mean": 0.6597,
+          "latency_s_stdev": 0.0458,
+          "resources_mean": {
+            "rss_mb_peak_mean": 394.5,
+            "cpu_percent_peak_mean": 335.3
+          }
+        },
+        {
+          "id": "short_ack",
+          "category": "general",
+          "reference": "Can you hear me?",
+          "hypothesis": "Can you hear me?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.705,
+            0.5805,
+            0.6153
+          ],
+          "latency_s_mean": 0.6336,
+          "latency_s_stdev": 0.0524,
+          "resources_mean": {
+            "rss_mb_peak_mean": 394.8,
+            "cpu_percent_peak_mean": 270.1
+          }
+        },
+        {
+          "id": "amount_and_invoice",
+          "category": "invoice",
+          "reference": "The duplicate charge is twenty nine dollars on INV-1042.",
+          "hypothesis": "The duplicate charge is $29 on INV 1042.",
+          "wer": 0.5556,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.6633,
+            0.5797,
+            0.6827
+          ],
+          "latency_s_mean": 0.6419,
+          "latency_s_stdev": 0.0447,
+          "resources_mean": {
+            "rss_mb_peak_mean": 392.9,
+            "cpu_percent_peak_mean": 435.4
+          }
+        },
+        {
+          "id": "beckett_control",
+          "category": "control",
+          "reference": "Ever tried ever failed no matter try again fail again fail better.",
+          "hypothesis": "Ever tried ever failed no matter try again fail again fail better",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.8805,
+            0.8322,
+            0.6855
+          ],
+          "latency_s_mean": 0.7994,
+          "latency_s_stdev": 0.0829,
+          "resources_mean": {
+            "rss_mb_peak_mean": 394.6,
+            "cpu_percent_peak_mean": 330.4
+          }
+        }
+      ],
+      "quantization": null
+    },
+    {
+      "model_id": "moonshine_streaming_medium",
+      "display_name": "Moonshine Streaming Medium (ONNX INT8)",
+      "notes": "Streaming architecture; offline full-utterance path used for WER.",
+      "load_s": 1.158,
+      "rss_mb_before_load": 435.1,
+      "rss_mb_after_load": 428.6,
+      "rss_mb_delta": -6.5,
+      "wer_mean": 0.2408,
+      "wer_median": 0.2429,
+      "latency_s_mean": 0.218,
+      "latency_s_median": 0.2345,
+      "invoice_id_hit_rate_mean": 1.0,
+      "utterances": [
+        {
+          "id": "inv_1042_clear",
+          "category": "invoice",
+          "reference": "I was charged twice on invoice INV-1042.",
+          "hypothesis": "I was charged twice on invoice envy 1042.",
+          "wer": 0.2857,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.2145,
+            0.2268,
+            0.2011
+          ],
+          "latency_s_mean": 0.2141,
+          "latency_s_stdev": 0.0105,
+          "resources_mean": {
+            "rss_mb_peak_mean": 552.9,
+            "cpu_percent_peak_mean": 215.5
+          }
+        },
+        {
+          "id": "inv_1042_spoken",
+          "category": "invoice_spoken",
+          "reference": "Please look up invoice I N V one zero four two.",
+          "hypothesis": "Please look up invoice, inv1042.",
+          "wer": 0.6364,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.1993,
+            0.1807,
+            0.1778
+          ],
+          "latency_s_mean": 0.1859,
+          "latency_s_stdev": 0.0095,
+          "resources_mean": {
+            "rss_mb_peak_mean": 488.4,
+            "cpu_percent_peak_mean": 215.8
+          }
+        },
+        {
+          "id": "inv_1038_refund",
+          "category": "invoice",
+          "reference": "Can you refund invoice INV-1038 for twenty nine dollars?",
+          "hypothesis": "Can you refund invoice INV1038 for $29?",
+          "wer": 0.4444,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1038"
+            ],
+            "found": [
+              "INV-1038"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1038"
+            ]
+          },
+          "latency_s_runs": [
+            0.2856,
+            0.2851,
+            0.2869
+          ],
+          "latency_s_mean": 0.2859,
+          "latency_s_stdev": 0.0008,
+          "resources_mean": {
+            "rss_mb_peak_mean": 474.5,
+            "cpu_percent_peak_mean": 210.4
+          }
+        },
+        {
+          "id": "tier_pro",
+          "category": "general",
+          "reference": "What is my account tier?",
+          "hypothesis": "What is my account tier?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.0874,
+            0.0809,
+            0.0834
+          ],
+          "latency_s_mean": 0.0839,
+          "latency_s_stdev": 0.0027,
+          "resources_mean": {
+            "rss_mb_peak_mean": 422.2,
+            "cpu_percent_peak_mean": 219.3
+          }
+        },
+        {
+          "id": "confirm_refund",
+          "category": "invoice",
+          "reference": "Yes I confirm the refund for INV-1042.",
+          "hypothesis": "Yes, i confirm the refund for inv 1042.",
+          "wer": 0.2857,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.2282,
+            0.2426,
+            0.2644
+          ],
+          "latency_s_mean": 0.2451,
+          "latency_s_stdev": 0.0149,
+          "resources_mean": {
+            "rss_mb_peak_mean": 417.6,
+            "cpu_percent_peak_mean": 211.7
+          }
+        },
+        {
+          "id": "policy_ask",
+          "category": "general",
+          "reference": "What is the Pro billing refund policy for duplicate charges?",
+          "hypothesis": "What is the pro billing refund policy for duplicate charges?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.2299,
+            0.2232,
+            0.2398
+          ],
+          "latency_s_mean": 0.2309,
+          "latency_s_stdev": 0.0068,
+          "resources_mean": {
+            "rss_mb_peak_mean": 408.1,
+            "cpu_percent_peak_mean": 214.8
+          }
+        },
+        {
+          "id": "inv_2001_foreign",
+          "category": "invoice",
+          "reference": "Do not refund invoice INV-2001 it belongs to another customer.",
+          "hypothesis": "Do not refund invoice INV 2001. It belongs to another customer.",
+          "wer": 0.2,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-2001"
+            ],
+            "found": [
+              "INV-2001"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-2001"
+            ]
+          },
+          "latency_s_runs": [
+            0.4891,
+            0.3437,
+            0.369
+          ],
+          "latency_s_mean": 0.4006,
+          "latency_s_stdev": 0.0634,
+          "resources_mean": {
+            "rss_mb_peak_mean": 407.2,
+            "cpu_percent_peak_mean": 213.4
+          }
+        },
+        {
+          "id": "short_ack",
+          "category": "general",
+          "reference": "Can you hear me?",
+          "hypothesis": "Can you hear me?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.0494,
+            0.0487,
+            0.0458
+          ],
+          "latency_s_mean": 0.0479,
+          "latency_s_stdev": 0.0016,
+          "resources_mean": {
+            "rss_mb_peak_mean": 405.1,
+            "cpu_percent_peak_mean": 0.0
+          }
+        },
+        {
+          "id": "amount_and_invoice",
+          "category": "invoice",
+          "reference": "The duplicate charge is twenty nine dollars on INV-1042.",
+          "hypothesis": "The duplicate charge is $29 on INV 1042.",
+          "wer": 0.5556,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.2469,
+            0.2327,
+            0.262
+          ],
+          "latency_s_mean": 0.2472,
+          "latency_s_stdev": 0.012,
+          "resources_mean": {
+            "rss_mb_peak_mean": 405.6,
+            "cpu_percent_peak_mean": 215.5
+          }
+        },
+        {
+          "id": "beckett_control",
+          "category": "control",
+          "reference": "Ever tried ever failed no matter try again fail again fail better.",
+          "hypothesis": "Ever tried ever failed no matter try again fail again fail better",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.2385,
+            0.2311,
+            0.2449
+          ],
+          "latency_s_mean": 0.2381,
+          "latency_s_stdev": 0.0056,
+          "resources_mean": {
+            "rss_mb_peak_mean": 406.3,
+            "cpu_percent_peak_mean": 218.0
+          }
+        }
+      ],
+      "quantization": null
+    },
+    {
+      "model_id": "parakeet_0_6b",
+      "display_name": "NVIDIA Parakeet TDT 0.6B V2 (ONNX)",
+      "notes": "Larger English ASR; higher accuracy expected, heavier RAM/CPU.",
+      "load_s": 23.831,
+      "rss_mb_before_load": 487.4,
+      "rss_mb_after_load": 756.2,
+      "rss_mb_delta": 268.8,
+      "wer_mean": 0.2519,
+      "wer_median": 0.2429,
+      "latency_s_mean": 0.6101,
+      "latency_s_median": 0.4228,
+      "invoice_id_hit_rate_mean": 1.0,
+      "utterances": [
+        {
+          "id": "inv_1042_clear",
+          "category": "invoice",
+          "reference": "I was charged twice on invoice INV-1042.",
+          "hypothesis": "I was charged twice on Invoice Inv 1042.",
+          "wer": 0.2857,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.628,
+            0.2362,
+            0.2601
+          ],
+          "latency_s_mean": 0.3748,
+          "latency_s_stdev": 0.1793,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1341.2,
+            "cpu_percent_peak_mean": 438.0
+          }
+        },
+        {
+          "id": "inv_1042_spoken",
+          "category": "invoice_spoken",
+          "reference": "Please look up invoice I N V one zero four two.",
+          "hypothesis": "Please look up invoice, INV1042.",
+          "wer": 0.6364,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.2673,
+            0.2563,
+            0.2323
+          ],
+          "latency_s_mean": 0.252,
+          "latency_s_stdev": 0.0146,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1378.8,
+            "cpu_percent_peak_mean": 462.0
+          }
+        },
+        {
+          "id": "inv_1038_refund",
+          "category": "invoice",
+          "reference": "Can you refund invoice INV-1038 for twenty nine dollars?",
+          "hypothesis": "Can you refund invoice IN V1038 for$29?",
+          "wer": 0.5556,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1038"
+            ],
+            "found": [
+              "INV-1038"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1038"
+            ]
+          },
+          "latency_s_runs": [
+            0.5076,
+            0.6807,
+            0.7017
+          ],
+          "latency_s_mean": 0.63,
+          "latency_s_stdev": 0.087,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1436.2,
+            "cpu_percent_peak_mean": 418.8
+          }
+        },
+        {
+          "id": "tier_pro",
+          "category": "general",
+          "reference": "What is my account tier?",
+          "hypothesis": "What is my account tier?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.1847,
+            0.1267,
+            0.1261
+          ],
+          "latency_s_mean": 0.1458,
+          "latency_s_stdev": 0.0275,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1633.8,
+            "cpu_percent_peak_mean": 504.4
+          }
+        },
+        {
+          "id": "confirm_refund",
+          "category": "invoice",
+          "reference": "Yes I confirm the refund for INV-1042.",
+          "hypothesis": "Yes, I confirmed the refund for INV1042.",
+          "wer": 0.2857,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            0.3423,
+            0.2574,
+            0.2285
+          ],
+          "latency_s_mean": 0.276,
+          "latency_s_stdev": 0.0483,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1671.9,
+            "cpu_percent_peak_mean": 459.0
+          }
+        },
+        {
+          "id": "policy_ask",
+          "category": "general",
+          "reference": "What is the Pro billing refund policy for duplicate charges?",
+          "hypothesis": "What is the pro billing refund policy for duplicate charges?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.2765,
+            0.2165,
+            0.2412
+          ],
+          "latency_s_mean": 0.2448,
+          "latency_s_stdev": 0.0246,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1674.7,
+            "cpu_percent_peak_mean": 478.6
+          }
+        },
+        {
+          "id": "inv_2001_foreign",
+          "category": "invoice",
+          "reference": "Do not refund invoice INV-2001 it belongs to another customer.",
+          "hypothesis": "Do not refund invoice INV 2001. It belongs to another customer.",
+          "wer": 0.2,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-2001"
+            ],
+            "found": [
+              "INV-2001"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-2001"
+            ]
+          },
+          "latency_s_runs": [
+            0.4391,
+            0.6528,
+            1.2908
+          ],
+          "latency_s_mean": 0.7942,
+          "latency_s_stdev": 0.3618,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1712.0,
+            "cpu_percent_peak_mean": 418.0
+          }
+        },
+        {
+          "id": "short_ack",
+          "category": "general",
+          "reference": "Can you hear me?",
+          "hypothesis": "Can you hear me?",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            0.9178,
+            0.2801,
+            0.2142
+          ],
+          "latency_s_mean": 0.4707,
+          "latency_s_stdev": 0.3173,
+          "resources_mean": {
+            "rss_mb_peak_mean": 941.2,
+            "cpu_percent_peak_mean": 344.4
+          }
+        },
+        {
+          "id": "amount_and_invoice",
+          "category": "invoice",
+          "reference": "The duplicate charge is twenty nine dollars on INV-1042.",
+          "hypothesis": "The duplicate charge is$29 on INV 1042.",
+          "wer": 0.5556,
+          "invoice": {
+            "applicable": true,
+            "expected": [
+              "INV-1042"
+            ],
+            "found": [
+              "INV-1042"
+            ],
+            "hit_rate": 1.0,
+            "hits": [
+              "INV-1042"
+            ]
+          },
+          "latency_s_runs": [
+            2.3116,
+            1.8355,
+            1.3862
+          ],
+          "latency_s_mean": 1.8445,
+          "latency_s_stdev": 0.3778,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1054.8,
+            "cpu_percent_peak_mean": 352.4
+          }
+        },
+        {
+          "id": "beckett_control",
+          "category": "control",
+          "reference": "Ever tried ever failed no matter try again fail again fail better.",
+          "hypothesis": "Ever tried ever failed no matter try again. Fail again, fail better.",
+          "wer": 0.0,
+          "invoice": {
+            "applicable": false,
+            "expected": [],
+            "found": [],
+            "hit_rate": null
+          },
+          "latency_s_runs": [
+            1.1774,
+            1.0797,
+            0.9481
+          ],
+          "latency_s_mean": 1.0684,
+          "latency_s_stdev": 0.0939,
+          "resources_mean": {
+            "rss_mb_peak_mean": 1514.0,
+            "cpu_percent_peak_mean": 359.3
+          }
+        }
+      ],
+      "quantization": "int8"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+model_id,display_name,utterance_id,category,wer,latency_s_mean,invoice_hit_rate,hypothesis,reference
+moonshine_tiny,Moonshine Tiny (ONNX),inv_1042_clear,invoice,0.2857,0.737,1.0,I was charged twice on Invoice Invi 1042.,I was charged twice on invoice INV-1042.
+moonshine_tiny,Moonshine Tiny (ONNX),inv_1042_spoken,invoice_spoken,0.5455,0.7378,1.0,"Please look up invoice, i env1042.",Please look up invoice I N V one zero four two.
+moonshine_tiny,Moonshine Tiny (ONNX),inv_1038_refund,invoice,0.4444,0.6672,1.0,"Can you refund invoice, INV1038 for $29?",Can you refund invoice INV-1038 for twenty nine dollars?
+moonshine_tiny,Moonshine Tiny (ONNX),tier_pro,general,0.2,0.6511,,What is my account here?,What is my account tier?
+moonshine_tiny,Moonshine Tiny (ONNX),confirm_refund,invoice,0.2857,0.6401,1.0,"Yes, I confirmed the refund for INV1042.",Yes I confirm the refund for INV-1042.
+moonshine_tiny,Moonshine Tiny (ONNX),policy_ask,general,0.2,0.6796,,What is the pro-billing refund policy for duplicate charges?,What is the Pro billing refund policy for duplicate charges?
+moonshine_tiny,Moonshine Tiny (ONNX),inv_2001_foreign,invoice,0.2,0.6597,1.0,Do not refund invoice INV 2001 it belongs to another customer.,Do not refund invoice INV-2001 it belongs to another customer.
+moonshine_tiny,Moonshine Tiny (ONNX),short_ack,general,0.0,0.6336,,Can you hear me?,Can you hear me?
+moonshine_tiny,Moonshine Tiny (ONNX),amount_and_invoice,invoice,0.5556,0.6419,1.0,The duplicate charge is $29 on INV 1042.,The duplicate charge is twenty nine dollars on INV-1042.
+moonshine_tiny,Moonshine Tiny (ONNX),beckett_control,control,0.0,0.7994,,Ever tried ever failed no matter try again fail again fail better,Ever tried ever failed no matter try again fail again fail better.
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),inv_1042_clear,invoice,0.2857,0.2141,1.0,I was charged twice on invoice envy 1042.,I was charged twice on invoice INV-1042.
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),inv_1042_spoken,invoice_spoken,0.6364,0.1859,1.0,"Please look up invoice, inv1042.",Please look up invoice I N V one zero four two.
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),inv_1038_refund,invoice,0.4444,0.2859,1.0,Can you refund invoice INV1038 for $29?,Can you refund invoice INV-1038 for twenty nine dollars?
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),tier_pro,general,0.0,0.0839,,What is my account tier?,What is my account tier?
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),confirm_refund,invoice,0.2857,0.2451,1.0,"Yes, i confirm the refund for inv 1042.",Yes I confirm the refund for INV-1042.
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),policy_ask,general,0.0,0.2309,,What is the pro billing refund policy for duplicate charges?,What is the Pro billing refund policy for duplicate charges?
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),inv_2001_foreign,invoice,0.2,0.4006,1.0,Do not refund invoice INV 2001. It belongs to another customer.,Do not refund invoice INV-2001 it belongs to another customer.
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),short_ack,general,0.0,0.0479,,Can you hear me?,Can you hear me?
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),amount_and_invoice,invoice,0.5556,0.2472,1.0,The duplicate charge is $29 on INV 1042.,The duplicate charge is twenty nine dollars on INV-1042.
+moonshine_streaming_medium,Moonshine Streaming Medium (ONNX INT8),beckett_control,control,0.0,0.2381,,Ever tried ever failed no matter try again fail again fail better,Ever tried ever failed no matter try again fail again fail better.
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),inv_1042_clear,invoice,0.2857,0.3748,1.0,I was charged twice on Invoice Inv 1042.,I was charged twice on invoice INV-1042.
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),inv_1042_spoken,invoice_spoken,0.6364,0.252,1.0,"Please look up invoice, INV1042.",Please look up invoice I N V one zero four two.
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),inv_1038_refund,invoice,0.5556,0.63,1.0,Can you refund invoice IN V1038 for$29?,Can you refund invoice INV-1038 for twenty nine dollars?
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),tier_pro,general,0.0,0.1458,,What is my account tier?,What is my account tier?
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),confirm_refund,invoice,0.2857,0.276,1.0,"Yes, I confirmed the refund for INV1042.",Yes I confirm the refund for INV-1042.
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),policy_ask,general,0.0,0.2448,,What is the pro billing refund policy for duplicate charges?,What is the Pro billing refund policy for duplicate charges?
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),inv_2001_foreign,invoice,0.2,0.7942,1.0,Do not refund invoice INV 2001. It belongs to another customer.,Do not refund invoice INV-2001 it belongs to another customer.
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),short_ack,general,0.0,0.4707,,Can you hear me?,Can you hear me?
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),amount_and_invoice,invoice,0.5556,1.8445,1.0,The duplicate charge is$29 on INV 1042.,The duplicate charge is twenty nine dollars on INV-1042.
+parakeet_0_6b,NVIDIA Parakeet TDT 0.6B V2 (ONNX),beckett_control,control,0.0,1.0684,,"Ever tried ever failed no matter try again. Fail again, fail better.",Ever tried ever failed no matter try again fail again fail better.
