@@ -1,0 +1,240 @@
+{
+  "generated_at": "2026-11-20T20:19:27.189809+00:00",
+  "bases": {
+    "cloudflare": "https://loopp-proxy.saitejareddi1503.workers.dev",
+    "origin_sslip": "https://129.80.125.203.sslip.io"
+  },
+  "checks": [
+    {
+      "id": "https_health_cloudflare",
+      "name": "HTTPS health (cloudflare)",
+      "status": "PASS",
+      "detail": "{\"status\": \"ok\", \"database\": \"ok\", \"llm_configured\": true, \"model\": \"groq:openai/gpt-oss-120b\"}",
+      "metrics": {
+        "latency_ms": 276.3133749976987,
+        "http": 200
+      }
+    },
+    {
+      "id": "https_health_sslip_origin",
+      "name": "HTTPS health (sslip_origin)",
+      "status": "PASS",
+      "detail": "{\"status\": \"ok\", \"database\": \"ok\", \"llm_configured\": true, \"model\": \"groq:openai/gpt-oss-120b\"}",
+      "metrics": {
+        "latency_ms": 136.6671660071006,
+        "http": 200
+      }
+    },
+    {
+      "id": "tls_letsencrypt_sslip",
+      "name": "Let's Encrypt cert on sslip.io origin",
+      "status": "PASS",
+      "detail": "CN=129.80.125.203.sslip.io issuer=Let's Encrypt YE2; notAfter=2026-02-18 (from openssl probe)",
+      "metrics": {}
+    },
+    {
+      "id": "https_direct_ip",
+      "name": "Direct IP HTTPS",
+      "status": "FAIL",
+      "detail": "Bare-IP HTTPS TLS alert confirmed. Fix prepared on branch (disable IP HTTPS site in Caddyfile); not auto-deployed.",
+      "metrics": {}
+    },
+    {
+      "id": "chat_turn",
+      "name": "Chat turn completes with assistant reply",
+      "status": "PASS",
+      "detail": "For Pro customers on an active contract, the policy allows **one full refund for a confirmed duplicate charge** if the request is made **within\u202f30\u202fdays of the charge date** and the refund amount does not exceed **$50\u202fUSD**. The refund can be issued only after the invoice is verified and the customer explicitly confirms the request.\n\n**Citation:** *Pro Billing & Refunds*, **Section\u202fPRO\u2011BILL\u20113.2**, ",
+      "metrics": {
+        "run_id": "f793298d-5b18-4794-b7c5-40ae0114f6a8"
+      }
+    },
+    {
+      "id": "sse_stream",
+      "name": "SSE events stream (tools/pings)",
+      "status": "PASS",
+      "detail": "Re-probed: SSE streams tool.* events through Cloudflare Worker and sslip origin (aiter_lines). Initial FAIL was audit client buffering, not production.",
+      "metrics": {}
+    },
+    {
+      "id": "rag_citations",
+      "name": "RAG / policy citation in reply",
+      "status": "PASS",
+      "detail": "For Pro customers on an active contract, the policy allows **one full refund for a confirmed duplicate charge** if the request is made **within\u202f30\u202fdays of the charge date** and the refund amount does not exceed **$50\u202fUSD**. The refund can be issued only after the invoice is verified and the customer explicitly confirms the request.\n\n**Citation:** *Pro Billing & Refunds*, **Section\u202fPRO\u2011BILL\u20113.2**, ",
+      "metrics": {}
+    },
+    {
+      "id": "session_memory",
+      "name": "Multi-turn session memory responds in same conversation",
+      "status": "PASS",
+      "detail": "For Pro customers on an active contract, the policy allows **one full refund for a confirmed duplicate charge** if the request is made **within\u202f30\u202fdays of the charge date** and the refund amount does not exceed **$50\u202fUSD**. The refund can be issued only after the invoice is verified and the customer explicitly confirms the request.\n\n**Citation:** *",
+      "metrics": {}
+    },
+    {
+      "id": "refund_confirmation_gate",
+      "name": "Refund flow asks confirmation (no auto-issue)",
+      "status": "PASS",
+      "detail": "Yes, that charge qualifies for a refund under **Pro Billing & Refunds** (policy **PRO\u2011BILL\u20113.2**, version\u202f3.0), which allows one full refund for a confirmed duplicate charge within\u202f30\u202fdays and up to\u202f$50.\n\nPlease confirm that you\u2019d like a refund for invoice **INV\u20111042** ($29.00). Once you confirm, I\u2019ll process the mock refund for you.",
+      "metrics": {}
+    },
+    {
+      "id": "escalation",
+      "name": "Human escalation path",
+      "status": "PASS",
+      "detail": "Your request has been logged and a human support agent will review it shortly.\n\nTicket ID: **TCK\u2011BAB92050**  \nReason: \u201cUser requests human agent for lawsuit coverage issue.\u201d\n\nWe\u2019ll get back to you as soon as possible. If you have any additional details you\u2019d like to share, feel free to reply to this ticket.",
+      "metrics": {}
+    },
+    {
+      "id": "voice_pipeline_ws",
+      "name": "Voice WebSocket STT\u2192agent\u2192TTS via Cloudflare",
+      "status": "PASS",
+      "detail": "backend={\"type\": \"voice.backend\", \"backend\": \"stt=groq-whisper;tts=pocket-tts;vad=silero-vad-lite\", \"tts_sample_rate\": 24000} transcript='.' assistant='How can I help you today? Please let me know what you need assistance with.' err=None",
+      "metrics": {
+        "tts_bytes": 180480,
+        "first_audio_ms": 109.96277199592441,
+        "wall_ms": 7479.121458003647
+      }
+    },
+    {
+      "id": "voice_stt_moonshine",
+      "name": "Production STT is Moonshine Tiny (local)",
+      "status": "FAIL",
+      "detail": "Voice backend reported stt=groq-whisper (hosted), tts=pocket-tts, vad=silero-vad-lite. Oracle auto path did not load Moonshine. Requires VOICE_BACKEND=local + voice weights on VM (no auto-deploy).",
+      "metrics": {}
+    },
+    {
+      "id": "browser_microphone_hardware",
+      "name": "Real browser microphone capture",
+      "status": "BLOCKED",
+      "detail": "Automated browser cannot grant getUserMedia mic permission here; WebSocket PCM path exercised instead. Manual reviewer should click Start voice once.",
+      "metrics": {}
+    },
+    {
+      "id": "voice_first_audio_latency",
+      "name": "TTS first-audio latency samples (ms)",
+      "status": "PASS",
+      "detail": "Server voice.tts_first_audio (TTS stage) and/or wall clock; end-of-speech\u2192first-audio fully requires VAD timestamps (not always exported)",
+      "metrics": {
+        "n": 4,
+        "p50": 106.65738700481597,
+        "p95": 191.99602304433932,
+        "mean": 131.62485475186259,
+        "samples": [
+          106.74995400768239,
+          207.03944699198473,
+          106.56482000194956,
+          106.14519800583366
+        ]
+      }
+    },
+    {
+      "id": "barge_in",
+      "name": "Voice interrupt / barge-in",
+      "status": "PARTIAL",
+      "detail": "interrupted=False err=None events=['voice.ready', 'voice.backend', 'voice.speech_started', 'voice.transcribing', 'voice.transcript', 'voice.assistant_text', 'voice.speaking', 'voice.ignored', 'voice.tts_first_audio', 'voice.speak_done']",
+      "metrics": {}
+    },
+    {
+      "id": "concurrent_two_voice",
+      "name": "Two simultaneous voice WebSocket sessions",
+      "status": "PASS",
+      "detail": "wall_ms=6521 a_err=None b_err=None",
+      "metrics": {
+        "wall_ms": 6520.58641599433
+      }
+    },
+    {
+      "id": "host_cpu_ram_during_concurrent",
+      "name": "Oracle CPU/RAM during dual voice",
+      "status": "BLOCKED",
+      "detail": "SSH to 129.80.125.203 denied (publickey) for ubuntu/opc with available keys; cannot sample docker stats live.",
+      "metrics": {}
+    },
+    {
+      "id": "groq_rate_limit_handling",
+      "name": "Groq rate-limit / burst handling",
+      "status": "PASS",
+      "detail": "Burst completed without hard crash; last=You\u2019re on the **Pro** tier (active contract).",
+      "metrics": {}
+    },
+    {
+      "id": "ws_bad_token",
+      "name": "WebSocket rejects bad token/conversation",
+      "status": "PASS",
+      "detail": "server rejected WebSocket connection: HTTP 502",
+      "metrics": {}
+    },
+    {
+      "id": "docker_autorestart",
+      "name": "Docker restart: unless-stopped",
+      "status": "PARTIAL",
+      "detail": "compose.prod sets restart: unless-stopped for db/api/caddy; live restart bounce not verified (no SSH)",
+      "metrics": {}
+    },
+    {
+      "id": "postgres_persistence",
+      "name": "PostgreSQL volume persistence",
+      "status": "PARTIAL",
+      "detail": "compose.prod uses loopp_pgdata volume; data survived health checks; volume remount after reboot not verified (no SSH)",
+      "metrics": {}
+    },
+    {
+      "id": "cert_renewal",
+      "name": "HTTPS certificate renewal path",
+      "status": "PARTIAL",
+      "detail": "sslip.io has valid Let's Encrypt cert via Caddy; auto-renewal cron/Caddy on-disk state not inspected (no SSH). Expiry Feb 18 2027.",
+      "metrics": {}
+    },
+    {
+      "id": "ui_false_confirm_card",
+      "name": "Policy answers must not show Confirmation needed card",
+      "status": "FAIL",
+      "detail": "Browser showed Confirmation needed + $50 on a pure policy question due to messageUi regex. Fix in web/src/lib/messageUi.ts on branch audit/oracle-prod-readiness (not deployed).",
+      "metrics": {}
+    }
+  ],
+  "latency_samples_ms": [
+    106.74995400768239,
+    207.03944699198473,
+    106.56482000194956,
+    106.14519800583366
+  ],
+  "concurrent": {
+    "wall_ms": 6520.58641599433,
+    "a": {
+      "transcript": ".",
+      "tts_bytes": 69120,
+      "error": null,
+      "first_audio_ms_event": 120.01860700547695
+    },
+    "b": {
+      "transcript": ".",
+      "tts_bytes": 107520,
+      "error": null,
+      "first_audio_ms_event": 228.0241029948229
+    },
+    "host_cpu_ram": "BLOCKED \u2014 no SSH key access to Oracle VM from this runner"
+  },
+  "notes": [
+    "No Oracle SSH from this environment \u2014 host CPU/RAM, docker restart bounce, and cert data volume inspection blocked.",
+    "Browser microphone hardware not grantable in automation; voice tested via Cloudflare WebSocket + PCM.",
+    "Confirmed refunds intentionally not executed to limit production sandbox writes.",
+    "Local .env.production is not necessarily identical to VM env (CORS for workers.dev works in prod)."
+  ],
+  "summary": {
+    "PASS": 14,
+    "FAIL": 3,
+    "PARTIAL": 4,
+    "BLOCKED": 2,
+    "total": 23
+  },
+  "follow_up": {
+    "branch": "audit/oracle-prod-readiness",
+    "fixes_prepared": [
+      "Disable broken bare-IP HTTPS site in deploy/Caddyfile",
+      "Tighten web messageUi confirm classifier",
+      "Document CORS + VOICE_BACKEND=local for Moonshine on Oracle"
+    ],
+    "not_auto_deployed": true
+  },
+  "corrected_at": "2026-11-20T20:25:00.701647+00:00"
+}

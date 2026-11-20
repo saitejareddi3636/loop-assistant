@@ -9,10 +9,21 @@ export function classifyAssistantMessage(content: string): MessageCardKind {
   ) {
     return "escalation";
   }
-  if (/confirm.*(refund|charge)|ready for confirmation|once you confirm/.test(lower)) {
+  // Only treat as an actionable confirm card when the agent is asking the user
+  // to confirm now — not when policy text merely mentions "confirmation".
+  if (
+    /\b(please confirm|confirm that you|would you like me to|reply\s+[“"']?yes|say\s+[“"']?yes|ready for confirmation|once you confirm)\b/.test(
+      lower,
+    ) && /\b(refund|charge|invoice)\b/.test(lower)
+  ) {
     return "confirm";
   }
-  if (/refund|duplicate charge|inv[-\s]?\d+/i.test(content) && /\$|dollar|amount|eligible/.test(lower)) {
+  if (
+    /\b(refund|duplicate charge)\b/.test(lower) &&
+    /inv[-\s]?\d+/i.test(content) &&
+    /\$|dollar|amount|eligible/.test(lower) &&
+    !/\b(policy|section|citation)\b/.test(lower)
+  ) {
     return "refund";
   }
   return null;

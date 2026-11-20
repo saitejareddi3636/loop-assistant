@@ -108,14 +108,10 @@ CI (`.github/workflows/ci.yml`): API pytest + web build + **deterministic evals*
 - `.github/workflows/ci.yml` — API pytest + web build + deterministic evals
 - **Oracle / public URL:** not deployed in the evals milestone
 
-**Public URL:** not deployed/tested in this phase. Next steps for a public demo:
+**Public HTTPS (Oracle + Cloudflare):** `https://loopp-proxy.saitejareddi1503.workers.dev`  
+**Origin:** `https://129.80.125.203.sslip.io`  
 
-1. Provision managed Postgres with pgvector (or Fly/Railway volume + compose)
-2. Set `GROQ_API_KEY`, `SESSION_SECRET`, `VOICE_BACKEND=hosted` (or ship a larger RAM box for local voice)
-3. Deploy the Docker image behind HTTPS (required for mic outside localhost)
-4. Verify `/api/health`, chat turn, voice WebSocket, and interruption from a signed-out browser
-
-Do not treat deployment as complete until that public URL is exercised.
+Latest readiness audit: [`evals/results/oracle_audit/REPORT.md`](evals/results/oracle_audit/REPORT.md) — **not** Moonshine-ready on Oracle yet (`stt=groq-whisper`); bare-IP HTTPS broken; host CPU/RAM needs SSH. Fixes prepared on branch `audit/oracle-prod-readiness` (not auto-deployed).
 
 ## Architecture (Phase 3 additions)
 
