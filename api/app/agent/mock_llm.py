@@ -167,6 +167,45 @@ class MockSupportChatModel(BaseChatModel):
                 content=f"I've opened human-review ticket {ticket.get('id', 'TCK-UNKNOWN')} and a specialist will follow up."
             )
 
+        # Pure policy Q&A — retrieval only (no refund confirmation UI).
+        if (
+            "policy" in user_text
+            and not any(
+                w in user_text
+                for w in (
+                    "charged twice",
+                    "charged me",
+                    "inv-1042",
+                    "inv-2001",
+                    "help with a refund",
+                    "issue a refund",
+                    "can you refund",
+                )
+            )
+        ):
+            if "search_policy" not in names_done:
+                tier = "Basic" if customer_id == "cust_basic_001" else "Pro"
+                return AIMessage(
+                    content="",
+                    tool_calls=[
+                        self._tool_call(
+                            "search_policy",
+                            {"query": user_text, "tier": tier},
+                        )
+                    ],
+                )
+            docs = (tools.get("search_policy") or {}).get("documents") or []
+            citation = docs[0].get("citation") if docs else "PRO-BILL-3.2"
+            version = docs[0].get("version") if docs else "3.0"
+            title = docs[0].get("title") if docs else "Pro Billing & Refunds"
+            return AIMessage(
+                content=(
+                    f"Under {title} v{version} ({citation}), Pro customers on an active contract "
+                    "may receive one full mock refund for a confirmed duplicate charge within 30 days, "
+                    "up to $50. Refunds require invoice verification and explicit customer confirmation."
+                )
+            )
+
         # Subscription / tier questions
         if any(word in user_text for word in ("tier", "subscription", "what plan", "my plan", "account status")):
             if "verify_customer" not in names_done:
@@ -326,15 +365,39 @@ class MockSupportChatModel(BaseChatModel):
                 )
             )
 
+        # Propose refund via structured confirmation_required (not free-text alone).
+        if "issue_mock_refund" not in names_done:
+            invoice_id = "INV-2001" if customer_id == "cust_basic_001" else "INV-1042"
+            inv = (tools.get("get_invoice") or {}).get("invoice") or {}
+            if inv.get("id"):
+                invoice_id = str(inv["id"])
+            return AIMessage(
+                content="",
+                tool_calls=[
+                    self._tool_call(
+                        "issue_mock_refund",
+                        {
+                            "customer_id": customer_id,
+                            "invoice_id": invoice_id,
+                            "confirmed": False,
+                        },
+                    )
+                ],
+            )
+
         docs = policy.get("documents") or []
         citation = docs[0].get("citation") if docs else "PRO-BILL-3.2"
         version = docs[0].get("version") if docs else "3.0"
         title = docs[0].get("title") if docs else "Pro Billing & Refunds"
+        inv = (tools.get("get_invoice") or {}).get("invoice") or {}
+        invoice_id = str(inv.get("id") or "INV-1042")
+        amount = inv.get("amount_cents")
+        amount_display = f"${amount / 100:.2f}" if isinstance(amount, int) else "$29.00"
         return AIMessage(
             content=(
-                "I verified your Pro account and found a duplicate charge on INV-1042 for $29.00 "
-                f"(3 days old). Under {title} v{version} ({citation}), you're eligible for "
-                "one full mock refund within 30 days up to $50.\n\n"
-                "Reply **yes** to confirm a $29.00 refund on INV-1042."
+                f"I verified your Pro account and found a duplicate charge on {invoice_id} for "
+                f"{amount_display} (3 days old). Under {title} v{version} ({citation}), you're "
+                f"eligible for one full mock refund within 30 days up to $50.\n\n"
+                f"Reply **yes** to confirm a {amount_display} refund on {invoice_id}."
             )
         )

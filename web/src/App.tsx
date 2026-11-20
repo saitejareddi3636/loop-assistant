@@ -84,6 +84,10 @@ export default function App() {
           setStreamingText(text);
         }
 
+        if (event.event_type === "assistant.ui") {
+          setTraces((prev) => [`assistant.ui · ${JSON.stringify(event.payload)}`, ...prev].slice(0, 40));
+        }
+
         if (event.event_type === "obs.metrics") {
           setMetrics((prev) => [...prev, event.payload as ObsMetric]);
           setTraces((prev) =>
@@ -121,6 +125,7 @@ export default function App() {
       "tool.completed",
       "tool.failed",
       "assistant.delta",
+      "assistant.ui",
       "obs.metrics",
     ]) {
       source.addEventListener(name, handlePayload as EventListener);

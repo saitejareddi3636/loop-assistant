@@ -1,41 +1,43 @@
-/** Lightweight UI classifiers for assistant replies — no backend changes. */
+/** UI helpers driven by backend `message.meta.ui` (structured), not reply regex. */
 
 export type MessageCardKind = "refund" | "escalation" | "confirm" | null;
 
-export function classifyAssistantMessage(content: string): MessageCardKind {
-  const lower = content.toLowerCase();
-  if (
-    /escalat|human specialist|support ticket|create_ticket|human review/.test(lower)
-  ) {
-    return "escalation";
-  }
-  // Only treat as an actionable confirm card when the agent is asking the user
-  // to confirm now — not when policy text merely mentions "confirmation".
-  if (
-    /\b(please confirm|confirm that you|would you like me to|reply\s+[“"']?yes|say\s+[“"']?yes|ready for confirmation|once you confirm)\b/.test(
-      lower,
-    ) && /\b(refund|charge|invoice)\b/.test(lower)
-  ) {
-    return "confirm";
-  }
-  if (
-    /\b(refund|duplicate charge)\b/.test(lower) &&
-    /inv[-\s]?\d+/i.test(content) &&
-    /\$|dollar|amount|eligible/.test(lower) &&
-    !/\b(policy|section|citation)\b/.test(lower)
-  ) {
-    return "refund";
-  }
+export type ConfirmationUi = {
+  kind: "refund";
+  invoice_id: string;
+  amount_cents: number;
+  currency?: string;
+  amount_display?: string;
+  requires_explicit_confirm?: boolean;
+};
+
+export type EscalationUi = {
+  ticket_id: string;
+  status?: string;
+};
+
+export type AssistantUi = {
+  confirmation?: ConfirmationUi;
+  escalation?: EscalationUi;
+  refund_receipt?: Record<string, unknown>;
+};
+
+export function assistantUiFromMeta(meta: Record<string, unknown> | undefined | null): AssistantUi {
+  if (!meta || typeof meta !== "object") return {};
+  const raw = meta.ui;
+  if (!raw || typeof raw !== "object") return {};
+  return raw as AssistantUi;
+}
+
+/** @deprecated Prefer assistantUiFromMeta — kept for non-meta legacy messages only as null. */
+export function classifyAssistantMessage(_content: string): MessageCardKind {
   return null;
 }
 
-export function extractInvoiceHint(content: string): string | null {
-  const match = content.match(/INV[-\s]?(\d{3,6})/i);
-  return match ? `INV-${match[1]}` : null;
+export function extractAmountHint(ui: AssistantUi): string | null {
+  return ui.confirmation?.amount_display ?? null;
 }
 
-export function extractAmountHint(content: string): string | null {
-  const match = content.match(/\$\s?(\d+(?:\.\d{2})?)/) || content.match(/(\d+)\s*dollars?/i);
-  if (!match) return null;
-  return match[0].startsWith("$") ? match[0] : `$${match[1]}`;
+export function extractInvoiceHint(ui: AssistantUi): string | null {
+  return ui.confirmation?.invoice_id ?? null;
 }

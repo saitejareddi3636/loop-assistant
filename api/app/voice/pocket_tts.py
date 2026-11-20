@@ -7,18 +7,21 @@ from collections.abc import AsyncIterator, Iterator
 
 import numpy as np
 
+from app.voice.speech_normalize import normalize_for_speech
+
 _MARKDOWN = re.compile(r"[*_`#>|~]+")
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 
 
 def speakable_sentences(text: str, max_chars: int = 220) -> list[str]:
-    """Strip markdown and split into short sentences.
+    """Strip markdown, normalize IDs/currency for TTS, split into short sentences.
 
     Pocket TTS slows down sharply on long inputs, so synthesizing one short
     sentence at a time keeps generation near real time.
     """
     cleaned = _MARKDOWN.sub("", text)
     cleaned = cleaned.replace("\u2011", "-").replace("\u202f", " ").replace("\u00a0", " ")
+    cleaned = normalize_for_speech(cleaned)
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     out: list[str] = []
     for sentence in _SENTENCE_SPLIT.split(cleaned):

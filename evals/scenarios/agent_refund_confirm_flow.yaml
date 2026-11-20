@@ -13,8 +13,11 @@ turns:
     - verify_customer
     - get_invoice
     - search_policy
-    tools_exclude:
     - issue_mock_refund
+    tool_args:
+      issue_mock_refund:
+        confirmed: false
+        invoice_id: INV-1042
     response_contains_any:
     - INV-1042
     - PRO-BILL
