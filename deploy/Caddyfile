@@ -1,0 +1,43 @@
+{
+	email saitejareddi1503@gmail.com
+	servers {
+		protocols h1 h2
+	}
+}
+
+# HTTP: ACME + direct IP access (chat still works on http://IP)
+:80 {
+	encode gzip
+	reverse_proxy api:8000 {
+		header_up Host {host}
+		transport http {
+			read_timeout 3600s
+			write_timeout 3600s
+		}
+	}
+}
+
+# Publicly trusted HTTPS origin for Cloudflare Worker (Let's Encrypt via sslip.io)
+https://129.80.125.203.sslip.io {
+	encode gzip
+	reverse_proxy api:8000 {
+		header_up Host {host}
+		transport http {
+			read_timeout 3600s
+			write_timeout 3600s
+		}
+	}
+}
+
+# Direct IP HTTPS (self-signed) kept for local/debug access
+https://129.80.125.203 {
+	tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
+	encode gzip
+	reverse_proxy api:8000 {
+		header_up Host {host}
+		transport http {
+			read_timeout 3600s
+			write_timeout 3600s
+		}
+	}
+}

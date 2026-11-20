@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #0f1f1b;
+  background:
+    radial-gradient(ellipse 80% 55% at 8% -10%, #cfece3 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 100% 0%, #dce8f5 0%, transparent 48%),
+    radial-gradient(ellipse 50% 40% at 50% 110%, #e8efe8 0%, transparent 55%),
+    linear-gradient(180deg, #f5f8f7 0%, #eef3f1 100%);
+  font-family: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@layer utilities {
+  .grain {
+    background-image: radial-gradient(rgba(15, 31, 27, 0.03) 0.6px, transparent 0.6px);
+    background-size: 3px 3px;
+  }
+
+  .streaming-cursor::after {
+    content: "";
+    display: inline-block;
+    width: 0.45em;
+    height: 1em;
+    margin-left: 0.15em;
+    vertical-align: -0.12em;
+    background: currentColor;
+    border-radius: 1px;
+    animation: pulse-dot 1s ease-in-out infinite;
+  }
+
+  .scroll-fade {
+    mask-image: linear-gradient(to bottom, transparent, black 12px, black calc(100% - 12px), transparent);
+  }
+
+  .skeleton-bar {
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #e2ece9 25%, #f3f7f6 50%, #e2ece9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+
+  .dock {
+    background: linear-gradient(to top, #eef3f1 55%, rgba(238, 243, 241, 0.92) 80%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

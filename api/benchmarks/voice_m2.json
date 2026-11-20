@@ -1,0 +1,26 @@
+{
+  "device": "darwin-arm64",
+  "rss_start_mb": 15.4,
+  "vad_load_s": 0.154,
+  "vad_100_frames_ms": 16.4,
+  "moonshine_warm_s": [
+    0.948,
+    0.741,
+    1.099
+  ],
+  "moonshine_warm_mean_s": 0.929,
+  "moonshine_sample_text": [
+    "Ever tried ever failed, no matter try again, fail again, fail better."
+  ],
+  "rss_after_stt_mb": 471.2,
+  "tts_load_s": 1.491,
+  "tts_first_audio_s": 0.165,
+  "tts_total_s": 1.464,
+  "tts_audio_s": 5.04,
+  "rss_after_tts_mb": 893.1,
+  "pass_targets": {
+    "tts_first_audio_lt_0_5s": true,
+    "useful_audio_budget_lt_3s_note": "Depends on LLM; local TTS total measured separately",
+    "rss_under_2gb": true
+  }
+}

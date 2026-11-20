@@ -1,0 +1,23 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sse-starlette==2.2.1
+pydantic==2.10.4
+pydantic-settings==2.7.0
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+greenlet==3.1.1
+pgvector==0.3.6
+langgraph==0.2.60
+langchain-core==0.3.28
+langchain-openai==0.2.14
+langchain-anthropic==0.3.1
+openai==1.58.1
+anthropic==0.42.0
+httpx==0.28.1
+python-dotenv==1.0.1
+orjson==3.10.12
+pytest==8.3.4
+pytest-asyncio==0.25.0
+# Lightweight audio helpers used by voice routes even when models are hosted
+soundfile>=0.12.1
+numpy>=1.26.0

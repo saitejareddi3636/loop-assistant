@@ -1,0 +1,48 @@
+# Local stack optimized for Mac M2 8 GB.
+# Phase 3: db always; api/web optional for production-like runs.
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: loopp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-loopp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-loopp}
+      POSTGRES_DB: ${POSTGRES_DB:-loopp}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - loopp_pgdata:/var/lib/postgresql/data
+      - ./api/scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    mem_limit: 512m
+    cpus: 1.0
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-loopp} -d ${POSTGRES_DB:-loopp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    profiles: ["full"]
+    build: .
+    container_name: loopp-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://loopp:loopp@db:5432/loopp
+      LLM_PROVIDER: ${LLM_PROVIDER:-groq}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-openai/gpt-oss-120b}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.groq.com/openai/v1}
+      VOICE_BACKEND: ${VOICE_BACKEND:-hosted}
+      SESSION_SECRET: ${SESSION_SECRET:-change-me}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      EMBEDDING_PROVIDER: hash
+    ports:
+      - "8000:8000"
+    mem_limit: 2g
+
+volumes:
+  loopp_pgdata:

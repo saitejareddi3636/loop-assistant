@@ -1,0 +1,7 @@
+# Optional local voice stack (Moonshine ONNX + Pocket TTS + Silero VAD).
+# Installed in production image when VOICE_BACKEND=local|auto.
+useful-moonshine-onnx==20251121
+silero-vad-lite>=0.3.0
+pocket-tts>=4.0.0
+scipy>=1.5.0
+onnxruntime>=1.16.0

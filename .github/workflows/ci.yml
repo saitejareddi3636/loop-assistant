@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: loopp
+          POSTGRES_PASSWORD: loopp
+          POSTGRES_DB: loopp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U loopp -d loopp"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Voice unit tests that need local models; skip heavy pocket-tts in CI by default.
+          pip install useful-moonshine-onnx==20251121 silero-vad-lite soundfile
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://loopp:loopp@localhost:5432/loopp
+          LLM_PROVIDER: mock
+          LLM_MODEL: mock-support
+          EMBEDDING_PROVIDER: hash
+          SESSION_SECRET: ci-secret
+        run: PYTHONPATH=. pytest -q
+
+  build-web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run build
