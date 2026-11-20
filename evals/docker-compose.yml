@@ -1,0 +1,24 @@
+# Isolated PostgreSQL for regression evals — never reuse production loopp volume.
+services:
+  evals-db:
+    image: pgvector/pgvector:pg16
+    container_name: loopp-evals-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: loopp_evals
+      POSTGRES_PASSWORD: loopp_evals
+      POSTGRES_DB: loopp_evals
+    ports:
+      - "${EVALS_POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - loopp_evals_pgdata:/var/lib/postgresql/data
+      - ../api/scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loopp_evals -d loopp_evals"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  loopp_evals_pgdata:

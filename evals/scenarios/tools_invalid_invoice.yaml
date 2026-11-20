@@ -1,0 +1,18 @@
+id: tools_invalid_invoice
+name: Missing invoice id
+kind: tools
+description: Unknown invoice returns invoice_not_found
+expected_behavior: invoice_not_found for INV-9999
+tags:
+- billing
+- errors
+tools_script:
+- tool: get_invoice
+  args:
+    invoice_id: INV-9999
+    customer_id: cust_pro_001
+expect:
+  tool_failed:
+  - get_invoice
+  response_contains_any:
+  - invoice_not_found

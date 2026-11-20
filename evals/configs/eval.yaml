@@ -1,0 +1,30 @@
+suite: loopp-regression
+seed: 42
+default_customer_id: cust_pro_001
+judge:
+  enabled_for: [live, voice]
+  model_env: GROQ_API_KEY
+  provider: groq
+  model: openai/gpt-oss-120b
+  pass_threshold: 0.7
+latency_budgets_ms:
+  agent_turn: 90000
+  stt: 5000
+  tts_first_audio: 1500
+  e2e_voice: 120000
+artifacts:
+  keep_failures: true
+  compare_previous: true
+suites:
+  deterministic:
+    description: Mock LLM + direct tool assertions (CI-safe)
+    kinds: [tools, agent_mock, voice_sim]
+  live:
+    description: Real Groq LLM through LangGraph + tools + RAG (manual)
+    kinds: [agent_live]
+  voice:
+    description: Real STT → LangGraph → TTS (manual, resource-heavy)
+    kinds: [voice_live]
+  all:
+    description: Deterministic + live + voice when credentials/models available
+    kinds: [tools, agent_mock, voice_sim, agent_live, voice_live]

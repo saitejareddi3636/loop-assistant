@@ -1,0 +1,23 @@
+id: agent_basic_tier_escalation
+name: Mock agent escalates Basic tier refund
+kind: agent_mock
+description: Basic customer refund must create_ticket, not issue_mock_refund
+expected_behavior: Opens human-review ticket; no auto refund
+customer_id: cust_basic_001
+tags:
+- escalation
+- policy
+turns:
+- user: I'm on the Basic plan (cust_basic_001). Please refund my duplicate invoice
+    INV-2001.
+  expect:
+    tools_include:
+    - create_ticket
+    tools_exclude:
+    - issue_mock_refund
+    ticket_created: true
+    response_contains_any:
+    - ticket
+    - Basic
+    - manual
+    - review

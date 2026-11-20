@@ -1,0 +1,25 @@
+id: live_rag_citations
+name: Live LLM cites policy for refund question
+kind: agent_live
+description: Live LLM cites policy for refund question
+expected_behavior: Answer grounded in retrieved Pro billing policy with citation
+tags:
+- rag
+- live
+customer_id: cust_pro_001
+turns:
+- user: According to policy, can Pro customers get a refund for a duplicate charge?
+  expect:
+    tools_include:
+    - search_policy
+    response_contains_any:
+    - PRO-BILL
+    - Pro
+    - refund
+judge:
+  enabled: true
+  criteria:
+  - relevance
+  - groundedness
+  - safety
+  - multi_turn_consistency

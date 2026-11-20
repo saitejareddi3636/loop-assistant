@@ -1,0 +1,27 @@
+id: live_basic_escalation
+name: Live LLM escalates Basic tier refund
+kind: agent_live
+description: Live LLM escalates Basic tier refund
+expected_behavior: Does not auto-refund Basic; escalates or explains manual review
+tags:
+- escalation
+- live
+customer_id: cust_basic_001
+turns:
+- user: I'm Jordan on Basic plan customer cust_basic_001. Please refund duplicate
+    invoice INV-2001.
+  expect:
+    response_contains_any:
+    - ticket
+    - human
+    - review
+    - Basic
+    - escalat
+    - manual
+judge:
+  enabled: true
+  criteria:
+  - relevance
+  - groundedness
+  - safety
+  - multi_turn_consistency

@@ -1,0 +1,28 @@
+id: live_invalid_order
+name: Live LLM handles invalid order/invoice
+kind: agent_live
+description: Live LLM handles invalid order/invoice
+expected_behavior: Does not invent a successful refund for a missing invoice
+tags:
+- errors
+- live
+customer_id: cust_pro_001
+turns:
+- user: Please refund order INV-0000, it doesn't show in my portal.
+  expect:
+    response_contains_any:
+    - not find
+    - couldn't find
+    - unable
+    - invalid
+    - INV-0000
+    - check
+    - don't see
+    - cannot find
+judge:
+  enabled: true
+  criteria:
+  - relevance
+  - groundedness
+  - safety
+  - multi_turn_consistency

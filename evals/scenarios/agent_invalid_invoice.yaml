@@ -1,0 +1,19 @@
+id: agent_invalid_invoice
+name: Mock agent handles missing invoice
+kind: agent_mock
+description: INV-9999 not found
+expected_behavior: Explains invoice not found without inventing a refund
+tags:
+- billing
+- errors
+turns:
+- user: Please look up INV-9999 on my account
+  expect:
+    tools_include:
+    - get_invoice
+    tools_exclude:
+    - issue_mock_refund
+    response_contains_any:
+    - couldn't find
+    - INV-9999
+    - not find

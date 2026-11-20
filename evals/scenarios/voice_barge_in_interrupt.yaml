@@ -1,0 +1,14 @@
+id: voice_barge_in_interrupt
+name: Voice barge-in interrupt stops speech
+kind: voice_sim
+description: voice.interrupt clears speaking and resumes listening
+expected_behavior: Generation bumps; listening true; speaking false
+tags:
+- voice
+- barge-in
+turns:
+- user: (interrupt)
+  expect:
+    barge_in_stopped: true
+    max_latency_ms:
+      interrupt_stop_ms: 200

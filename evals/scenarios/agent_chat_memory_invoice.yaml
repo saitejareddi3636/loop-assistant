@@ -1,0 +1,19 @@
+id: agent_chat_memory_invoice
+name: Mock agent uses prior turn invoice context
+kind: agent_mock
+description: 'Multi-turn memory: invoice then confirm'
+expected_behavior: Second turn confirms refund for same invoice
+tags:
+- memory
+turns:
+- user: I was charged twice on INV-1042
+  expect:
+    response_contains_any:
+    - INV-1042
+- user: Yes, confirm
+  expect:
+    tools_include:
+    - issue_mock_refund
+    receipt_exists:
+      customer_id: cust_pro_001
+      invoice_id: INV-1042

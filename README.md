@@ -19,6 +19,16 @@ Customer-support agent with **Groq** tool-calling, **pgvector RAG**, **real-time
 | 2 Groq + RAG + guardrails | Working |
 | 3 Voice + observability + deploy prep | Working locally; **public cloud URL not live yet** |
 
+## Regression evals
+
+Isolated end-to-end AI regression tests live in [`evals/`](evals/) (separate from [`benchmarks/`](benchmarks/) speech-model comparisons). Uses a dedicated Postgres (`loopp_evals` on port 5434) and mock refunds — never production Oracle.
+
+```bash
+cd evals && docker compose up -d
+PYTHONPATH=../api:. python scripts/run_evals.py --suite deterministic   # CI
+# Manual: --suite live | --suite voice
+```
+
 ## Quick start (Mac M2 8 GB)
 
 ```bash

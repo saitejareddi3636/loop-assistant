@@ -1,0 +1,18 @@
+id: tools_foreign_invoice_blocked
+name: Cross-customer invoice blocked
+kind: tools
+description: Pro customer cannot access Basic invoice INV-2001
+expected_behavior: customer_scope_mismatch or invoice_not_found
+tags:
+- security
+- scope
+tools_script:
+- tool: get_invoice
+  args:
+    invoice_id: INV-2001
+    customer_id: cust_basic_001
+expect:
+  tool_failed:
+  - get_invoice
+  response_contains_any:
+  - customer_scope_mismatch

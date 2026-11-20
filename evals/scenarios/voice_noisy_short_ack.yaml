@@ -1,0 +1,21 @@
+id: voice_noisy_short_ack
+name: Voice E2E short acknowledgement
+kind: voice_live
+description: Short speech still produces a grounded assistant reply + TTS
+expected_behavior: Pipeline completes with TTS output
+tags:
+- voice
+- noise
+channel: voice
+turns:
+- user: Okay thanks
+  audio_fixture: voice_short_ack
+  expect:
+    tts_min_bytes: 200
+    response_contains_any:
+    - help
+    - welcome
+    - anything
+    - else
+    - okay
+    - thank
