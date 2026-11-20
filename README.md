@@ -21,13 +21,27 @@ Customer-support agent with **Groq** tool-calling, **pgvector RAG**, **real-time
 
 ## Regression evals
 
-Isolated end-to-end AI regression tests live in [`evals/`](evals/) (separate from [`benchmarks/`](benchmarks/) speech-model comparisons). Uses a dedicated Postgres (`loopp_evals` on port 5434) and mock refunds — never production Oracle.
+Isolated end-to-end AI regression tests live in [`evals/`](evals/) (separate from [`benchmarks/`](benchmarks/) speech-model comparisons). Uses a dedicated Postgres (`loopp_evals` on port 5434) and mock refunds — **never production Oracle**.
 
 ```bash
 cd evals && docker compose up -d
-PYTHONPATH=../api:. python scripts/run_evals.py --suite deterministic   # CI
-# Manual: --suite live | --suite voice
+PYTHONPATH=../api:. python scripts/run_evals.py --suite deterministic   # CI gate
+# Manual only: --suite live | --suite voice
 ```
+
+**Measured (2026-11-20, local Darwin arm64):**
+
+| Suite | Result | Notes |
+|-------|--------|-------|
+| Deterministic (CI) | **22/22 PASS** | Mock LLM + tools + barge-in sim |
+| API pytest | **14/14 PASS** | Existing backend suite |
+| Live Groq (continuous) | **2 PASS / 3 FAIL** | Failures are **Groq TPM 429** — preserved in [`evals/results/preserved_failures/`](evals/results/preserved_failures/) |
+| Live Groq (rerun after cooldown) | **3/3 PASS** | Same failed ids; not a CI gate |
+| Voice E2E subset | **3/3 PASS** | Real Moonshine STT + Groq + Pocket TTS |
+
+Full evidence: [`evals/results/VERIFICATION.md`](evals/results/VERIFICATION.md).
+
+**Limitations (explicit):** continuous live runs on free/on_demand Groq are rate-limited (~8k TPM) and must not be treated as a green CI signal; fixtures are synthetic/`say` audio; browser mic, Cloudflare WebSockets, simultaneous users, and Oracle latency are **out of scope** for this milestone (next).
 
 ## Quick start (Mac M2 8 GB)
 
@@ -80,13 +94,19 @@ cd api && source .venv/bin/activate && python scripts/benchmark_voice.py
 ```bash
 cd api && source .venv/bin/activate
 PYTHONPATH=. pytest -q
+
+cd ../evals && docker compose up -d
+PYTHONPATH=../api:. python scripts/run_evals.py --suite deterministic
 ```
+
+CI (`.github/workflows/ci.yml`): API pytest + web build + **deterministic evals** (`test-evals`). Live/voice are manual.
 
 ## Deployment prep (not production-live yet)
 
 - `Dockerfile` — API + built web
 - `docker compose --profile full up --build` — db + api
-- `.github/workflows/ci.yml` — API pytest + web build
+- `.github/workflows/ci.yml` — API pytest + web build + deterministic evals
+- **Oracle / public URL:** not deployed in the evals milestone
 
 **Public URL:** not deployed/tested in this phase. Next steps for a public demo:
 

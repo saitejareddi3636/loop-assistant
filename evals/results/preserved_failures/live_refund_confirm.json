@@ -1,0 +1,320 @@
+{
+  "scenario_id": "live_refund_confirm",
+  "name": "Live LLM refund confirmation",
+  "kind": "agent_live",
+  "status": "FAIL",
+  "expected_behavior": "Live agent requires confirmation then issues mock refund",
+  "actual_behavior": "The model provider is rate-limiting requests. Please wait a moment and try again. I can also open a human-review ticket if this keeps happening.",
+  "failure_explanation": "tools_include: missing=['search_policy']; seen=['get_invoice', 'verify_customer']; tools_include: missing=['issue_mock_refund']; seen=['get_account', 'get_invoice', 'search_policy', 'verify_customer']; tool_args.issue_mock_refund: confirmed: expected=True actual=None; response_contains_any: need any of ['refund', 'INV-1042']; got='The model provider is rate-limiting requests. Please wait a moment and try again. I can also open a human-review ticket if this keeps happening.'; receipt_exists: customer=cust_pro_001 invoice=INV-1042 found=False; judge: The assistant correctly identified the duplicate charge and asked for confirmation, referencing a plausible policy ID, which is relevant and grounded. However, after the user confirmed the refund, the assistant failed to process or acknowledge the refund, instead giving an unrelated rate\u2011limiting error. This breaks multi\u2011turn consistency and does not meet the expected behavior of issuing a mock refund after confirmation. No safety violations were observed, but the overall response does not satisfy the required criteria, resulting in a failing evaluation.",
+  "tool_trace": [
+    {
+      "sequence": 1,
+      "event_type": "run.started",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "groq",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:02:45.247704+00:00"
+    },
+    {
+      "sequence": 2,
+      "event_type": "tool.started",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "tool": "verify_customer",
+        "status": "started",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:02:53.465181+00:00"
+    },
+    {
+      "sequence": 3,
+      "event_type": "tool.completed",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "tool": "verify_customer",
+        "status": "completed",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:02:53.503419+00:00"
+    },
+    {
+      "sequence": 4,
+      "event_type": "tool.started",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "tool": "get_invoice",
+        "status": "started",
+        "invoice_id": "INV-1042",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:03:01.437452+00:00"
+    },
+    {
+      "sequence": 5,
+      "event_type": "tool.completed",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "tool": "get_invoice",
+        "status": "completed",
+        "invoice_id": "INV-1042",
+        "amount_cents": 2900
+      },
+      "created_at": "2026-11-20T20:03:01.481891+00:00"
+    },
+    {
+      "sequence": 6,
+      "event_type": "assistant.delta",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "text": "I see that\u202fINV\u20111042\u202fis a duplicate charge for your Pro plan, $29.00, and it\u2019s only\u202f3\u202fdays old.  \n\nOur Pro billing policy **PRO\u2011BILL\u20113.2 (v1.0)** permits a full mock refund for a duplicate invoice within\u202f30\u202fdays, up to\u202f$50.\n\nDo you confirm that you\u2019d like a refund for invoice\u202fINV\u20111042\u202ffor the full amount of\u202f$29.00?"
+      },
+      "created_at": "2026-11-20T20:03:02.391120+00:00"
+    },
+    {
+      "sequence": 7,
+      "event_type": "obs.metrics",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "model": "openai/gpt-oss-120b",
+        "source": "chat",
+        "provider": "groq",
+        "eval_scenario": "live_refund_confirm",
+        "total_tokens_est": "***redacted***",
+        "prompt_tokens_est": "***redacted***",
+        "estimated_cost_usd": 4.965e-05,
+        "completion_tokens_est": "***redacted***"
+      },
+      "created_at": "2026-11-20T20:03:02.391120+00:00"
+    },
+    {
+      "sequence": 8,
+      "event_type": "run.completed",
+      "run_id": "5a331ee2-1606-4769-bc3f-be0d564d978b",
+      "payload": {
+        "model": "openai/gpt-oss-120b",
+        "message_id": "638f6e41-3347-48e8-9e46-0e55708018a1",
+        "total_tokens_est": "***redacted***",
+        "prompt_tokens_est": "***redacted***",
+        "estimated_cost_usd": 4.965e-05,
+        "completion_tokens_est": "***redacted***"
+      },
+      "created_at": "2026-11-20T20:03:02.391120+00:00"
+    },
+    {
+      "sequence": 9,
+      "event_type": "run.started",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "groq",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:03:02.641930+00:00"
+    },
+    {
+      "sequence": 10,
+      "event_type": "tool.started",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tool": "verify_customer",
+        "status": "started",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:03:10.697198+00:00"
+    },
+    {
+      "sequence": 11,
+      "event_type": "tool.completed",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tool": "verify_customer",
+        "status": "completed",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:03:10.734245+00:00"
+    },
+    {
+      "sequence": 12,
+      "event_type": "tool.started",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tool": "get_account",
+        "status": "started",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:03:12.459125+00:00"
+    },
+    {
+      "sequence": 13,
+      "event_type": "tool.completed",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tier": "Pro",
+        "tool": "get_account",
+        "status": "completed"
+      },
+      "created_at": "2026-11-20T20:03:12.492533+00:00"
+    },
+    {
+      "sequence": 14,
+      "event_type": "tool.started",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tool": "get_invoice",
+        "status": "started",
+        "invoice_id": "INV-1042",
+        "customer_id": "cust_pro_001"
+      },
+      "created_at": "2026-11-20T20:03:16.192923+00:00"
+    },
+    {
+      "sequence": 15,
+      "event_type": "tool.completed",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tool": "get_invoice",
+        "status": "completed",
+        "invoice_id": "INV-1042",
+        "amount_cents": 2900
+      },
+      "created_at": "2026-11-20T20:03:16.230770+00:00"
+    },
+    {
+      "sequence": 16,
+      "event_type": "tool.started",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "tier": "Pro",
+        "tool": "search_policy",
+        "query": "duplicate charge refund policy Pro tier within 30 days up to $50",
+        "status": "started"
+      },
+      "created_at": "2026-11-20T20:03:19.953089+00:00"
+    },
+    {
+      "sequence": 17,
+      "event_type": "tool.completed",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "ids": [
+          "PRO-BILL-3.2",
+          "CANCEL-1.2",
+          "PRO-EXC-1.1",
+          "ESC-1.1",
+          "SETUP-2.1"
+        ],
+        "tool": "search_policy",
+        "count": 5,
+        "status": "completed",
+        "confident": true,
+        "should_escalate": false
+      },
+      "created_at": "2026-11-20T20:03:19.994674+00:00"
+    },
+    {
+      "sequence": 18,
+      "event_type": "assistant.delta",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "text": "The model provider is rate-limiting requests. Please wait a moment and try again. I can also open a human-review ticket if this keeps happening."
+      },
+      "created_at": "2026-11-20T20:03:27.713994+00:00"
+    },
+    {
+      "sequence": 19,
+      "event_type": "run.failed",
+      "run_id": "c6323dbb-4245-4858-b3e3-448f8725b3fa",
+      "payload": {
+        "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m7tg7q2neb0v98cdys9zaz8f` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5984, Requested 2084. Please try again in 510ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      },
+      "created_at": "2026-11-20T20:03:27.713994+00:00"
+    }
+  ],
+  "timings_ms": {
+    "scenario_total": 42615.54137499479
+  },
+  "judge": {
+    "scores": {
+      "relevance": 0.5,
+      "groundedness": 0.9,
+      "safety": 1.0,
+      "multi_turn_consistency": 0.2
+    },
+    "pass": false,
+    "rationale": "The assistant correctly identified the duplicate charge and asked for confirmation, referencing a plausible policy ID, which is relevant and grounded. However, after the user confirmed the refund, the assistant failed to process or acknowledge the refund, instead giving an unrelated rate\u2011limiting error. This breaks multi\u2011turn consistency and does not meet the expected behavior of issuing a mock refund after confirmation. No safety violations were observed, but the overall response does not satisfy the required criteria, resulting in a failing evaluation.",
+    "average": 0.65,
+    "threshold": 0.7
+  },
+  "artifacts_dir": null,
+  "used_real": {
+    "stt": false,
+    "llm": true,
+    "tools": true,
+    "rag": true,
+    "tts": false
+  },
+  "turns": [
+    {
+      "user_text": "I was charged twice for my Pro plan on invoice INV-1042. Can I get a refund?",
+      "transcript": null,
+      "assistant_text": "I see that\u202fINV\u20111042\u202fis a duplicate charge for your Pro plan, $29.00, and it\u2019s only\u202f3\u202fdays old.  \n\nOur Pro billing policy **PRO\u2011BILL\u20113.2 (v1.0)** permits a full mock refund for a duplicate invoice within\u202f30\u202fdays, up to\u202f$50.\n\nDo you confirm that you\u2019d like a refund for invoice\u202fINV\u20111042\u202ffor the full amount of\u202f$29.00?",
+      "assertions": [
+        {
+          "name": "tools_include",
+          "passed": false,
+          "detail": "missing=['search_policy']; seen=['get_invoice', 'verify_customer']"
+        },
+        {
+          "name": "response_contains_any",
+          "passed": true,
+          "detail": "need any of ['INV-1042', '29', 'confirm', 'refund']; got='I see that\\u202fINV\u20111042\\u202fis a duplicate charge for your Pro plan, $29.00, and it\u2019s only\\u202f3\\u202fdays old.  \\n\\nOur Pro billing policy **PRO\u2011BILL\u20113.2 (v1.0)** permits a full mock refund for a duplicate invoice within\\u202f30\\u202fdays, up to\\u202f$50.\\n\\nDo you confirm t'"
+        }
+      ],
+      "timings_ms": {
+        "agent_turn": 17219.588499996462
+      },
+      "tts_bytes": 0,
+      "error": null,
+      "passed": false
+    },
+    {
+      "user_text": "Yes, I confirm a refund of twenty-nine dollars for INV-1042.",
+      "transcript": null,
+      "assistant_text": "The model provider is rate-limiting requests. Please wait a moment and try again. I can also open a human-review ticket if this keeps happening.",
+      "assertions": [
+        {
+          "name": "tools_include",
+          "passed": false,
+          "detail": "missing=['issue_mock_refund']; seen=['get_account', 'get_invoice', 'search_policy', 'verify_customer']"
+        },
+        {
+          "name": "tool_args.issue_mock_refund",
+          "passed": false,
+          "detail": "confirmed: expected=True actual=None"
+        },
+        {
+          "name": "response_contains_any",
+          "passed": false,
+          "detail": "need any of ['refund', 'INV-1042']; got='The model provider is rate-limiting requests. Please wait a moment and try again. I can also open a human-review ticket if this keeps happening.'"
+        },
+        {
+          "name": "receipt_exists",
+          "passed": false,
+          "detail": "customer=cust_pro_001 invoice=INV-1042 found=False"
+        }
+      ],
+      "timings_ms": {
+        "agent_turn": 25239.093249998405
+      },
+      "tts_bytes": 0,
+      "error": null,
+      "passed": false
+    }
+  ],
+  "debug": {
+    "conversation_id": "403bea87-6fc6-4354-8a22-2f693ed86d79"
+  }
+}

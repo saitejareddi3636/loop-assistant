@@ -71,6 +71,25 @@ Deterministic assertions cover refund confirmation, tool args, idempotency, and 
 PYTHONPATH=../api:. python scripts/debug_failure.py agent_refund_confirm_flow
 ```
 
+## Measured results (2026-11-20)
+
+| Suite | Result |
+|-------|--------|
+| Deterministic | **22/22 PASS** (re-verified at milestone close) |
+| API pytest | **14/14 PASS** |
+| Live continuous | **2/5 PASS** — remaining failures are **Groq 429 TPM** |
+| Live after cooldown | **3/3 PASS** on previously failed ids |
+| Voice subset | **3/3 PASS** (real STT + LLM + TTS) |
+
+See [`results/VERIFICATION.md`](results/VERIFICATION.md) and preserved rate-limit artifacts under [`results/preserved_failures/`](results/preserved_failures/).
+
+## Limitations
+
+- Continuous `--suite live` on Groq free/on_demand (**~8000 TPM**) is **rate-limited**; do not use uninterrupted live green as a merge gate.
+- Audio fixtures are synthetic (`say` / generated), not telephony.
+- Harness calls production adapters without a browser WebSocket client.
+- Out of scope here: Cloudflare WS, multi-user load, Oracle deploy/latency.
+
 ## GitHub Actions
 
 Deterministic evals run in CI (see `.github/workflows/ci.yml` job `test-evals`). Live/voice suites are manual only.

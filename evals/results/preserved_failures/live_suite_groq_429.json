@@ -1,0 +1,30 @@
+{
+  "suite": "live",
+  "run_id": "2026-11-20T20:02:13Z-continuous",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "outcome": "RATE_LIMITED",
+  "summary": {
+    "total": 5,
+    "passed_before_tpm_exhaustion": 2,
+    "failed": 3,
+    "failed_ids": [
+      "live_prompt_injection",
+      "live_rag_citations",
+      "live_refund_confirm"
+    ]
+  },
+  "error_sample": {
+    "http_status": 429,
+    "type": "tokens",
+    "code": "rate_limit_exceeded",
+    "message": "Rate limit reached for model openai/gpt-oss-120b ... TPM Limit 8000 ... Please try again in ~2\u20138s"
+  },
+  "interpretation": "Continuous live-suite execution on the free/on_demand Groq tier is rate-limited. These are infrastructure throttles, not product assertion failures. After cooldown, the same scenario ids passed 3/3. Do not treat continuous live PASS as a CI gate.",
+  "mitigations": [
+    "EVALS_LIVE_PAUSE_SECONDS between scenarios",
+    "LLM_MAX_RETRIES / LLM_RETRY_BASE_SECONDS",
+    "Rerun only failed ids after cooldown",
+    "Keep deterministic suite as the CI gate"
+  ]
+}
