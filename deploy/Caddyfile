@@ -29,15 +29,10 @@ https://129.80.125.203.sslip.io {
 	}
 }
 
-# Direct IP HTTPS (self-signed) kept for local/debug access
-https://129.80.125.203 {
-	tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
-	encode gzip
-	reverse_proxy api:8000 {
-		header_up Host {host}
-		transport http {
-			read_timeout 3600s
-			write_timeout 3600s
-		}
-	}
-}
+# Direct-IP HTTPS is intentionally disabled.
+# Serving a second HTTPS site on the same :443 with a self-signed cert for the
+# bare IP caused TLS alerts for many clients (SNI / cert mismatch vs sslip.io).
+# Public entrypoints:
+#   - https://129.80.125.203.sslip.io  (Let's Encrypt origin)
+#   - https://loopp-proxy.<subdomain>.workers.dev  (Cloudflare Worker)
+# HTTP :80 above remains for ACME challenges and plain IP debugging.

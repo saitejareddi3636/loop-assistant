@@ -88,7 +88,16 @@ See [`results/VERIFICATION.md`](results/VERIFICATION.md) and preserved rate-limi
 - Continuous `--suite live` on Groq free/on_demand (**~8000 TPM**) is **rate-limited**; do not use uninterrupted live green as a merge gate.
 - Audio fixtures are synthetic (`say` / generated), not telephony.
 - Harness calls production adapters without a browser WebSocket client.
-- Out of scope here: Cloudflare WS, multi-user load, Oracle deploy/latency.
+
+## Oracle production audit
+
+Measured live against Cloudflare + Oracle origin (no auto-deploy):
+
+```bash
+PYTHONPATH=../api:. python scripts/oracle_prod_audit.py
+```
+
+Report: [`results/oracle_audit/REPORT.md`](results/oracle_audit/REPORT.md).
 
 ## GitHub Actions
 
