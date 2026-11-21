@@ -13,6 +13,7 @@ type Props = {
   streamingText?: string;
   busy?: boolean;
   onSuggestion?: (text: string) => void;
+  onCancelConfirmation?: () => void;
 };
 
 const SUGGESTIONS = [
@@ -21,7 +22,13 @@ const SUGGESTIONS = [
   "What is the Pro refund policy?",
 ];
 
-export function MessageList({ messages, streamingText, busy, onSuggestion }: Props) {
+export function MessageList({
+  messages,
+  streamingText,
+  busy,
+  onSuggestion,
+  onCancelConfirmation,
+}: Props) {
   const endRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -56,13 +63,25 @@ export function MessageList({ messages, streamingText, busy, onSuggestion }: Pro
         </div>
       ) : null}
 
-      {messages.map((message, index) => (
-        <MessageBubble
-          key={message.id}
-          message={message}
-          style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
-        />
-      ))}
+      {messages.map((message, index) => {
+        // Only the latest non-superseded confirmation card is actionable.
+        const isLatestConfirm =
+          !message.meta?.superseded &&
+          Boolean(assistantUiFromMeta(message.meta).confirmation) &&
+          !messages.slice(index + 1).some(
+            (m) =>
+              !m.meta?.superseded && Boolean(assistantUiFromMeta(m.meta).confirmation),
+          );
+        return (
+          <MessageBubble
+            key={message.id}
+            message={message}
+            showConfirmationCard={isLatestConfirm}
+            onCancelConfirmation={isLatestConfirm ? onCancelConfirmation : undefined}
+            style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
+          />
+        );
+      })}
 
       {busy && !streamingText ? (
         <div className="animate-fade-up flex justify-start">
@@ -102,15 +121,20 @@ export function MessageList({ messages, streamingText, busy, onSuggestion }: Pro
 function MessageBubble({
   message,
   style,
+  showConfirmationCard = false,
+  onCancelConfirmation,
 }: {
   message: ChatMessage;
   style?: CSSProperties;
+  showConfirmationCard?: boolean;
+  onCancelConfirmation?: () => void;
 }) {
   const isUser = message.role === "user";
-  const ui = !isUser ? assistantUiFromMeta(message.meta) : {};
+  const superseded = Boolean(message.meta?.superseded);
+  const ui = !isUser && !superseded ? assistantUiFromMeta(message.meta) : {};
   const invoice = extractInvoiceHint(ui);
   const amount = extractAmountHint(ui);
-  const showConfirm = Boolean(ui.confirmation);
+  const showConfirm = showConfirmationCard && Boolean(ui.confirmation);
   const showEscalation = Boolean(ui.escalation);
 
   return (
@@ -168,6 +192,15 @@ function MessageBubble({
             <p className="mt-2 text-xs leading-relaxed text-ink-700/80">
               Reply “yes, confirm the refund” when you’re ready. Nothing is charged until you confirm.
             </p>
+            {onCancelConfirmation ? (
+              <button
+                type="button"
+                onClick={onCancelConfirmation}
+                className="mt-2 text-xs font-medium text-ink-700/70 underline-offset-2 hover:underline"
+              >
+                Cancel confirmation
+              </button>
+            ) : null}
           </div>
         ) : null}
 

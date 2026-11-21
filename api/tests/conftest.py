@@ -55,6 +55,12 @@ async def prepare_database() -> AsyncGenerator[None, None]:
     )
     await init_db()
     async with db_session.async_session_factory() as session:
+        # Isolate refund confirmation state across tests (receipts are unique per invoice).
+        from sqlalchemy import text
+
+        await session.execute(text("DELETE FROM mock_receipts"))
+        await session.execute(text("DELETE FROM escalation_tickets"))
+        await session.commit()
         await seed_policy_index(session)
     yield
     await engine.dispose()

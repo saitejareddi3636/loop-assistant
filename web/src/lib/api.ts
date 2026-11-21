@@ -37,6 +37,37 @@ export function createTurn(
   });
 }
 
+export type RetryFailedRunResponse = {
+  conversation_id: string;
+  run_id: string;
+  failed_run_id: string;
+  client_retry_id: string;
+  status: string;
+  source: string;
+  reused: boolean;
+};
+
+export function retryFailedRun(
+  conversationId: string,
+  failedRunId: string,
+  clientRetryId: string,
+): Promise<RetryFailedRunResponse> {
+  return request<RetryFailedRunResponse>(
+    `/api/conversations/${conversationId}/runs/${failedRunId}/retry`,
+    {
+      method: "POST",
+      body: JSON.stringify({ client_retry_id: clientRetryId }),
+    },
+  );
+}
+
+export function cancelPendingConfirmation(conversationId: string): Promise<{ cancelled: boolean }> {
+  return request(`/api/conversations/${conversationId}/confirmation/cancel`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
 export function getHealth(): Promise<{
   status: string;
   database: string;
@@ -44,4 +75,36 @@ export function getHealth(): Promise<{
   model: string;
 }> {
   return request("/api/health");
+}
+
+export type TranscribeResult = {
+  text: string;
+  stt_ms: number;
+  stt_provider: string;
+  sample_rate: number;
+  duration_ms: number;
+};
+
+/** Dictation-only STT — does not create messages or run the agent. */
+export async function transcribeAudio(
+  conversationId: string,
+  sessionToken: string,
+  wav: Blob,
+  sampleRate = 16000,
+): Promise<TranscribeResult> {
+  const body = new FormData();
+  body.append("file", wav, "dictation.wav");
+  body.append("sample_rate", String(sampleRate));
+  const response = await fetch(`/api/conversations/${conversationId}/transcribe`, {
+    method: "POST",
+    headers: {
+      "X-Session-Token": sessionToken,
+    },
+    body,
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `Transcription failed (${response.status})`);
+  }
+  return response.json() as Promise<TranscribeResult>;
 }

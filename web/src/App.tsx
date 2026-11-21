@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Composer } from "./components/Composer";
+import { LiveVoiceModal } from "./components/LiveVoiceModal";
 import { MessageList } from "./components/MessageList";
 import { ObservabilityDrawer } from "./components/ObservabilityDrawer";
 import { ToolStatus } from "./components/ToolStatus";
-import { VoiceControls } from "./components/VoiceControls";
-import { createConversation, createTurn, getConversation, getHealth } from "./lib/api";
+import {
+  cancelPendingConfirmation,
+  createConversation,
+  createTurn,
+  getConversation,
+  getHealth,
+  retryFailedRun,
+} from "./lib/api";
 import type { ChatMessage, ObsMetric, StreamEvent, ToolStatusItem } from "./lib/types";
 
 function newTurnId(): string {
@@ -23,6 +30,13 @@ function toolDetail(payload: Record<string, unknown>): string | undefined {
   return undefined;
 }
 
+type FailedOp = {
+  runId: string;
+  source: "chat" | "voice";
+  retryAfterSeconds: number | null;
+  waitRequired: boolean;
+};
+
 export default function App() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
@@ -32,16 +46,17 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [booting, setBooting] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [retryable, setRetryable] = useState(false);
-  const [retryAfterSeconds, setRetryAfterSeconds] = useState<number | null>(null);
-  const [lastUserText, setLastUserText] = useState<string | null>(null);
+  const [failedOp, setFailedOp] = useState<FailedOp | null>(null);
   const [healthLabel, setHealthLabel] = useState("Connecting…");
   const [healthOk, setHealthOk] = useState(false);
   const [obsOpen, setObsOpen] = useState(false);
   const [traces, setTraces] = useState<string[]>([]);
   const [metrics, setMetrics] = useState<ObsMetric[]>([]);
+  const [liveVoiceOpen, setLiveVoiceOpen] = useState(false);
   const lastSequence = useRef(0);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const retryInFlight = useRef(false);
+  const activeRetryId = useRef<string | null>(null);
 
   const connectEvents = useCallback((id: string, after = 0) => {
     eventSourceRef.current?.close();
@@ -91,6 +106,11 @@ export default function App() {
           setTraces((prev) => [`assistant.ui · ${JSON.stringify(event.payload)}`, ...prev].slice(0, 40));
         }
 
+        if (event.event_type === "confirmation.cancelled") {
+          setTraces((prev) => ["confirmation.cancelled", ...prev].slice(0, 40));
+          void getConversation(id).then((detail) => setMessages(detail.messages));
+        }
+
         if (event.event_type === "obs.metrics") {
           setMetrics((prev) => [...prev, event.payload as ObsMetric]);
           setTraces((prev) =>
@@ -104,6 +124,10 @@ export default function App() {
         if (event.event_type === "run.completed") {
           setBusy(false);
           setStreamingText("");
+          setFailedOp(null);
+          setError(null);
+          retryInFlight.current = false;
+          activeRetryId.current = null;
           void getConversation(id).then((detail) => {
             setMessages(detail.messages);
           });
@@ -112,10 +136,11 @@ export default function App() {
         if (event.event_type === "run.failed") {
           setBusy(false);
           setStreamingText("");
+          retryInFlight.current = false;
           const retry = Boolean(event.payload.retryable);
-          setRetryable(retry);
+          const src = event.payload.source === "voice" ? "voice" : "chat";
           const wait = event.payload.retry_after_seconds;
-          setRetryAfterSeconds(typeof wait === "number" ? wait : null);
+          const waitRequired = Boolean(event.payload.wait_required);
           setError(
             String(
               event.payload.user_message ??
@@ -123,6 +148,16 @@ export default function App() {
                 "Agent run failed",
             ),
           );
+          if (retry && event.run_id) {
+            setFailedOp({
+              runId: event.run_id,
+              source: src,
+              retryAfterSeconds: typeof wait === "number" ? wait : null,
+              waitRequired,
+            });
+          } else {
+            setFailedOp(null);
+          }
           void getConversation(id).then((detail) => {
             setMessages(detail.messages);
           });
@@ -142,6 +177,7 @@ export default function App() {
       "tool.failed",
       "assistant.delta",
       "assistant.ui",
+      "confirmation.cancelled",
       "obs.metrics",
     ]) {
       source.addEventListener(name, handlePayload as EventListener);
@@ -189,9 +225,7 @@ export default function App() {
     async (text: string) => {
       if (!conversationId || busy) return;
       setError(null);
-      setRetryable(false);
-      setRetryAfterSeconds(null);
-      setLastUserText(text);
+      setFailedOp(null);
       setBusy(true);
       setToolItems([]);
       setStreamingText("");
@@ -210,17 +244,58 @@ export default function App() {
         await createTurn(conversationId, text, turnId);
       } catch (err) {
         setBusy(false);
-        setRetryable(true);
         setError(err instanceof Error ? err.message : "Failed to send message");
       }
     },
     [busy, conversationId],
   );
 
-  const onRetry = useCallback(() => {
-    if (!lastUserText || busy) return;
-    void onSend(lastUserText);
-  }, [busy, lastUserText, onSend]);
+  const onRetryFailed = useCallback(async () => {
+    if (!conversationId || !failedOp || busy || retryInFlight.current) return;
+    retryInFlight.current = true;
+    setBusy(true);
+    setError(null);
+    setToolItems([]);
+    setStreamingText("");
+    // Stable id for this click burst — duplicate clicks reuse the same retry run.
+    if (!activeRetryId.current) {
+      activeRetryId.current = newTurnId();
+    }
+    const clientRetryId = activeRetryId.current;
+    try {
+      const result = await retryFailedRun(conversationId, failedOp.runId, clientRetryId);
+      if (result.reused) {
+        setTraces((prev) => [`retry reused · ${result.run_id}`, ...prev].slice(0, 40));
+      }
+      // Keep failedOp until run.completed/failed so a second click hits the same client_retry_id.
+    } catch (err) {
+      setBusy(false);
+      retryInFlight.current = false;
+      setError(err instanceof Error ? err.message : "Retry failed");
+    }
+  }, [busy, conversationId, failedOp]);
+
+  const onCancelConfirmation = useCallback(async () => {
+    if (!conversationId) return;
+    try {
+      await cancelPendingConfirmation(conversationId);
+      // Strip confirmation cards locally; persisted message meta may still carry ui until refresh.
+      setMessages((prev) =>
+        prev.map((m) => {
+          const ui = m.meta?.ui;
+          if (!ui || typeof ui !== "object" || !("confirmation" in (ui as object))) return m;
+          const nextUi = { ...(ui as Record<string, unknown>) };
+          delete nextUi.confirmation;
+          return { ...m, meta: { ...m.meta, ui: nextUi } };
+        }),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not cancel confirmation");
+    }
+  }, [conversationId]);
+
+  const retryLabel =
+    failedOp?.source === "voice" ? "Retry voice turn" : "Retry last turn";
 
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col">
@@ -266,43 +341,12 @@ export default function App() {
             streamingText={streamingText || undefined}
             busy={busy}
             onSuggestion={conversationId && !busy ? (text) => void onSend(text) : undefined}
+            onCancelConfirmation={conversationId ? () => void onCancelConfirmation() : undefined}
           />
         )}
 
         <div className="dock sticky bottom-0 z-20 border-t border-ink-200/50 pt-2">
           <ToolStatus items={toolItems} />
-          <VoiceControls
-            conversationId={conversationId}
-            sessionToken={sessionToken}
-            disabled={busy || booting}
-            onUserTranscript={(text) => {
-              if (!text) return;
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id: `voice-user-${Date.now()}`,
-                  role: "user",
-                  content: text,
-                  created_at: new Date().toISOString(),
-                },
-              ]);
-            }}
-            onAssistantText={(text) => {
-              if (!text) return;
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id: `voice-asst-${Date.now()}`,
-                  role: "assistant",
-                  content: text,
-                  created_at: new Date().toISOString(),
-                },
-              ]);
-              setBusy(false);
-            }}
-            onError={setError}
-            onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
-          />
           {error ? (
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 pb-2">
               <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2">
@@ -311,30 +355,33 @@ export default function App() {
                   type="button"
                   onClick={() => {
                     setError(null);
-                    setRetryable(false);
+                    setFailedOp(null);
+                    activeRetryId.current = null;
                   }}
                   className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/60 hover:bg-white/70"
                 >
                   Dismiss
                 </button>
               </div>
-              {retryable && lastUserText ? (
+              {failedOp ? (
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
-                    disabled={busy}
-                    onClick={onRetry}
+                    disabled={busy || retryInFlight.current}
+                    onClick={() => void onRetryFailed()}
                     className="rounded-xl bg-ink-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-ink-700 disabled:opacity-50"
                   >
-                    Retry last message
+                    {retryLabel}
                   </button>
-                  {retryAfterSeconds != null ? (
+                  {failedOp.retryAfterSeconds != null ? (
                     <p className="text-xs text-ink-700/60">
-                      Provider asked to wait ~{Math.ceil(retryAfterSeconds)}s if this keeps failing.
+                      {failedOp.waitRequired
+                        ? `Wait ~${Math.ceil(failedOp.retryAfterSeconds)}s before retrying (provider Retry-After).`
+                        : `Provider suggested ~${Math.ceil(failedOp.retryAfterSeconds)}s if this keeps failing.`}
                     </p>
                   ) : (
                     <p className="text-xs text-ink-700/60">
-                      Conversation and pending refund confirmation stay intact — no need to start over.
+                      Retries the same {failedOp.source} turn — no duplicate user message.
                     </p>
                   )}
                 </div>
@@ -342,9 +389,14 @@ export default function App() {
             </div>
           ) : null}
           <Composer
+            conversationId={conversationId}
+            sessionToken={sessionToken}
             disabled={!conversationId || booting}
             busy={busy}
             onSend={onSend}
+            onError={setError}
+            onOpenLiveVoice={() => setLiveVoiceOpen(true)}
+            liveVoiceDisabled={busy || booting || liveVoiceOpen}
           />
           <ObservabilityDrawer
             open={obsOpen}
@@ -354,6 +406,42 @@ export default function App() {
           />
         </div>
       </main>
+
+      <LiveVoiceModal
+        open={liveVoiceOpen}
+        conversationId={conversationId}
+        sessionToken={sessionToken}
+        onClose={() => setLiveVoiceOpen(false)}
+        onUserTranscript={(text) => {
+          if (!text) return;
+          // Live utterance supersedes any pending typed-chat retry target.
+          setFailedOp(null);
+          setError(null);
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `voice-user-${Date.now()}`,
+              role: "user",
+              content: text,
+              created_at: new Date().toISOString(),
+            },
+          ]);
+        }}
+        onAssistantText={(text) => {
+          if (!text) return;
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `voice-asst-${Date.now()}`,
+              role: "assistant",
+              content: text,
+              created_at: new Date().toISOString(),
+            },
+          ]);
+        }}
+        onError={setError}
+        onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
+      />
     </div>
   );
 }

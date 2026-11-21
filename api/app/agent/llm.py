@@ -12,6 +12,18 @@ logger = logging.getLogger(__name__)
 _RETRY_AFTER_RE = re.compile(r"retry[- ]after[:\s]+(\d+(?:\.\d+)?)", re.IGNORECASE)
 
 
+class RateLimitBudgetExceeded(Exception):
+    """Retry-After exceeds our in-process retry budget — do not keep hitting the API."""
+
+    def __init__(self, retry_after_seconds: float, budget_seconds: float):
+        self.retry_after_seconds = float(retry_after_seconds)
+        self.budget_seconds = float(budget_seconds)
+        super().__init__(
+            f"Rate limited; Retry-After {self.retry_after_seconds:.0f}s exceeds "
+            f"retry budget {self.budget_seconds:.0f}s"
+        )
+
+
 def get_chat_model() -> Any:
     settings = get_settings()
     provider = settings.llm_provider.lower().strip()
@@ -134,14 +146,17 @@ def extract_retry_after_seconds(exc: Exception) -> float | None:
 
 
 def compute_retry_delay_seconds(exc: Exception, *, attempt: int) -> float:
-    """Bounded delay: prefer Retry-After, else exponential backoff."""
+    """Delay for an in-budget retry. Raises RateLimitBudgetExceeded if Retry-After is too large."""
     settings = get_settings()
-    base = settings.llm_retry_base_seconds * (2 ** max(0, attempt - 1))
+    budget = float(settings.llm_retry_max_seconds)
     hinted = extract_retry_after_seconds(exc)
+    if hinted is not None and hinted > budget:
+        raise RateLimitBudgetExceeded(hinted, budget)
+    base = settings.llm_retry_base_seconds * (2 ** max(0, attempt - 1))
     delay = max(base, hinted) if hinted is not None else base
     # Small jitter to avoid synchronized retries under TPM limits.
     delay = delay + min(0.25 * attempt, 1.0)
-    return min(delay, float(settings.llm_retry_max_seconds))
+    return min(delay, budget)
 
 
 async def ainvoke_with_retries(model: Any, messages: list[Any]) -> Any:
@@ -151,11 +166,15 @@ async def ainvoke_with_retries(model: Any, messages: list[Any]) -> Any:
     while attempt <= settings.llm_max_retries:
         try:
             return await model.ainvoke(messages)
+        except RateLimitBudgetExceeded:
+            raise
         except Exception as exc:  # noqa: BLE001
             last_exc = exc
             attempt += 1
             if attempt > settings.llm_max_retries or not _is_retryable(exc):
                 raise
+            # Fail closed when provider asks us to wait longer than our budget —
+            # do not sleep/cap and hammer 429 again.
             delay = compute_retry_delay_seconds(exc, attempt=attempt)
             logger.warning(
                 "LLM call failed (%s); retry %s/%s in %.1fs (retry_after=%s)",

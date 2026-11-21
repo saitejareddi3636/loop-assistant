@@ -9,7 +9,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.graph import build_agent_graph, extract_final_text
-from app.agent.llm import extract_retry_after_seconds, is_rate_limit_error
+from app.agent.llm import (
+    RateLimitBudgetExceeded,
+    extract_retry_after_seconds,
+    is_rate_limit_error,
+)
 from app.agent.tools import ToolContext, build_tools
 from app.config import get_settings
 from app.db.models import AgentRun, Message
@@ -21,20 +25,29 @@ _HISTORY_LIMIT = 12
 
 
 def _user_facing_error(exc: Exception) -> str:
+    if isinstance(exc, RateLimitBudgetExceeded):
+        wait = max(1, int(exc.retry_after_seconds))
+        return (
+            f"The model provider asked us to wait {wait} seconds before trying again "
+            f"(longer than our automatic retry window). Please wait about {wait}s, then tap Retry — "
+            "your conversation and any still-valid refund confirmation stay here."
+        )
     if is_rate_limit_error(exc):
         retry_after = extract_retry_after_seconds(exc)
         wait = f" Wait about {int(retry_after)} seconds," if retry_after else " Wait a moment,"
         return (
             f"The model provider is rate-limiting requests.{wait} then tap Retry — "
-            "your conversation and any pending refund confirmation are still here."
+            "your conversation and any still-valid refund confirmation are still here."
         )
     text = str(exc).lower()
     if "timeout" in text:
-        return "The model timed out. Please retry your question — the conversation is unchanged."
+        return "The model timed out. Please retry — the conversation is unchanged."
     return f"Something went wrong while processing your request: {exc}"
 
 
 def _is_recoverable(exc: Exception) -> bool:
+    if isinstance(exc, RateLimitBudgetExceeded):
+        return True  # user can retry after waiting; we do not auto-loop
     if is_rate_limit_error(exc):
         return True
     text = str(exc).lower()
@@ -50,12 +63,12 @@ def _trim_history(rows: list[Message]) -> list:
     for row in usable:
         meta = row.meta or {}
         if row.role == "assistant" and meta.get("error") and meta.get("retryable"):
-            # Skip prior rate-limit error bubbles from the prompt (token waste).
+            continue
+        if meta.get("superseded"):
             continue
         if row.role == "user":
             lc_messages.append(HumanMessage(content=row.content))
         elif row.role == "assistant":
-            # Cap very long prior replies.
             content = row.content if len(row.content) <= 800 else row.content[:800] + "…"
             lc_messages.append(AIMessage(content=content))
     return lc_messages
@@ -104,6 +117,7 @@ async def run_agent_turn(
             "customer_id": customer_id,
             "provider": settings.llm_provider,
             "model": settings.llm_model,
+            "source": source,
         },
     )
     await session.commit()
@@ -145,6 +159,7 @@ async def run_agent_turn(
             meta={
                 "model": settings.llm_model,
                 "provider": settings.llm_provider,
+                "source": source,
                 "ui": ui,
             },
         )
@@ -176,7 +191,7 @@ async def run_agent_turn(
             conversation_id=conversation_id,
             run_id=run_id,
             event_type="run.completed",
-            payload={"message_id": str(assistant_msg.id), **cost},
+            payload={"message_id": str(assistant_msg.id), "source": source, **cost},
         )
         await session.commit()
         return final_text
@@ -185,8 +200,15 @@ async def run_agent_turn(
 
         friendly = _user_facing_error(exc)
         recoverable = _is_recoverable(exc)
-        retry_after = extract_retry_after_seconds(exc)
-        ui = await pending_confirmation_ui(session, conversation_id=conversation_id)
+        if isinstance(exc, RateLimitBudgetExceeded):
+            retry_after = exc.retry_after_seconds
+            wait_required = True
+        else:
+            retry_after = extract_retry_after_seconds(exc)
+            wait_required = False
+        ui = await pending_confirmation_ui(
+            session, conversation_id=conversation_id, customer_id=customer_id
+        )
 
         assistant_msg = Message(
             conversation_id=conversation_id,
@@ -196,9 +218,12 @@ async def run_agent_turn(
             meta={
                 "error": True,
                 "retryable": recoverable,
-                "rate_limited": is_rate_limit_error(exc),
+                "rate_limited": is_rate_limit_error(exc)
+                or isinstance(exc, RateLimitBudgetExceeded),
                 "retry_after_seconds": retry_after,
+                "wait_required": wait_required,
                 "provider": settings.llm_provider,
+                "source": source,
                 "ui": ui,
             },
         )
@@ -215,7 +240,7 @@ async def run_agent_turn(
             conversation_id=conversation_id,
             run_id=run_id,
             event_type="assistant.delta",
-            payload={"text": friendly, "ui": ui, "retryable": recoverable},
+            payload={"text": friendly, "ui": ui, "retryable": recoverable, "source": source},
         )
         if ui:
             await event_bus.publish(
@@ -233,9 +258,12 @@ async def run_agent_turn(
             payload={
                 "error": str(exc),
                 "retryable": recoverable,
-                "rate_limited": is_rate_limit_error(exc),
+                "rate_limited": is_rate_limit_error(exc)
+                or isinstance(exc, RateLimitBudgetExceeded),
                 "retry_after_seconds": retry_after,
+                "wait_required": wait_required,
                 "user_message": friendly,
+                "source": source,
                 "ui": ui,
             },
         )
