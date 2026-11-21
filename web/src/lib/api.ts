@@ -108,3 +108,24 @@ export async function transcribeAudio(
   }
   return response.json() as Promise<TranscribeResult>;
 }
+
+/** On-demand Pocket TTS for the chat speaker button. */
+export async function speakText(
+  conversationId: string,
+  sessionToken: string,
+  text: string,
+): Promise<Blob> {
+  const response = await fetch(`/api/conversations/${conversationId}/speak`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Session-Token": sessionToken,
+    },
+    body: JSON.stringify({ text }),
+  });
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(errText || `Speech failed (${response.status})`);
+  }
+  return response.blob();
+}

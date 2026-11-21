@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { encodeWav, formatTimer, toPcm16k } from "../lib/audio";
+import { encodeWav, toPcm16k } from "../lib/audio";
 import { transcribeAudio } from "../lib/api";
-import { Waveform } from "./Waveform";
 
 type Props = {
   conversationId: string | null;
@@ -18,7 +17,6 @@ type Props = {
 type DictationPhase = "idle" | "recording" | "transcribing";
 
 const MAX_RECORD_MS = 60_000;
-const LEVEL_BARS = 32;
 
 export function Composer({
   conversationId,
@@ -32,9 +30,7 @@ export function Composer({
 }: Props) {
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<DictationPhase>("idle");
-  const [levels, setLevels] = useState<number[]>(() => Array.from({ length: LEVEL_BARS }, () => 0.08));
-  const [elapsedMs, setElapsedMs] = useState(0);
-  const [dictationHint, setDictationHint] = useState<string | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
@@ -43,18 +39,30 @@ export function Composer({
   const chunksRef = useRef<Int16Array[]>([]);
   const sampleRateRef = useRef(16000);
   const startedAtRef = useRef(0);
-  const timerRef = useRef<number | null>(null);
+  const maxTimerRef = useRef<number | null>(null);
   const phaseRef = useRef<DictationPhase>("idle");
 
   phaseRef.current = phase;
   const canSend = !disabled && !busy && phase === "idle" && Boolean(text.trim());
-  const micBusy = phase !== "idle";
+  const recording = phase === "recording";
+  const transcribing = phase === "transcribing";
 
   useEffect(() => {
     return () => {
       stopCapture();
-      if (timerRef.current !== null) window.clearInterval(timerRef.current);
+      if (maxTimerRef.current !== null) window.clearTimeout(maxTimerRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && phaseRef.current === "recording") {
+        e.preventDefault();
+        cancelDictation();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   function stopCapture() {
@@ -66,15 +74,22 @@ export function Composer({
     streamRef.current = null;
     void audioCtxRef.current?.close().catch(() => undefined);
     audioCtxRef.current = null;
-    if (timerRef.current !== null) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
+    if (maxTimerRef.current !== null) {
+      window.clearTimeout(maxTimerRef.current);
+      maxTimerRef.current = null;
     }
   }
 
+  function cancelDictation() {
+    stopCapture();
+    chunksRef.current = [];
+    setPhase("idle");
+    setHint("Recording cancelled");
+  }
+
   async function startDictation() {
-    if (!conversationId || !sessionToken || disabled || busy || micBusy) return;
-    setDictationHint(null);
+    if (!conversationId || !sessionToken || disabled || busy || phase !== "idle") return;
+    setHint(null);
     try {
       if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
         throw new Error("Microphone requires HTTPS (secure context).");
@@ -101,8 +116,6 @@ export function Composer({
       sampleRateRef.current = 16000;
       chunksRef.current = [];
       startedAtRef.current = performance.now();
-      setElapsedMs(0);
-      setLevels(Array.from({ length: LEVEL_BARS }, () => 0.08));
       setPhase("recording");
 
       const processor = audioCtx.createScriptProcessor(4096, 1, 1);
@@ -110,22 +123,19 @@ export function Composer({
       processor.onaudioprocess = (e) => {
         if (phaseRef.current !== "recording") return;
         const input = e.inputBuffer.getChannelData(0);
-        let sum = 0;
-        for (let i = 0; i < input.length; i += 32) sum += Math.abs(input[i] ?? 0);
-        const level = Math.min(1, (sum / (input.length / 32)) * 4);
-        setLevels((prev) => [...prev.slice(1), level]);
         const pcm = toPcm16k(input, audioCtx.sampleRate);
         chunksRef.current.push(pcm);
-        if (performance.now() - startedAtRef.current >= MAX_RECORD_MS) {
-          void finishDictation();
-        }
       };
       source.connect(processor);
-      processor.connect(audioCtx.destination);
+      // Don't connect processor → destination (avoids mic feedback / monitoring).
+      const silent = audioCtx.createGain();
+      silent.gain.value = 0;
+      processor.connect(silent);
+      silent.connect(audioCtx.destination);
 
-      timerRef.current = window.setInterval(() => {
-        setElapsedMs(performance.now() - startedAtRef.current);
-      }, 200);
+      maxTimerRef.current = window.setTimeout(() => {
+        void finishAndSend();
+      }, MAX_RECORD_MS);
     } catch (err) {
       stopCapture();
       setPhase("idle");
@@ -133,15 +143,7 @@ export function Composer({
     }
   }
 
-  function cancelDictation() {
-    stopCapture();
-    chunksRef.current = [];
-    setPhase("idle");
-    setElapsedMs(0);
-    setDictationHint(null);
-  }
-
-  async function finishDictation() {
+  async function finishAndSend() {
     if (phaseRef.current !== "recording") return;
     setPhase("transcribing");
     stopCapture();
@@ -152,7 +154,7 @@ export function Composer({
     for (const p of parts) total += p.length;
     if (total < 1600) {
       setPhase("idle");
-      setDictationHint("Recording too short — try again.");
+      setHint("Too short — hold the mic a moment longer.");
       return;
     }
     const merged = new Int16Array(total);
@@ -173,17 +175,27 @@ export function Composer({
       const result = await transcribeAudio(conversationId, sessionToken, wav, sampleRateRef.current);
       const transcript = (result.text || "").trim();
       if (!transcript) {
-        setDictationHint("No speech detected — nothing was sent.");
-      } else {
-        setText((prev) => (prev.trim() ? `${prev.trim()} ${transcript}` : transcript));
-        setDictationHint("Review the transcript, then press Send.");
+        setPhase("idle");
+        setHint("No speech detected — try again.");
+        return;
       }
-    } catch (err) {
-      onError?.(err instanceof Error ? err.message : "Transcription failed");
-    } finally {
+      setText("");
+      setHint(null);
       setPhase("idle");
-      setElapsedMs(0);
+      await onSend(transcript);
+    } catch (err) {
+      setPhase("idle");
+      onError?.(err instanceof Error ? err.message : "Transcription failed");
     }
+  }
+
+  function toggleMic() {
+    if (recording) {
+      void finishAndSend();
+      return;
+    }
+    if (transcribing || disabled || busy) return;
+    void startDictation();
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -191,60 +203,18 @@ export function Composer({
     const value = text.trim();
     if (!value || disabled || busy || phase !== "idle") return;
     setText("");
-    setDictationHint(null);
+    setHint(null);
     await onSend(value);
   }
 
+  const micLabel = recording
+    ? "Stop recording and send"
+    : transcribing
+      ? "Transcribing"
+      : "Dictate with microphone";
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-3 pt-1 sm:pb-4">
-      {phase === "recording" || phase === "transcribing" ? (
-        <div
-          className="mb-2 overflow-hidden rounded-2xl border border-ink-200/80 bg-white/95 p-3 shadow-soft sm:p-4"
-          role="status"
-          aria-live="polite"
-        >
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span
-                className={`h-2.5 w-2.5 rounded-full ${
-                  phase === "recording" ? "animate-pulse-dot bg-coral" : "bg-accent"
-                }`}
-              />
-              <p className="text-sm font-semibold text-ink-900">
-                {phase === "recording" ? "Recording" : "Transcribing…"}
-              </p>
-              <span className="font-mono text-xs text-ink-700/55">{formatTimer(elapsedMs)}</span>
-            </div>
-            <p className="hidden text-[11px] text-ink-700/45 sm:block">Silence never sends</p>
-          </div>
-          <div className="mt-3 flex items-center gap-3">
-            <Waveform
-              levels={levels}
-              active={phase === "recording"}
-              tone={phase === "recording" ? "listen" : "idle"}
-            />
-            <div className="ml-auto flex shrink-0 items-center gap-2">
-              <button
-                type="button"
-                onClick={cancelDictation}
-                disabled={phase === "transcribing"}
-                className="rounded-xl border border-ink-200 bg-white px-3.5 py-2 text-sm font-medium text-ink-900 transition hover:bg-ink-50 disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => void finishDictation()}
-                disabled={phase !== "recording"}
-                className="rounded-xl bg-ink-900 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-ink-700 disabled:opacity-50"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
       <form onSubmit={(e) => void handleSubmit(e)} className="flex items-end gap-2 sm:gap-3">
         <label className="sr-only" htmlFor="composer">
           Message
@@ -256,10 +226,10 @@ export function Composer({
             rows={2}
             value={text}
             autoComplete="off"
-            disabled={disabled || busy || micBusy}
+            disabled={disabled || busy || phase !== "idle"}
             onChange={(e) => {
               setText(e.target.value);
-              if (dictationHint) setDictationHint(null);
+              if (hint) setHint(null);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -270,29 +240,38 @@ export function Composer({
             placeholder={
               busy
                 ? "Waiting for the agent…"
-                : micBusy
-                  ? "Finish or cancel recording…"
-                  : "Describe the issue… or use the mic to dictate"
+                : recording
+                  ? "Listening… tap the mic again to send"
+                  : transcribing
+                    ? "Transcribing…"
+                    : "Describe the issue…"
             }
             className="min-h-[56px] w-full resize-none rounded-2xl border border-ink-200/90 bg-white/95 py-3.5 pl-4 pr-24 text-sm text-ink-900 shadow-soft outline-none ring-accent/25 placeholder:text-ink-700/35 focus:border-accent/40 focus:ring-2 focus-visible:ring-2 disabled:opacity-60"
           />
           <div className="absolute bottom-2 right-2 flex items-center gap-1">
             <button
               type="button"
-              aria-label="Dictate with microphone"
-              title="Dictate"
-              disabled={!conversationId || !sessionToken || disabled || busy || micBusy}
-              onClick={() => void startDictation()}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-ink-700 transition hover:bg-ink-50 hover:text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label={micLabel}
+              aria-pressed={recording}
+              title={micLabel}
+              disabled={!conversationId || !sessionToken || disabled || busy || transcribing}
+              onClick={toggleMic}
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-xl transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40 ${
+                recording
+                  ? "bg-coral text-white shadow-glow ring-2 ring-coral/40"
+                  : transcribing
+                    ? "bg-accent-soft text-accent-deep"
+                    : "text-ink-700 hover:bg-ink-50 hover:text-ink-900"
+              }`}
             >
-              <MicIcon />
+              {transcribing ? <SpinnerIcon /> : <MicIcon />}
             </button>
             {onOpenLiveVoice ? (
               <button
                 type="button"
                 aria-label="Open live voice conversation"
                 title="Live voice"
-                disabled={liveVoiceDisabled || !conversationId || !sessionToken || disabled || busy || micBusy}
+                disabled={liveVoiceDisabled || !conversationId || !sessionToken || disabled || busy || phase !== "idle"}
                 onClick={onOpenLiveVoice}
                 className="inline-flex h-9 items-center justify-center gap-1 rounded-xl px-2 text-xs font-semibold text-ink-700 transition hover:bg-accent-soft hover:text-accent-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -311,13 +290,12 @@ export function Composer({
           {busy ? "…" : "Send"}
         </button>
       </form>
-      {dictationHint ? (
-        <p className="mt-1.5 px-1 text-[11px] text-ink-700/55">{dictationHint}</p>
-      ) : (
-        <p className="mt-1.5 px-1 text-[11px] text-ink-700/35">
-          Mic dictates into the box — Send submits. Live opens hands-free conversation.
-        </p>
-      )}
+      <p className="mt-1.5 px-1 text-[11px] text-ink-700/45" aria-live="polite">
+        {hint ??
+          (recording
+            ? "Recording — tap the mic again to transcribe and send. Esc cancels."
+            : "Tap mic to talk, tap again to send. Speaker on replies reads them aloud. Live is hands-free.")}
+      </p>
     </div>
   );
 }
@@ -336,6 +314,15 @@ function MicIcon() {
         strokeWidth="1.75"
         strokeLinecap="round"
       />
+    </svg>
+  );
+}
+
+function SpinnerIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="animate-spin">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2.5" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   );
 }

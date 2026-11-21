@@ -289,9 +289,7 @@ export default function App() {
   const retryLabel = failedOp?.source === "voice" ? "Retry voice turn" : "Retry last turn";
 
   return (
-    <div className="relative flex min-h-screen min-h-dvh flex-col bg-transparent">
-      <div className="pointer-events-none absolute inset-0 grain opacity-70" aria-hidden />
-
+    <div className="relative flex min-h-screen min-h-dvh flex-col bg-sage">
       <a
         href="#composer"
         className="absolute left-4 top-4 z-50 -translate-y-16 rounded-lg bg-white px-3 py-2 text-sm text-ink-900 opacity-0 shadow-soft transition focus:translate-y-0 focus:opacity-100 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent"
@@ -299,13 +297,13 @@ export default function App() {
         Skip to message
       </a>
 
-      <header className="sticky top-0 z-20 border-b border-ink-200/60 bg-white/75 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <header className="sticky top-0 z-20 border-b border-ink-200/50 bg-sage/90 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
           <div className="min-w-0">
-            <p className="font-display text-2xl tracking-tight text-ink-900 sm:text-[1.75rem]">
-              Loopp Support
+            <p className="font-display text-2xl tracking-tight text-ink-900 sm:text-[1.7rem]">
+              Loopp
             </p>
-            <p className="mt-0.5 text-xs text-ink-700/60">Customer care · chat & voice</p>
+            <p className="mt-0.5 text-xs text-muted">Customer care</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -321,9 +319,7 @@ export default function App() {
               <p className="text-xs font-medium text-coral" title={healthLabel}>
                 Can’t reach support right now
               </p>
-            ) : (
-              <p className="hidden text-xs text-ink-700/50 sm:block">{healthLabel}</p>
-            )}
+            ) : null}
           </div>
         </div>
       </header>
@@ -332,11 +328,11 @@ export default function App() {
         <main id="main" className="relative flex min-h-0 min-w-0 flex-1 flex-col">
           {booting ? (
             <div className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-6">
-              <div className="rounded-2xl border border-ink-200/70 bg-white/70 p-8 shadow-soft backdrop-blur">
+              <div className="rounded-2xl bg-white p-8 shadow-soft">
                 <div className="skeleton-bar h-3 w-40" />
                 <div className="skeleton-bar mt-4 h-3 w-full" />
                 <div className="skeleton-bar mt-2 h-3 w-4/5" />
-                <p className="mt-6 text-sm text-ink-700/60">Starting your support session…</p>
+                <p className="mt-6 text-sm text-muted">Starting your support session…</p>
               </div>
             </div>
           ) : (
@@ -344,19 +340,22 @@ export default function App() {
               messages={messages}
               streamingText={streamingText || undefined}
               busy={busy}
+              conversationId={conversationId}
+              sessionToken={sessionToken}
               onSuggestion={conversationId && !busy ? (text) => void onSend(text) : undefined}
               onCancelConfirmation={conversationId ? () => void onCancelConfirmation() : undefined}
+              onError={setError}
             />
           )}
 
-          <div className="dock sticky bottom-0 z-20 border-t border-ink-200/50 pt-2">
+          <div className="dock sticky bottom-0 z-20 pt-2">
             {error ? (
               <div
                 className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 pb-2 sm:px-6"
                 role="alert"
                 aria-live="assertive"
               >
-                <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2">
+                <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft px-3 py-2">
                   <p className="text-sm text-coral">{error}</p>
                   <button
                     type="button"
@@ -365,7 +364,7 @@ export default function App() {
                       setFailedOp(null);
                       activeRetryId.current = null;
                     }}
-                    className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/60 transition hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-muted transition hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
                     Dismiss
                   </button>
@@ -376,18 +375,18 @@ export default function App() {
                       type="button"
                       disabled={busy || retryInFlight.current}
                       onClick={() => void onRetryFailed()}
-                      className="rounded-xl bg-ink-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-ink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-900 disabled:opacity-50"
+                      className="rounded-xl bg-accent px-3.5 py-2 text-sm font-medium text-white transition hover:bg-accent-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
                     >
                       {retryLabel}
                     </button>
                     {failedOp.retryAfterSeconds != null ? (
-                      <p className="text-xs text-ink-700/60">
+                      <p className="text-xs text-muted">
                         {failedOp.waitRequired
                           ? `Wait about ${Math.ceil(failedOp.retryAfterSeconds)}s, then retry.`
                           : `Provider suggested waiting ~${Math.ceil(failedOp.retryAfterSeconds)}s if this keeps failing.`}
                       </p>
                     ) : (
-                      <p className="text-xs text-ink-700/60">
+                      <p className="text-xs text-muted">
                         Retries the same {failedOp.source} turn — no duplicate user message.
                       </p>
                     )}
@@ -412,15 +411,15 @@ export default function App() {
           id="activity-sidebar"
           className={`${
             activityOpen ? "flex" : "hidden"
-          } w-full flex-col border-t border-ink-200/60 bg-white/55 backdrop-blur-md lg:flex lg:w-[300px] lg:shrink-0 lg:border-l lg:border-t-0`}
+          } w-full flex-col border-t border-ink-200/40 bg-white/80 lg:flex lg:w-[280px] lg:shrink-0 lg:border-l lg:border-t-0`}
         >
-          <div className="flex items-center justify-between border-b border-ink-100 px-4 py-3">
-            <p className="text-sm font-semibold text-ink-900">Live agent steps</p>
-            <span className="rounded-full bg-ink-50 px-2 py-0.5 text-[10px] font-medium text-ink-700/60">
+          <div className="flex items-center justify-between px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Activity</p>
+            <span className="rounded-full bg-sage px-2 py-0.5 text-[10px] font-medium text-muted">
               {toolItems.length}
             </span>
           </div>
-          <div className="flex-1 overflow-y-auto px-3 py-3">
+          <div className="flex-1 overflow-y-auto px-3 pb-3">
             <ToolStatus items={toolItems} compact />
           </div>
           <div className="border-t border-ink-100 px-2 py-1">

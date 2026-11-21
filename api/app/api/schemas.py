@@ -83,3 +83,9 @@ class TranscribeResponse(BaseModel):
     stt_provider: str
     sample_rate: int
     duration_ms: float
+
+
+class SpeakRequest(BaseModel):
+    """On-demand TTS for the chat speaker button."""
+
+    text: str

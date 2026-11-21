@@ -250,42 +250,20 @@ async function runDesktop(browser) {
 
   await page.screenshot({ path: join(SHOT_DIR, "01-composer-default.png"), fullPage: true });
 
-  // Record → Done → transcript preview (no Send yet → no turns)
-  await page.getByRole("button", { name: /Dictate with microphone/i }).click();
-  await page.getByText("Recording").waitFor({ timeout: 10000 });
-  await page.getByText("Silence never sends").waitFor();
-  await page.screenshot({ path: join(SHOT_DIR, "02-dictation-recording.png"), fullPage: true });
-  await page.waitForTimeout(800);
-  await page.getByRole("button", { name: "Done" }).click();
-  await page.waitForFunction(
-    () => {
-      const el = document.querySelector("#composer");
-      return el instanceof HTMLTextAreaElement && el.value.includes("INV-1042");
-    },
-    { timeout: 15000 },
-  );
-  const preview = await page.locator("#composer").inputValue();
-  assert(preview.includes("INV-1042"), `expected transcript preview, got: ${preview}`);
-  assert(api.getTurns() === 0, "Send not pressed — agent turn must not run");
-  assert(api.getTranscribeCalls() === 1, "expected one transcription call");
-  await page.screenshot({ path: join(SHOT_DIR, "03-transcript-preview.png"), fullPage: true });
-
-  // Cancel path before Send (composer still idle / not busy)
-  await page.locator("#composer").fill("");
+  // Esc cancels recording without send (while still idle / not busy)
   const beforeTx = api.getTranscribeCalls();
   const beforeTurns = api.getTurns();
   await page.getByRole("button", { name: /Dictate with microphone/i }).click();
-  await page.getByText("Recording").waitFor();
-  await page.getByRole("button", { name: "Cancel" }).click();
+  await page.getByRole("button", { name: /Stop recording and send/i }).waitFor({ timeout: 10000 });
+  await page.screenshot({ path: join(SHOT_DIR, "02-dictation-recording.png"), fullPage: true });
+  await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
-  assert(api.getTranscribeCalls() === beforeTx, "Cancel must not transcribe");
-  assert(api.getTurns() === beforeTurns, "Cancel must not submit");
-  const afterCancel = await page.locator("#composer").inputValue();
-  assert(afterCancel === "", "Cancel must leave composer empty");
+  assert(api.getTranscribeCalls() === beforeTx, "Esc must not transcribe");
+  assert(api.getTurns() === beforeTurns, "Esc must not submit");
+  await page.getByRole("button", { name: /Dictate with microphone/i }).waitFor();
 
-  // Live mode while chat is idle (not busy)
-  const liveBtn = page.getByRole("button", { name: /Open live voice conversation/i });
-  await liveBtn.click();
+  // Live mode while chat is idle
+  await page.getByRole("button", { name: /Open live voice conversation/i }).click();
   await page.getByRole("dialog", { name: /Live voice conversation/i }).waitFor({ timeout: 15000 });
   await page.getByText(/Listening|Connecting|Hearing/i).first().waitFor({ timeout: 10000 });
   await page.screenshot({ path: join(SHOT_DIR, "04-live-voice.png"), fullPage: true });
@@ -296,23 +274,16 @@ async function runDesktop(browser) {
   await page.getByText("Loopp Support").first().waitFor();
   await page.screenshot({ path: join(SHOT_DIR, "05-back-to-chat.png"), fullPage: true });
 
-  // Re-dictate → edit incorrect invoice → Send → one agent turn
+  // Mic toggle: tap to record (bright), tap again → transcribe + send
   await page.getByRole("button", { name: /Dictate with microphone/i }).click();
-  await page.getByText("Recording").waitFor();
-  await page.waitForTimeout(500);
-  await page.getByRole("button", { name: "Done" }).click();
-  await page.waitForFunction(
-    () => {
-      const el = document.querySelector("#composer");
-      return el instanceof HTMLTextAreaElement && el.value.includes("INV-1042");
-    },
-    { timeout: 15000 },
-  );
-  await page.locator("#composer").fill("I was charged twice on INV-9999");
-  await page.getByRole("button", { name: "Send" }).click();
-  await page.waitForTimeout(400);
-  assert(api.getTurns() === 1, "exactly one agent submission after Send");
-  assert(api.getMessages().some((m) => m.role === "user" && m.content.includes("INV-9999")));
+  await page.getByRole("button", { name: /Stop recording and send/i }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(600);
+  await page.getByRole("button", { name: /Stop recording and send/i }).click();
+  await page.waitForTimeout(800);
+  assert(api.getTranscribeCalls() === 1, "expected one transcription call");
+  assert(api.getTurns() === 1, "second mic tap must send the transcript");
+  assert(api.getMessages().some((m) => m.role === "user" && m.content.includes("INV-1042")));
+  await page.screenshot({ path: join(SHOT_DIR, "03-transcript-sent.png"), fullPage: true });
 
   await context.close();
   return { ok: true, turns: api.getTurns(), transcribe: api.getTranscribeCalls() };
