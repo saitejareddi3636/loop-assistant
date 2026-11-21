@@ -79,19 +79,23 @@ async def voice_diagnostics() -> dict[str, Any]:
     except Exception as exc:  # noqa: BLE001
         result["active_error"] = f"{type(exc).__name__}: {exc}"
 
-    # Interpretation for reviewers
+    # Interpretation for reviewers (factory no longer silently falls back to hosted).
     if moon.get("ok"):
         result["recommendation"] = (
-            "Moonshine Tiny loads successfully. Prefer VOICE_BACKEND=local (or auto) so production "
-            "uses moonshine-onnx-tiny instead of groq-whisper."
+            "Moonshine Tiny loads successfully. Keep VOICE_BACKEND=local|auto so production "
+            "uses moonshine-onnx-tiny. Hosted Whisper requires VOICE_BACKEND=hosted or VOICE_STT=groq."
         )
     elif groq.get("ok"):
         result["recommendation"] = (
-            "Moonshine Tiny failed to load; Groq Whisper is the reliable STT on this host. "
-            "Keep VOICE_BACKEND=auto/hosted until Moonshine load errors are fixed. "
-            f"Moonshine error: {moon.get('error')}"
+            "Moonshine Tiny failed to load on this host. Voice will fail under VOICE_BACKEND=auto|local "
+            "because silent hosted fallback is disabled. Fix Moonshine deps/weights, or set "
+            f"VOICE_BACKEND=hosted explicitly. Moonshine error: {moon.get('error')}"
         )
     else:
         result["recommendation"] = "No STT backend available — voice will fail."
 
+    result["fallback_policy"] = (
+        "No silent Groq fallback. local|auto|moonshine require Moonshine; "
+        "hosted|groq require Whisper."
+    )
     return result

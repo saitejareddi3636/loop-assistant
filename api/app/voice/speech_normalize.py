@@ -15,10 +15,48 @@ _DIGIT = {
     "9": "nine",
 }
 
-_INV = re.compile(r"\bINV[-\s]?(\d{3,8})\b", re.IGNORECASE)
-_TCK = re.compile(r"\bTCK[-\s]?([A-Z0-9]{4,12})\b", re.IGNORECASE)
+_ONES = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+]
+
+_TENS = {
+    2: "twenty",
+    3: "thirty",
+    4: "forty",
+    5: "fifty",
+    6: "sixty",
+    7: "seventy",
+    8: "eighty",
+    9: "ninety",
+}
+
+# Optional leading "invoice"/"ticket" so we never say "invoice invoice …".
+_INV = re.compile(r"(?:\binvoice\s+)?\bINV[-\s]?(\d{3,8})\b", re.IGNORECASE)
+_TCK = re.compile(r"(?:\bticket\s+)?\bTCK[-\s]?([A-Z0-9]{4,12})\b", re.IGNORECASE)
 _MONEY = re.compile(r"\$\s?(\d+)(?:\.(\d{2}))?\b")
 _MONEY_USD = re.compile(r"\b(\d+)(?:\.(\d{2}))?\s*(?:USD|dollars?)\b", re.IGNORECASE)
+
+_INV_COMPACT = re.compile(r"\bINV(\d{3,8})\b", re.IGNORECASE)
+_TCK_COMPACT = re.compile(r"\bTCK([A-Z0-9]{4,12})\b", re.IGNORECASE)
 
 
 def _spell_digits(num: str) -> str:
@@ -35,57 +73,26 @@ def _spell_alnum(token: str) -> str:
     return " ".join(parts)
 
 
-def _money_words(dollars: str, cents: str | None) -> str:
-    # Deterministic small-amount phrasing for support utterances.
-    whole = int(dollars)
-    if whole < 20:
-        ones = [
-            "zero",
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine",
-            "ten",
-            "eleven",
-            "twelve",
-            "thirteen",
-            "fourteen",
-            "fifteen",
-            "sixteen",
-            "seventeen",
-            "eighteen",
-            "nineteen",
-        ]
-        dollar_words = ones[whole]
-    elif whole < 100:
-        tens_names = {
-            2: "twenty",
-            3: "thirty",
-            4: "forty",
-            5: "fifty",
-            6: "sixty",
-            7: "seventy",
-            8: "eighty",
-            9: "ninety",
-        }
-        tens, rem = divmod(whole, 10)
-        dollar_words = tens_names[tens] + (f"-{_DIGIT[str(rem)]}" if rem else "")
-    else:
-        dollar_words = _spell_digits(dollars)
+def _number_words(n: int) -> str:
+    if n < 20:
+        return _ONES[n]
+    if n < 100:
+        tens, rem = divmod(n, 10)
+        return _TENS[tens] + (f"-{_ONES[rem]}" if rem else "")
+    return _spell_digits(str(n))
 
+
+def _money_words(dollars: str, cents: str | None) -> str:
+    """Deterministic currency phrasing, including non-zero cents ($29.50)."""
+    whole = int(dollars)
+    dollar_words = _number_words(whole)
     unit = "dollar" if whole == 1 else "dollars"
     if cents and cents != "00":
-        return f"{dollar_words} {unit} and {_spell_digits(cents)} cents"
+        cent_n = int(cents)
+        cent_words = _number_words(cent_n)
+        cent_unit = "cent" if cent_n == 1 else "cents"
+        return f"{dollar_words} {unit} and {cent_words} {cent_unit}"
     return f"{dollar_words} {unit}"
-
-
-_INV_COMPACT = re.compile(r"\bINV(\d{3,8})\b", re.IGNORECASE)
-_TCK_COMPACT = re.compile(r"\bTCK([A-Z0-9]{4,12})\b", re.IGNORECASE)
 
 
 def normalize_transcript_ids(text: str) -> str:
