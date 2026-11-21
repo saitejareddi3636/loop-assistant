@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Composer } from "./components/Composer";
+import { LiveVoiceModal } from "./components/LiveVoiceModal";
 import { MessageList } from "./components/MessageList";
 import { ObservabilityDrawer } from "./components/ObservabilityDrawer";
 import { ToolStatus } from "./components/ToolStatus";
-import { VoiceControls } from "./components/VoiceControls";
 import {
   cancelPendingConfirmation,
   createConversation,
@@ -30,6 +30,16 @@ function toolDetail(payload: Record<string, unknown>): string | undefined {
   return undefined;
 }
 
+function toolStatusFromEvent(
+  eventType: string,
+  payload: Record<string, unknown>,
+): ToolStatusItem["status"] {
+  if (payload.error === "confirmation_required") return "awaiting";
+  if (eventType === "tool.started") return "started";
+  if (eventType === "tool.completed") return "completed";
+  return "failed";
+}
+
 type FailedOp = {
   runId: string;
   source: "chat" | "voice";
@@ -50,8 +60,10 @@ export default function App() {
   const [healthLabel, setHealthLabel] = useState("Connecting…");
   const [healthOk, setHealthOk] = useState(false);
   const [obsOpen, setObsOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(true);
   const [traces, setTraces] = useState<string[]>([]);
   const [metrics, setMetrics] = useState<ObsMetric[]>([]);
+  const [liveVoiceOpen, setLiveVoiceOpen] = useState(false);
   const lastSequence = useRef(0);
   const eventSourceRef = useRef<EventSource | null>(null);
   const retryInFlight = useRef(false);
@@ -74,12 +86,7 @@ export default function App() {
           event.event_type === "tool.failed"
         ) {
           const tool = String(event.payload.tool ?? "tool");
-          const status =
-            event.event_type === "tool.started"
-              ? "started"
-              : event.event_type === "tool.completed"
-                ? "completed"
-                : "failed";
+          const status = toolStatusFromEvent(event.event_type, event.payload);
           setToolItems((prev) => {
             const withoutSame = prev.filter((item) => !(item.tool === tool && item.status === "started"));
             return [
@@ -182,11 +189,7 @@ export default function App() {
         const health = await getHealth();
         if (!cancelled) {
           setHealthOk(true);
-          setHealthLabel(
-            health.llm_configured
-              ? `Online · ${health.model.replace(/^groq:/, "")}`
-              : "Online · set GROQ_API_KEY",
-          );
+          setHealthLabel(health.llm_configured ? "Online" : "Online · LLM not configured");
         }
         const conversation = await createConversation();
         if (cancelled) return;
@@ -286,137 +289,186 @@ export default function App() {
   const retryLabel = failedOp?.source === "voice" ? "Retry voice turn" : "Retry last turn";
 
   return (
-    <div className="relative flex min-h-screen min-h-dvh flex-col">
+    <div className="relative flex min-h-screen min-h-dvh flex-col bg-transparent">
       <div className="pointer-events-none absolute inset-0 grain opacity-70" aria-hidden />
 
-      <header className="sticky top-0 z-20 border-b border-ink-200/60 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 py-3.5 sm:py-4">
+      <a
+        href="#composer"
+        className="absolute left-4 top-4 z-50 -translate-y-16 rounded-lg bg-white px-3 py-2 text-sm text-ink-900 opacity-0 shadow-soft transition focus:translate-y-0 focus:opacity-100 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent"
+      >
+        Skip to message
+      </a>
+
+      <header className="sticky top-0 z-20 border-b border-ink-200/60 bg-white/75 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="min-w-0">
             <p className="font-display text-2xl tracking-tight text-ink-900 sm:text-[1.75rem]">
               Loopp Support
             </p>
             <p className="mt-0.5 text-xs text-ink-700/60">Customer care · chat & voice</p>
           </div>
-          <div
-            className={`inline-flex max-w-[55%] items-center gap-2 truncate rounded-full px-3 py-1.5 text-[11px] font-medium sm:max-w-none ${
-              healthOk ? "bg-accent-soft text-accent-deep" : "bg-coral-soft text-coral"
-            }`}
-            title={healthLabel}
-          >
-            <span
-              className={`h-1.5 w-1.5 shrink-0 rounded-full ${healthOk ? "bg-accent" : "bg-coral"}`}
-            />
-            <span className="truncate">{healthLabel}</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="rounded-xl border border-ink-200 bg-white px-3 py-1.5 text-xs font-medium text-ink-700 transition hover:bg-ink-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:hidden"
+              onClick={() => setActivityOpen((v) => !v)}
+              aria-expanded={activityOpen}
+              aria-controls="activity-sidebar"
+            >
+              {activityOpen ? "Hide activity" : "Activity"}
+            </button>
+            {!healthOk && !booting ? (
+              <p className="text-xs font-medium text-coral" title={healthLabel}>
+                Can’t reach support right now
+              </p>
+            ) : (
+              <p className="hidden text-xs text-ink-700/50 sm:block">{healthLabel}</p>
+            )}
           </div>
         </div>
       </header>
 
-      <main className="relative z-10 flex min-h-0 flex-1 flex-col">
-        {booting ? (
-          <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-10">
-            <div className="rounded-[1.75rem] border border-ink-200/70 bg-white/70 p-8 shadow-soft backdrop-blur">
-              <div className="skeleton-bar h-3 w-40" />
-              <div className="skeleton-bar mt-4 h-3 w-full" />
-              <div className="skeleton-bar mt-2 h-3 w-4/5" />
-              <p className="mt-6 text-sm text-ink-700/60">Starting your support session…</p>
-            </div>
-          </div>
-        ) : (
-          <MessageList
-            messages={messages}
-            streamingText={streamingText || undefined}
-            busy={busy}
-            onSuggestion={conversationId && !busy ? (text) => void onSend(text) : undefined}
-            onCancelConfirmation={conversationId ? () => void onCancelConfirmation() : undefined}
-          />
-        )}
-
-        <div className="dock sticky bottom-0 z-20 border-t border-ink-200/50 pt-2">
-          <ToolStatus items={toolItems} />
-          <VoiceControls
-            conversationId={conversationId}
-            sessionToken={sessionToken}
-            disabled={busy || booting}
-            onUserTranscript={(text) => {
-              if (!text) return;
-              setFailedOp(null);
-              setError(null);
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id: `voice-user-${Date.now()}`,
-                  role: "user",
-                  content: text,
-                  created_at: new Date().toISOString(),
-                },
-              ]);
-            }}
-            onAssistantText={(text) => {
-              if (!text) return;
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id: `voice-asst-${Date.now()}`,
-                  role: "assistant",
-                  content: text,
-                  created_at: new Date().toISOString(),
-                },
-              ]);
-              setBusy(false);
-            }}
-            onError={setError}
-            onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
-          />
-          {error ? (
-            <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 pb-2">
-              <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2">
-                <p className="text-sm text-coral">{error}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setError(null);
-                    setFailedOp(null);
-                    activeRetryId.current = null;
-                  }}
-                  className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/60 hover:bg-white/70"
-                >
-                  Dismiss
-                </button>
+      <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col lg:flex-row">
+        <main id="main" className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+          {booting ? (
+            <div className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-6">
+              <div className="rounded-2xl border border-ink-200/70 bg-white/70 p-8 shadow-soft backdrop-blur">
+                <div className="skeleton-bar h-3 w-40" />
+                <div className="skeleton-bar mt-4 h-3 w-full" />
+                <div className="skeleton-bar mt-2 h-3 w-4/5" />
+                <p className="mt-6 text-sm text-ink-700/60">Starting your support session…</p>
               </div>
-              {failedOp ? (
-                <div className="flex flex-wrap items-center gap-2">
+            </div>
+          ) : (
+            <MessageList
+              messages={messages}
+              streamingText={streamingText || undefined}
+              busy={busy}
+              onSuggestion={conversationId && !busy ? (text) => void onSend(text) : undefined}
+              onCancelConfirmation={conversationId ? () => void onCancelConfirmation() : undefined}
+            />
+          )}
+
+          <div className="dock sticky bottom-0 z-20 border-t border-ink-200/50 pt-2">
+            {error ? (
+              <div
+                className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 pb-2 sm:px-6"
+                role="alert"
+                aria-live="assertive"
+              >
+                <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2">
+                  <p className="text-sm text-coral">{error}</p>
                   <button
                     type="button"
-                    disabled={busy || retryInFlight.current}
-                    onClick={() => void onRetryFailed()}
-                    className="rounded-xl bg-ink-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-ink-700 disabled:opacity-50"
+                    onClick={() => {
+                      setError(null);
+                      setFailedOp(null);
+                      activeRetryId.current = null;
+                    }}
+                    className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/60 transition hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
-                    {retryLabel}
+                    Dismiss
                   </button>
-                  {failedOp.retryAfterSeconds != null ? (
-                    <p className="text-xs text-ink-700/60">
-                      {failedOp.waitRequired
-                        ? `Wait ~${Math.ceil(failedOp.retryAfterSeconds)}s before retrying (provider Retry-After).`
-                        : `Provider suggested ~${Math.ceil(failedOp.retryAfterSeconds)}s if this keeps failing.`}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-ink-700/60">
-                      Retries the same {failedOp.source} turn — no duplicate user message.
-                    </p>
-                  )}
                 </div>
-              ) : null}
-            </div>
-          ) : null}
-          <Composer disabled={!conversationId || booting} busy={busy} onSend={onSend} />
-          <ObservabilityDrawer
-            open={obsOpen}
-            onToggle={() => setObsOpen((v) => !v)}
-            traces={traces}
-            metrics={metrics}
-          />
-        </div>
-      </main>
+                {failedOp ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={busy || retryInFlight.current}
+                      onClick={() => void onRetryFailed()}
+                      className="rounded-xl bg-ink-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-ink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-900 disabled:opacity-50"
+                    >
+                      {retryLabel}
+                    </button>
+                    {failedOp.retryAfterSeconds != null ? (
+                      <p className="text-xs text-ink-700/60">
+                        {failedOp.waitRequired
+                          ? `Wait about ${Math.ceil(failedOp.retryAfterSeconds)}s, then retry.`
+                          : `Provider suggested waiting ~${Math.ceil(failedOp.retryAfterSeconds)}s if this keeps failing.`}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-ink-700/60">
+                        Retries the same {failedOp.source} turn — no duplicate user message.
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+            <Composer
+              conversationId={conversationId}
+              sessionToken={sessionToken}
+              disabled={!conversationId || booting}
+              busy={busy}
+              onSend={onSend}
+              onError={setError}
+              onOpenLiveVoice={() => setLiveVoiceOpen(true)}
+              liveVoiceDisabled={busy || booting || liveVoiceOpen}
+            />
+          </div>
+        </main>
+
+        <aside
+          id="activity-sidebar"
+          className={`${
+            activityOpen ? "flex" : "hidden"
+          } w-full flex-col border-t border-ink-200/60 bg-white/55 backdrop-blur-md lg:flex lg:w-[300px] lg:shrink-0 lg:border-l lg:border-t-0`}
+        >
+          <div className="flex items-center justify-between border-b border-ink-100 px-4 py-3">
+            <p className="text-sm font-semibold text-ink-900">Live agent steps</p>
+            <span className="rounded-full bg-ink-50 px-2 py-0.5 text-[10px] font-medium text-ink-700/60">
+              {toolItems.length}
+            </span>
+          </div>
+          <div className="flex-1 overflow-y-auto px-3 py-3">
+            <ToolStatus items={toolItems} compact />
+          </div>
+          <div className="border-t border-ink-100 px-2 py-1">
+            <ObservabilityDrawer
+              compact
+              open={obsOpen}
+              onToggle={() => setObsOpen((v) => !v)}
+              traces={traces}
+              metrics={metrics}
+            />
+          </div>
+        </aside>
+      </div>
+
+      <LiveVoiceModal
+        open={liveVoiceOpen}
+        conversationId={conversationId}
+        sessionToken={sessionToken}
+        onClose={() => setLiveVoiceOpen(false)}
+        onUserTranscript={(text) => {
+          if (!text) return;
+          setFailedOp(null);
+          setError(null);
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `voice-user-${Date.now()}`,
+              role: "user",
+              content: text,
+              created_at: new Date().toISOString(),
+            },
+          ]);
+        }}
+        onAssistantText={(text) => {
+          if (!text) return;
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `voice-asst-${Date.now()}`,
+              role: "assistant",
+              content: text,
+              created_at: new Date().toISOString(),
+            },
+          ]);
+        }}
+        onError={setError}
+        onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
+      />
     </div>
   );
 }

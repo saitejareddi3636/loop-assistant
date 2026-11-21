@@ -44,9 +44,11 @@ async function runDesktop(browser) {
   await page.getByRole("button", { name: /Observability/i }).click();
   await page.getByText(/Latency & cost/i).waitFor({ timeout: 10000 });
 
-  // Voice controls present + secure context
-  const voice = page.getByRole("button", { name: /Start voice/i });
-  assert(await voice.isEnabled(), "Start voice disabled");
+  // Dictation mic + optional Live voice (secure context)
+  const dictate = page.getByRole("button", { name: /Dictate with microphone/i });
+  assert(await dictate.isEnabled(), "Dictate mic disabled");
+  const live = page.getByRole("button", { name: /Open live voice conversation/i });
+  assert(await live.isEnabled(), "Live voice disabled");
   const secure = await page.evaluate(() => ({
     secure: window.isSecureContext,
     mic: typeof navigator.mediaDevices?.getUserMedia === "function",
@@ -54,19 +56,19 @@ async function runDesktop(browser) {
   assert(secure.secure, "not a secure context");
   assert(secure.mic, "getUserMedia unavailable");
 
-  // Start voice — WS + model warm can take a while on cold origin
-  await voice.click();
-  const stop = page.getByRole("button", { name: /Stop voice|End now/i });
+  // Live conversation — WS + model warm can take a while on cold origin
+  await live.click();
+  const dialog = page.getByRole("dialog", { name: /Live voice conversation/i });
   try {
-    await stop.waitFor({ timeout: 120000 });
-    await page.getByText(/Listening|Hearing you/i).first().waitFor({ timeout: 30000 });
-    await stop.click();
-    await page.getByRole("button", { name: /Start voice/i }).waitFor({ timeout: 60000 });
+    await dialog.waitFor({ timeout: 120000 });
+    await page.getByText(/Listening|Hearing you|Connecting/i).first().waitFor({ timeout: 30000 });
+    await page.getByRole("button", { name: /End live|Close|End now/i }).first().click();
+    await dialog.waitFor({ state: "detached", timeout: 60000 });
   } catch (err) {
     const errBanner = await page.locator("p.text-coral, .text-coral, .text-red-600").allTextContents();
     const bodySnippet = (await page.locator("main").innerText()).slice(0, 800);
     throw new Error(
-      `voice failed: ${err}\nerrors=${JSON.stringify(errors)}\nbanner=${JSON.stringify(errBanner)}\nui=${bodySnippet}`,
+      `live voice failed: ${err}\nerrors=${JSON.stringify(errors)}\nbanner=${JSON.stringify(errBanner)}\nui=${bodySnippet}`,
     );
   }
 
@@ -85,7 +87,8 @@ async function runMobile(browser) {
   const page = await context.newPage();
   await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.getByRole("button", { name: "Send" }).waitFor({ timeout: 45000 });
-  await page.getByRole("button", { name: /Start voice/i }).waitFor({ timeout: 15000 });
+  await page.getByRole("button", { name: /Dictate with microphone/i }).waitFor({ timeout: 15000 });
+  await page.getByRole("button", { name: /Open live voice conversation/i }).waitFor({ timeout: 15000 });
   const box = await page.getByRole("button", { name: "Send" }).boundingBox();
   assert(box && box.y > 0, "Send not laid out on mobile");
   await context.close();

@@ -22,6 +22,10 @@ const SUGGESTIONS = [
   "What is the Pro refund policy?",
 ];
 
+function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function MessageList({
   messages,
   streamingText,
@@ -32,20 +36,24 @@ export function MessageList({
   const endRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    endRef.current?.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      block: "end",
+    });
   }, [messages, streamingText, busy]);
 
   const empty = messages.length === 0 && !streamingText;
 
   return (
-    <div className="scroll-fade mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 sm:py-7">
+    <div className="scroll-fade mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
       {empty ? (
-        <div className="animate-fade-up mx-auto w-full max-w-lg rounded-[1.75rem] border border-ink-200/70 bg-white/75 p-7 text-center shadow-soft backdrop-blur sm:p-9">
-          <p className="font-display text-3xl tracking-tight text-ink-900 sm:text-[2.15rem]">
+        <div className="animate-fade-up mx-auto w-full max-w-xl py-8 sm:py-12">
+          <h1 className="font-display text-3xl tracking-tight text-ink-900 sm:text-[2.25rem]">
             How can we help?
-          </p>
-          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ink-700/75">
-            Ask about billing, invoices, or refunds. I can look up your account and policies in real time.
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-700/75">
+            Ask about billing, invoices, or refunds. I can look up your account and policies in real
+            time.
           </p>
           <div className="mt-6 flex flex-col gap-2">
             {SUGGESTIONS.map((text) => (
@@ -54,7 +62,7 @@ export function MessageList({
                 type="button"
                 disabled={!onSuggestion}
                 onClick={() => onSuggestion?.(text)}
-                className="rounded-2xl border border-ink-200/80 bg-ink-50/80 px-4 py-3 text-left text-sm text-ink-900 transition hover:border-accent/40 hover:bg-accent-soft/50 disabled:opacity-50"
+                className="rounded-2xl border border-ink-200/80 bg-white/80 px-4 py-3 text-left text-sm text-ink-900 transition hover:border-accent/40 hover:bg-accent-soft/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
               >
                 {text}
               </button>
@@ -64,7 +72,6 @@ export function MessageList({
       ) : null}
 
       {messages.map((message, index) => {
-        // Only the latest non-superseded confirmation card is actionable.
         const isLatestConfirm =
           !message.meta?.superseded &&
           Boolean(assistantUiFromMeta(message.meta).confirmation) &&
@@ -85,9 +92,9 @@ export function MessageList({
 
       {busy && !streamingText ? (
         <div className="animate-fade-up flex justify-start">
-          <div className="rounded-3xl border border-ink-100 bg-white/90 px-4 py-3 shadow-soft">
+          <div className="rounded-2xl border border-ink-100 bg-white/90 px-4 py-3 shadow-soft">
             <div className="flex items-center gap-2 text-sm text-ink-700/70">
-              <span className="flex gap-1">
+              <span className="flex gap-1" aria-hidden>
                 <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
                 <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent [animation-delay:150ms]" />
                 <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent [animation-delay:300ms]" />
@@ -100,12 +107,8 @@ export function MessageList({
 
       {streamingText ? (
         <div className="animate-fade-up flex justify-start">
-          <div className="max-w-[min(100%,36rem)] rounded-[1.6rem] rounded-bl-lg border border-accent/25 bg-gradient-to-br from-accent-soft/80 to-white px-4 py-3.5 text-sm leading-relaxed text-ink-900 shadow-soft">
-            <div className="mb-1.5 flex items-center gap-2">
-              <span className="inline-flex h-5 items-center rounded-full bg-accent/15 px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-deep">
-                Loopp · streaming
-              </span>
-            </div>
+          <div className="max-w-[min(100%,36rem)] rounded-2xl rounded-bl-md border border-accent/20 bg-gradient-to-br from-accent-soft/70 to-white px-4 py-3.5 text-sm leading-relaxed text-ink-900 shadow-soft">
+            <p className="mb-1.5 text-xs font-medium text-accent-deep">Loopp · streaming</p>
             <div className="streaming-cursor">
               <MarkdownText text={streamingText} />
             </div>
@@ -144,18 +147,14 @@ function MessageBubble({
     >
       <div className={`max-w-[min(100%,36rem)] space-y-2 ${isUser ? "items-end" : "items-start"}`}>
         <div
-          className={`rounded-[1.6rem] px-4 py-3.5 text-sm leading-relaxed shadow-soft ${
+          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-soft ${
             isUser
-              ? "rounded-br-lg bg-ink-900 text-white"
-              : "rounded-bl-lg border border-ink-100 bg-white/95 text-ink-900"
+              ? "rounded-br-md bg-ink-900 text-white"
+              : "rounded-bl-md border border-ink-100 bg-white/95 text-ink-900"
           }`}
         >
-          <div className="mb-1.5 flex items-center justify-between gap-3">
-            <p
-              className={`text-[10px] font-semibold uppercase tracking-[0.14em] ${
-                isUser ? "text-white/55" : "text-ink-700/50"
-              }`}
-            >
+          <div className="mb-1 flex items-center justify-between gap-3">
+            <p className={`text-xs font-medium ${isUser ? "text-white/55" : "text-ink-700/50"}`}>
               {isUser ? "You" : "Loopp Agent"}
             </p>
             <time
@@ -166,17 +165,15 @@ function MessageBubble({
             </time>
           </div>
           {isUser ? (
-            <p className="whitespace-pre-wrap">{message.content}</p>
+            <p className="whitespace-pre-wrap break-words">{message.content}</p>
           ) : (
             <MarkdownText text={message.content} />
           )}
         </div>
 
         {showConfirm ? (
-          <div className="rounded-2xl border border-accent/25 bg-accent-soft/60 p-3.5 shadow-soft backdrop-blur">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-deep">
-              Confirmation needed
-            </p>
+          <div className="rounded-2xl border border-accent/25 bg-accent-soft/60 p-3.5 shadow-soft">
+            <p className="text-xs font-semibold text-accent-deep">Confirmation needed</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {invoice ? (
                 <span className="rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-ink-900">
@@ -196,7 +193,7 @@ function MessageBubble({
               <button
                 type="button"
                 onClick={onCancelConfirmation}
-                className="mt-2 text-xs font-medium text-ink-700/70 underline-offset-2 hover:underline"
+                className="mt-2 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/80 transition hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 Cancel confirmation
               </button>
@@ -206,9 +203,7 @@ function MessageBubble({
 
         {showEscalation ? (
           <div className="rounded-2xl border border-coral/20 bg-coral-soft/70 p-3.5 shadow-soft">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-coral">
-              Escalation
-            </p>
+            <p className="text-xs font-semibold text-coral">Escalation</p>
             <p className="mt-1.5 text-xs leading-relaxed text-ink-700/85">
               Human-review ticket {ui.escalation?.ticket_id} is open.
             </p>

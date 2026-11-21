@@ -9,7 +9,12 @@ const components: Components = {
   ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 pl-5 last:mb-0">{children}</ol>,
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
   a: ({ href, children }) => (
-    <a href={href} className="underline decoration-accent/50 underline-offset-2" target="_blank" rel="noreferrer">
+    <a
+      href={href}
+      className="underline decoration-accent/50 underline-offset-2"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {children}
     </a>
   ),
