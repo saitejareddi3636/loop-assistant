@@ -32,6 +32,9 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [booting, setBooting] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryable, setRetryable] = useState(false);
+  const [retryAfterSeconds, setRetryAfterSeconds] = useState<number | null>(null);
+  const [lastUserText, setLastUserText] = useState<string | null>(null);
   const [healthLabel, setHealthLabel] = useState("Connecting…");
   const [healthOk, setHealthOk] = useState(false);
   const [obsOpen, setObsOpen] = useState(false);
@@ -109,7 +112,20 @@ export default function App() {
         if (event.event_type === "run.failed") {
           setBusy(false);
           setStreamingText("");
-          setError(String(event.payload.error ?? "Agent run failed"));
+          const retry = Boolean(event.payload.retryable);
+          setRetryable(retry);
+          const wait = event.payload.retry_after_seconds;
+          setRetryAfterSeconds(typeof wait === "number" ? wait : null);
+          setError(
+            String(
+              event.payload.user_message ??
+                event.payload.error ??
+                "Agent run failed",
+            ),
+          );
+          void getConversation(id).then((detail) => {
+            setMessages(detail.messages);
+          });
         }
       } catch {
         // ignore malformed ping/payloads
@@ -173,6 +189,9 @@ export default function App() {
     async (text: string) => {
       if (!conversationId || busy) return;
       setError(null);
+      setRetryable(false);
+      setRetryAfterSeconds(null);
+      setLastUserText(text);
       setBusy(true);
       setToolItems([]);
       setStreamingText("");
@@ -191,11 +210,17 @@ export default function App() {
         await createTurn(conversationId, text, turnId);
       } catch (err) {
         setBusy(false);
+        setRetryable(true);
         setError(err instanceof Error ? err.message : "Failed to send message");
       }
     },
     [busy, conversationId],
   );
+
+  const onRetry = useCallback(() => {
+    if (!lastUserText || busy) return;
+    void onSend(lastUserText);
+  }, [busy, lastUserText, onSend]);
 
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col">
@@ -279,17 +304,41 @@ export default function App() {
             onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
           />
           {error ? (
-            <div className="mx-auto flex w-full max-w-3xl items-start justify-between gap-3 px-4 pb-2">
-              <p className="rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2 text-sm text-coral">
-                {error}
-              </p>
-              <button
-                type="button"
-                onClick={() => setError(null)}
-                className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/60 hover:bg-white/70"
-              >
-                Dismiss
-              </button>
+            <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 pb-2">
+              <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2">
+                <p className="text-sm text-coral">{error}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setError(null);
+                    setRetryable(false);
+                  }}
+                  className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-ink-700/60 hover:bg-white/70"
+                >
+                  Dismiss
+                </button>
+              </div>
+              {retryable && lastUserText ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={onRetry}
+                    className="rounded-xl bg-ink-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-ink-700 disabled:opacity-50"
+                  >
+                    Retry last message
+                  </button>
+                  {retryAfterSeconds != null ? (
+                    <p className="text-xs text-ink-700/60">
+                      Provider asked to wait ~{Math.ceil(retryAfterSeconds)}s if this keeps failing.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-ink-700/60">
+                      Conversation and pending refund confirmation stay intact — no need to start over.
+                    </p>
+                  )}
+                </div>
+              ) : null}
             </div>
           ) : null}
           <Composer

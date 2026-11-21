@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from typing import Any
 
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
+
+_RETRY_AFTER_RE = re.compile(r"retry[- ]after[:\s]+(\d+(?:\.\d+)?)", re.IGNORECASE)
 
 
 def get_chat_model() -> Any:
@@ -37,7 +40,7 @@ def get_chat_model() -> Any:
             temperature=settings.llm_temperature,
             max_tokens=settings.llm_max_tokens,
             max_retries=0,  # we handle retries ourselves for clearer rate-limit UX
-            streaming=True,
+            streaming=False,  # ainvoke path; avoids streaming TPM waste on failed chunks
         )
 
     if provider in {"anthropic", "claude"}:
@@ -53,7 +56,7 @@ def get_chat_model() -> Any:
             model=settings.llm_model,
             temperature=settings.llm_temperature,
             max_tokens=settings.llm_max_tokens,
-            streaming=True,
+            streaming=False,
         )
 
     raise RuntimeError(f"Unsupported LLM_PROVIDER: {settings.llm_provider}")
@@ -66,7 +69,79 @@ def _is_retryable(exc: Exception) -> bool:
         return True
     if "ratelimit" in name or "apiconnection" in name or "timeout" in name:
         return True
+    code = getattr(exc, "status_code", None) or getattr(exc, "code", None)
+    if code in {429, 502, 503, 504}:
+        return True
     return False
+
+
+def is_rate_limit_error(exc: Exception) -> bool:
+    text = str(exc).lower()
+    name = type(exc).__name__.lower()
+    if "429" in text or "rate" in text or "ratelimit" in name:
+        return True
+    return getattr(exc, "status_code", None) == 429
+
+
+def _header_retry_after(headers: Any) -> float | None:
+    if headers is None:
+        return None
+    getter = getattr(headers, "get", None)
+    if not callable(getter):
+        try:
+            getter = dict(headers).get
+        except Exception:  # noqa: BLE001
+            return None
+    raw = getter("retry-after") or getter("Retry-After")
+    if raw is None:
+        return None
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def extract_retry_after_seconds(exc: Exception) -> float | None:
+    """Pull Retry-After from HTTP exception wrappers (Groq/OpenAI/httpx)."""
+    candidates: list[Any] = [exc, getattr(exc, "__cause__", None), getattr(exc, "__context__", None)]
+    for obj in candidates:
+        if obj is None:
+            continue
+        response = getattr(obj, "response", None)
+        if response is not None:
+            delay = _header_retry_after(getattr(response, "headers", None))
+            if delay is not None:
+                return delay
+        delay = _header_retry_after(getattr(obj, "headers", None))
+        if delay is not None:
+            return delay
+        body = getattr(obj, "body", None)
+        if isinstance(body, dict):
+            err = body.get("error") if isinstance(body.get("error"), dict) else body
+            for key in ("retry_after", "retry-after"):
+                if key in err:
+                    try:
+                        return float(err[key])
+                    except (TypeError, ValueError):
+                        pass
+    match = _RETRY_AFTER_RE.search(str(exc))
+    if match:
+        try:
+            return float(match.group(1))
+        except ValueError:
+            return None
+    return None
+
+
+def compute_retry_delay_seconds(exc: Exception, *, attempt: int) -> float:
+    """Bounded delay: prefer Retry-After, else exponential backoff."""
+    settings = get_settings()
+    base = settings.llm_retry_base_seconds * (2 ** max(0, attempt - 1))
+    hinted = extract_retry_after_seconds(exc)
+    delay = max(base, hinted) if hinted is not None else base
+    # Small jitter to avoid synchronized retries under TPM limits.
+    delay = delay + min(0.25 * attempt, 1.0)
+    return min(delay, float(settings.llm_retry_max_seconds))
 
 
 async def ainvoke_with_retries(model: Any, messages: list[Any]) -> Any:
@@ -81,8 +156,15 @@ async def ainvoke_with_retries(model: Any, messages: list[Any]) -> Any:
             attempt += 1
             if attempt > settings.llm_max_retries or not _is_retryable(exc):
                 raise
-            delay = settings.llm_retry_base_seconds * (2 ** (attempt - 1))
-            logger.warning("LLM call failed (%s); retrying in %.1fs", exc, delay)
+            delay = compute_retry_delay_seconds(exc, attempt=attempt)
+            logger.warning(
+                "LLM call failed (%s); retry %s/%s in %.1fs (retry_after=%s)",
+                type(exc).__name__,
+                attempt,
+                settings.llm_max_retries,
+                delay,
+                extract_retry_after_seconds(exc),
+            )
             await asyncio.sleep(delay)
     assert last_exc is not None
     raise last_exc

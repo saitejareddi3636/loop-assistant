@@ -24,9 +24,10 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://api.groq.com/openai/v1"
     llm_model: str = "openai/gpt-oss-120b"
     llm_temperature: float = 0.2
-    llm_max_tokens: int = 1024
-    llm_max_retries: int = 3
+    llm_max_tokens: int = 512  # support replies are short; lowers Groq TPM pressure
+    llm_max_retries: int = 4
     llm_retry_base_seconds: float = 1.0
+    llm_retry_max_seconds: float = 20.0  # cap backoff even when Retry-After is large
 
     embedding_provider: str = "hash"
     embedding_model: str = "BAAI/bge-small-en-v1.5"

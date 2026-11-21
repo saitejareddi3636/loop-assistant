@@ -5,6 +5,7 @@ from typing import Any, Callable
 
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import EscalationTicket
@@ -216,6 +217,35 @@ def build_tools(ctx: ToolContext) -> list[StructuredTool]:
             result = {"ok": False, "error": "customer_scope_mismatch"}
             await _emit_tool(ctx, name="create_ticket", status="failed", detail=result)
             return result
+        # Idempotent within a conversation: retries after LLM 429 must not open duplicates.
+        existing = await ctx.session.scalar(
+            select(EscalationTicket).where(
+                EscalationTicket.conversation_id == ctx.conversation_id,
+                EscalationTicket.customer_id == customer_id,
+                EscalationTicket.reason == reason,
+                EscalationTicket.status == "open",
+            )
+        )
+        if existing is not None:
+            result = {
+                "ok": True,
+                "reused": True,
+                "ticket": {
+                    "id": existing.id,
+                    "customer_id": existing.customer_id,
+                    "reason": existing.reason,
+                    "references": list(existing.references or []),
+                    "status": existing.status,
+                },
+            }
+            await _emit_tool(
+                ctx,
+                name="create_ticket",
+                status="completed",
+                detail={"ticket_id": existing.id, "reused": True},
+            )
+            return result
+
         ticket_id = f"TCK-{uuid.uuid4().hex[:8].upper()}"
         ticket = EscalationTicket(
             id=ticket_id,
@@ -229,6 +259,7 @@ def build_tools(ctx: ToolContext) -> list[StructuredTool]:
         await ctx.session.commit()
         result = {
             "ok": True,
+            "reused": False,
             "ticket": {
                 "id": ticket_id,
                 "customer_id": customer_id,
@@ -293,24 +324,18 @@ def build_tools(ctx: ToolContext) -> list[StructuredTool]:
     ]
 
 
-SYSTEM_PROMPT = """You are Loopp's customer support AI agent for a fictional sandbox.
+SYSTEM_PROMPT = """You are Loopp's customer support AI for a sandbox billing demo.
 
-You dynamically choose tools. Never invent invoices, tiers, receipts, or policy clauses.
+Never invent invoices, tiers, receipts, or policy clauses. Prefer tools for facts.
 
-Demo sandbox:
-- Default signed-in Pro customer: cust_pro_001 (Alex Rivera)
-- Duplicate charge example: INV-1042 for $29.00 (3 days old)
-- Pro policy PRO-BILL-3.2 allows one full mock refund within 30 days, up to $50, active contract
-- Basic tier refunds must escalate via create_ticket
+Sandbox: cust_pro_001 (Alex Rivera, Pro). Duplicate example INV-1042 $29.00 (3 days). PRO-BILL-3.2: one mock refund ≤$50 within 30 days, active contract. Basic tier → create_ticket.
 
-Tooling rules:
-1. Prefer tools for facts. Typical billing path: verify_customer → get_account → get_invoice → search_policy.
-2. When search_policy returns confident=false or should_escalate=true, call create_ticket and explain.
-3. When proposing a refund after invoice+policy verification, call issue_mock_refund with confirmed=false first.
-   That surfaces the structured confirmation UI. Never call confirmed=true until the customer clearly confirms.
-4. For pure policy questions (no specific invoice refund request), call search_policy only — do not call issue_mock_refund.
-5. Always cite policy title, section/citation id, and version when answering from retrieval.
-6. Keep replies concise. If upstream tools fail, explain and offer escalation.
-7. Authorization and refund eligibility are enforced server-side — trust tool error codes.
+Rules:
+1. Billing path: verify_customer → get_account → get_invoice → search_policy.
+2. Low-confidence / should_escalate → create_ticket.
+3. To propose a refund: issue_mock_refund(confirmed=false) first (confirmation UI). confirmed=true only after explicit customer yes.
+4. Pure policy questions: search_policy only (no issue_mock_refund).
+5. Cite policy title, citation id, and version. Keep replies short.
+6. Trust server tool error codes for auth and eligibility.
 """
 
