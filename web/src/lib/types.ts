@@ -41,7 +41,7 @@ export type StreamEvent = {
 export type ToolStatusItem = {
   id: string;
   tool: string;
-  status: "started" | "completed" | "failed";
+  status: "started" | "completed" | "failed" | "awaiting";
   detail?: string;
   at: number;
 };

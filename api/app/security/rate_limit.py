@@ -29,3 +29,7 @@ class SlidingWindowRateLimiter:
 # Defaults: 10 turns / minute / conversation, 1 voice stream start / 5s
 turn_limiter = SlidingWindowRateLimiter(limit=10, window_seconds=60)
 voice_start_limiter = SlidingWindowRateLimiter(limit=12, window_seconds=60)
+# Dictation uploads: a bit looser than live starts (user may re-record).
+transcribe_limiter = SlidingWindowRateLimiter(limit=20, window_seconds=60)
+# Click-to-speak TTS (Pocket) — keep modest to avoid pile-ups.
+speak_limiter = SlidingWindowRateLimiter(limit=12, window_seconds=60)
