@@ -18,19 +18,28 @@ Spoken Cloudflare WebSocket E2E against
 
 Artifact: `evals/results/oracle_audit/spoken_e2e.json`.
 
-## Root cause (code + config — without SSH logs)
+## Root cause (confirmed)
 
-### 1. Silent hosted fallback (primary code cause)
+### 1. Persistent env: `VOICE_STT=groq` (primary)
 
-Prior `api/app/voice/factory.py` with `VOICE_BACKEND=auto`:
+Oracle runtime had:
 
-1. Try Moonshine Tiny.
-2. On **any** load failure → log warning.
-3. **Silently** construct Groq Whisper.
+| Var | Value |
+|-----|-------|
+| `VOICE_BACKEND` | `auto` |
+| `VOICE_STT` | **`groq`** |
 
-Production Dockerfile / `.env.production` default is `VOICE_BACKEND=auto`. Combined with a Moonshine load failure, the public `voice.backend` string becomes `stt=groq-whisper` even though the intended path is local-first. Pocket TTS succeeding proves the image has enough of the voice stack to run torch-ish TTS; that does **not** prove Moonshine ONNX loaded.
+`VOICE_STT=groq` forces hosted Whisper in `factory.py` and **skips** Moonshine even when
+`MoonshineSTTAdapter()` initializes successfully (`moonshine-onnx-tiny` confirmed in-container).
 
-**Fix on this branch:** local / auto / moonshine **fail closed** if Moonshine cannot load. Hosted Whisper only when `VOICE_BACKEND=hosted|groq` or `VOICE_STT=groq|hosted` is set **explicitly**.
+**Fix:** pin `VOICE_BACKEND=local` and `VOICE_STT=local` in `docker-compose.prod.yml`
+`api.environment` (overrides `.env.production`), Dockerfile defaults, and `.env.production`.
+See `STT_CONFIG_FIX.md`.
+
+### 2. Silent hosted fallback (secondary, already removed)
+
+Prior `factory.py` with `VOICE_BACKEND=auto` could also fall through to Whisper after a Moonshine
+load error. That path is **removed** — local/auto fail closed; Whisper only when hosted is explicit.
 
 ### 2. Config surfaces to inspect on the VM (needs SSH)
 
