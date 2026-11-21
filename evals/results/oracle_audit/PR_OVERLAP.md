@@ -1,18 +1,23 @@
-# PR #1 vs PR #2 overlap
+# PR #1 / #2 / #3 merge status
 
-| PR | Branch | Intent |
-|----|--------|--------|
-| [#1](https://github.com/saitejareddi3636/loop-assistant/pull/1) | `feat/evals-regression-framework` | Isolated `evals/` regression harness + mock LLM Basic-tier fix |
-| [#2](https://github.com/saitejareddi3636/loop-assistant/pull/2) | `audit/oracle-prod-readiness` | Oracle audit report + Caddy bare-IP disable + regex confirm UI tweak + **almost all of PR #1 files** |
+| PR | Branch | Intent | Status |
+|----|--------|--------|--------|
+| [#1](https://github.com/saitejareddi3636/loop-assistant/pull/1) | `feat/evals-regression-framework` | Isolated `evals/` regression harness | **MERGED** into `main` |
+| [#2](https://github.com/saitejareddi3636/loop-assistant/pull/2) | `audit/oracle-prod-readiness` | Oracle audit + Caddy bare-IP disable + regex confirm tweak | Open — **do not merge regex UI**; useful bits already on #3 |
+| [#3](https://github.com/saitejareddi3636/loop-assistant/pull/3) | `fix/prod-audit-findings` | Structured confirm UI, Markdown, TTS, STT diagnosis | Rebased onto `main` after #1 |
 
-## Conflict risk
+## Preserved from PR #2 (on #3 / this branch)
 
-PR #2 was branched in a way that **already contains the evals tree from PR #1**. Merging both into `main` without rebasing will create large overlapping diffs on `evals/**`, `README.md`, `api/app/agent/mock_llm.py`, and CI.
+- `deploy/Caddyfile` — bare-IP HTTPS disabled (kept)
+- `evals/results/oracle_audit/REPORT.md` + `report.json` — audit evidence (kept)
+- README Oracle/Cloudflare pointers (kept / updated via audit commit)
 
-## Recommended merge order (no auto-deploy)
+## Explicitly **not** reintroduced from PR #2
 
-1. Merge **PR #1** first (evals framework).
-2. Rebase **PR #2** onto updated `main` and drop duplicated evals commits so it only keeps audit-specific deltas (`deploy/Caddyfile`, oracle audit reports, temporary UI tweak).
-3. Land product fixes from **`fix/prod-audit-findings`** (this branch) after or instead of the temporary regex tweak in PR #2 — structured `meta.ui` replaces the regex confirm card.
+- Regex / tightened-regex `classifyAssistantMessage` confirmation card logic  
+  → replaced by structured `message.meta.ui` + `assistantUiFromMeta` only
 
-Do **not** merge PR #2’s regex `messageUi` change if this branch’s structured confirmation is merging in the same window.
+## Recommended remaining actions
+
+1. Land **PR #3** after review (already contains structured UI + TTS/STT hardening).
+2. Close **PR #2** as superseded once #3 merges (or leave open only for historical audit discussion).
