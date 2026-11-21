@@ -1,0 +1,80 @@
+{
+  "utterance": "I was charged twice on invoice INV-1042 for twenty nine dollars. Can you help with a refund?",
+  "diagnostics": {
+    "http_status": 404,
+    "body": "{\"detail\":\"Not Found\"}",
+    "note": "diagnostics endpoint not deployed on production yet"
+  },
+  "backend": {
+    "type": "voice.backend",
+    "backend": "stt=groq-whisper;tts=pocket-tts;vad=silero-vad-lite",
+    "tts_sample_rate": 24000
+  },
+  "transcript": "I was charged twice on invoice INV1042 for $29. Can you help with a refund?",
+  "stt_provider": "groq-whisper",
+  "assistant": "Do you confirm you\u2019d like a full refund of twenty\u2011nine dollars for invoice\u202fINV\u20111042? If you say yes, I\u2019ll process the mock refund under policy PRO\u2011BILL\u20113.2. Let me know your decision.",
+  "tts_bytes": 533760,
+  "tts_first_audio": {
+    "type": "voice.tts_first_audio",
+    "ms": 160.59244600182865
+  },
+  "eos_to_first_audio_ms": 3995.223874997464,
+  "server_eos_to_first_audio_ms": null,
+  "client_eos_to_first_audio_ms": 3995.223874997464,
+  "stt_latency_ms": 382.41466600447893,
+  "agent_latency_ms": 3606.112679000944,
+  "messages": [
+    {
+      "id": "493733ca-c0b5-4be9-b5fc-465ec7e94e6f",
+      "role": "user",
+      "content": "I was charged twice on invoice INV1042 for $29. Can you help with a refund?",
+      "client_turn_id": "voice-267b6b70-ddf2-41d5-809f-629bedd13467",
+      "run_id": "49154d7b-2ae0-4ea2-b3b2-4e680fba0bdf",
+      "meta": {
+        "source": "voice"
+      },
+      "created_at": "2026-11-20T20:36:27.965043Z"
+    },
+    {
+      "id": "47f786bf-472e-45c0-990c-00b5eefb9356",
+      "role": "assistant",
+      "content": "Do you confirm you\u2019d like a full refund of twenty\u2011nine dollars for invoice\u202fINV\u20111042? If you say yes, I\u2019ll process the mock refund under policy PRO\u2011BILL\u20113.2. Let me know your decision.",
+      "client_turn_id": null,
+      "run_id": "49154d7b-2ae0-4ea2-b3b2-4e680fba0bdf",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "groq"
+      },
+      "created_at": "2026-11-20T20:36:31.567817Z"
+    }
+  ],
+  "tool_event_lines": [
+    "event: tool.started",
+    "event: tool.completed",
+    "event: tool.started",
+    "event: tool.failed",
+    "event: tool.started",
+    "event: tool.completed"
+  ],
+  "ws_event_types": [
+    "voice.ready",
+    "voice.backend",
+    "voice.speech_started",
+    "voice.transcribing",
+    "voice.transcript",
+    "voice.assistant_text",
+    "voice.speaking",
+    "voice.ignored",
+    "voice.tts_first_audio",
+    "voice.speak_done"
+  ],
+  "checks": {
+    "got_transcript": true,
+    "transcript_mentions_invoice_or_1042": true,
+    "got_assistant": true,
+    "got_tts_audio": true,
+    "has_eos_metric": true,
+    "got_tool_events": true
+  },
+  "passed": true
+}

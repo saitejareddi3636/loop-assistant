@@ -36,6 +36,8 @@ services:
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       LLM_MODEL: ${LLM_MODEL:-openai/gpt-oss-120b}
       LLM_BASE_URL: ${LLM_BASE_URL:-https://api.groq.com/openai/v1}
+      # Explicit hosted for thin local docker; prod uses .env.production (auto/local).
+      # Do not rely on silent Groq fallback — factory fail-closes when Moonshine is required.
       VOICE_BACKEND: ${VOICE_BACKEND:-hosted}
       SESSION_SECRET: ${SESSION_SECRET:-change-me}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}

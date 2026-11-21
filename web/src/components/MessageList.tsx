@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import {
-  classifyAssistantMessage,
+  assistantUiFromMeta,
   extractAmountHint,
   extractInvoiceHint,
 } from "../lib/messageUi";
 import type { ChatMessage } from "../lib/types";
+import { MarkdownText } from "./MarkdownText";
 
 type Props = {
   messages: ChatMessage[];
@@ -86,7 +87,9 @@ export function MessageList({ messages, streamingText, busy, onSuggestion }: Pro
                 Loopp · streaming
               </span>
             </div>
-            <p className="streaming-cursor whitespace-pre-wrap">{streamingText}</p>
+            <div className="streaming-cursor">
+              <MarkdownText text={streamingText} />
+            </div>
           </div>
         </div>
       ) : null}
@@ -104,9 +107,11 @@ function MessageBubble({
   style?: CSSProperties;
 }) {
   const isUser = message.role === "user";
-  const kind = !isUser ? classifyAssistantMessage(message.content) : null;
-  const invoice = !isUser ? extractInvoiceHint(message.content) : null;
-  const amount = !isUser ? extractAmountHint(message.content) : null;
+  const ui = !isUser ? assistantUiFromMeta(message.meta) : {};
+  const invoice = extractInvoiceHint(ui);
+  const amount = extractAmountHint(ui);
+  const showConfirm = Boolean(ui.confirmation);
+  const showEscalation = Boolean(ui.escalation);
 
   return (
     <div
@@ -136,13 +141,17 @@ function MessageBubble({
               {formatTime(message.created_at)}
             </time>
           </div>
-          <p className="whitespace-pre-wrap">{message.content}</p>
+          {isUser ? (
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            <MarkdownText text={message.content} />
+          )}
         </div>
 
-        {kind === "refund" || kind === "confirm" ? (
+        {showConfirm ? (
           <div className="rounded-2xl border border-accent/25 bg-accent-soft/60 p-3.5 shadow-soft backdrop-blur">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-deep">
-              {kind === "confirm" ? "Confirmation needed" : "Refund insight"}
+              Confirmation needed
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {invoice ? (
@@ -157,20 +166,18 @@ function MessageBubble({
               ) : null}
             </div>
             <p className="mt-2 text-xs leading-relaxed text-ink-700/80">
-              {kind === "confirm"
-                ? "Reply “yes, confirm the refund” when you’re ready. Nothing is charged until you confirm."
-                : "Policy and invoice checks are available in the live agent steps below."}
+              Reply “yes, confirm the refund” when you’re ready. Nothing is charged until you confirm.
             </p>
           </div>
         ) : null}
 
-        {kind === "escalation" ? (
+        {showEscalation ? (
           <div className="rounded-2xl border border-coral/20 bg-coral-soft/70 p-3.5 shadow-soft">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-coral">
               Escalation
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-ink-700/85">
-              This may need a human specialist. A review ticket can be opened from the conversation.
+              Human-review ticket {ui.escalation?.ticket_id} is open.
             </p>
           </div>
         ) : null}

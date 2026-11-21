@@ -17,6 +17,7 @@ from app.db.session import async_session_factory
 from app.events.bus import event_bus
 from app.observability.metrics import estimate_chat_cost
 from app.voice.factory import get_voice_stack
+from app.voice.speech_normalize import normalize_transcript_ids
 
 # Whisper-family models emit these on near-silent clips.
 _SILENCE_HALLUCINATIONS = {"you", "thank you", "thanks for watching", "bye"}
@@ -191,7 +192,11 @@ class VoiceSession:
             await self._send_json({"type": "voice.ignored", "reason": "too_short"})
             return
 
-        await self._send_json({"type": "voice.transcribing"})
+        # End-of-speech clock: silence VAD just committed this utterance.
+        eos_t0 = time.perf_counter()
+        self.state.metrics["eos_t0"] = eos_t0
+
+        await self._send_json({"type": "voice.transcribing", "eos_ms": 0})
         t0 = time.perf_counter()
         try:
             transcript = await self._stack.stt.transcribe(pcm, self.state.sample_rate)
@@ -200,7 +205,7 @@ class VoiceSession:
             return
         stt_ms = (time.perf_counter() - t0) * 1000
         self.state.metrics["stt_latency_ms"] = stt_ms
-        text = transcript.text.strip()
+        text = normalize_transcript_ids(transcript.text.strip())
         await self._send_json(
             {
                 "type": "voice.transcript",
@@ -222,7 +227,7 @@ class VoiceSession:
             reply = ""
             await self._send_json({"type": "voice.error", "error": f"agent_failed: {exc}"})
         if reply:
-            await self._speak(reply)
+            await self._speak(reply, eos_t0=eos_t0)
         else:
             self.state.listening = True
             await self._send_json({"type": "voice.speak_done", "generation": self.state.generation})
@@ -289,7 +294,7 @@ class VoiceSession:
         )
         return reply
 
-    async def _speak(self, text: str) -> None:
+    async def _speak(self, text: str, *, eos_t0: float | None = None) -> None:
         assert self.state is not None and self._stack is not None
         generation = self.state.generation
         self.state.speaking = True
@@ -314,7 +319,20 @@ class VoiceSession:
                     if first_ms is None:
                         first_ms = (time.perf_counter() - t0) * 1000
                         self.state.metrics["tts_first_audio_ms"] = first_ms
-                        await self._send_json({"type": "voice.tts_first_audio", "ms": first_ms})
+                        eos_to_first = None
+                        if eos_t0 is not None:
+                            eos_to_first = (time.perf_counter() - eos_t0) * 1000
+                            self.state.metrics["eos_to_first_audio_ms"] = eos_to_first
+                        await self._send_json(
+                            {
+                                "type": "voice.tts_first_audio",
+                                "ms": first_ms,
+                                "tts_first_audio_ms": first_ms,
+                                "eos_to_first_audio_ms": eos_to_first,
+                                "stt_latency_ms": self.state.metrics.get("stt_latency_ms"),
+                                "agent_latency_ms": self.state.metrics.get("agent_latency_ms"),
+                            }
+                        )
                     # Prefix 8-byte header: generation(uint32) + sequence(uint32)
                     header = generation.to_bytes(4, "little") + seq.to_bytes(4, "little")
                     await self.ws.send_bytes(header + chunk)
@@ -330,6 +348,7 @@ class VoiceSession:
                         "type": "voice.speak_done",
                         "generation": generation,
                         "tts_total_ms": self.state.metrics.get("tts_total_ms"),
+                        "eos_to_first_audio_ms": self.state.metrics.get("eos_to_first_audio_ms"),
                     }
                 )
 

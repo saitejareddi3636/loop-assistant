@@ -85,20 +85,38 @@ async def run_agent_turn(
         )
         final_text = extract_final_text(result["messages"])
 
+        from app.agent.ui_hints import build_assistant_ui
+
+        ui = await build_assistant_ui(
+            session, conversation_id=conversation_id, run_id=run_id
+        )
+
         await event_bus.publish(
             session,
             conversation_id=conversation_id,
             run_id=run_id,
             event_type="assistant.delta",
-            payload={"text": final_text},
+            payload={"text": final_text, "ui": ui},
         )
+        if ui:
+            await event_bus.publish(
+                session,
+                conversation_id=conversation_id,
+                run_id=run_id,
+                event_type="assistant.ui",
+                payload=ui,
+            )
 
         assistant_msg = Message(
             conversation_id=conversation_id,
             role="assistant",
             content=final_text,
             run_id=run_id,
-            meta={"model": settings.llm_model, "provider": settings.llm_provider},
+            meta={
+                "model": settings.llm_model,
+                "provider": settings.llm_provider,
+                "ui": ui,
+            },
         )
         session.add(assistant_msg)
 

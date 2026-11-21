@@ -28,7 +28,8 @@ COPY api/scripts ./scripts
 COPY --from=web-build /web/dist ./web_dist
 
 ENV LLM_PROVIDER=groq \
-    VOICE_BACKEND=auto \
+    VOICE_BACKEND=local \
+    VOICE_STT=local \
     EMBEDDING_PROVIDER=hash
 
 EXPOSE 8000

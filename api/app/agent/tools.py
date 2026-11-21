@@ -149,7 +149,12 @@ def build_tools(ctx: ToolContext) -> list[StructuredTool]:
             ctx,
             name="get_invoice",
             status="completed",
-            detail={"invoice_id": invoice_id, "amount_cents": invoice.amount_cents},
+            detail={
+                "invoice_id": invoice_id,
+                "amount_cents": invoice.amount_cents,
+                "is_duplicate": invoice.is_duplicate,
+                "currency": invoice.currency,
+            },
         )
         return result
 
@@ -182,13 +187,18 @@ def build_tools(ctx: ToolContext) -> list[StructuredTool]:
             await _emit_tool(ctx, name="issue_mock_refund", status="failed", detail=result)
             return result
         if not confirmed:
+            invoice = INVOICES.get(invoice_id)
             result = {
                 "ok": False,
                 "error": "confirmation_required",
                 "message": "Ask the customer to confirm the refund amount and invoice before calling again.",
+                "invoice_id": invoice_id,
+                "amount_cents": invoice.amount_cents if invoice else None,
+                "currency": invoice.currency if invoice else "USD",
             }
             await _emit_tool(ctx, name="issue_mock_refund", status="failed", detail=result)
             return result
+
         result = await issue_mock_refund(
             ctx.session,
             conversation_id=ctx.conversation_id,
@@ -296,8 +306,11 @@ Demo sandbox:
 Tooling rules:
 1. Prefer tools for facts. Typical billing path: verify_customer → get_account → get_invoice → search_policy.
 2. When search_policy returns confident=false or should_escalate=true, call create_ticket and explain.
-3. Never call issue_mock_refund with confirmed=true until the customer clearly confirms invoice + amount.
-4. Always cite policy title, section/citation id, and version when answering from retrieval.
-5. Keep replies concise. If upstream tools fail, explain and offer escalation.
-6. Authorization and refund eligibility are enforced server-side — trust tool error codes.
+3. When proposing a refund after invoice+policy verification, call issue_mock_refund with confirmed=false first.
+   That surfaces the structured confirmation UI. Never call confirmed=true until the customer clearly confirms.
+4. For pure policy questions (no specific invoice refund request), call search_policy only — do not call issue_mock_refund.
+5. Always cite policy title, section/citation id, and version when answering from retrieval.
+6. Keep replies concise. If upstream tools fail, explain and offer escalation.
+7. Authorization and refund eligibility are enforced server-side — trust tool error codes.
 """
+
