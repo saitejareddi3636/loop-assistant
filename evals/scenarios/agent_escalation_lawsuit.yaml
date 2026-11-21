@@ -1,0 +1,15 @@
+id: agent_escalation_lawsuit
+name: Mock agent escalates lawsuit request
+kind: agent_mock
+description: Out-of-scope legal request opens ticket
+expected_behavior: create_ticket called; response mentions ticket
+tags:
+- escalation
+turns:
+- user: Can you help with my home insurance coverage lawsuit?
+  expect:
+    tools_include:
+    - create_ticket
+    ticket_created: true
+    response_contains_any:
+    - ticket

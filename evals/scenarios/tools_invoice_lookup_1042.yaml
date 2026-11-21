@@ -1,0 +1,23 @@
+id: tools_invoice_lookup_1042
+name: Invoice lookup INV-1042
+kind: tools
+description: get_invoice returns duplicate Pro charge
+expected_behavior: Invoice found with $29.00 duplicate flag
+tags:
+- billing
+tools_script:
+- tool: verify_customer
+  args:
+    customer_id: cust_pro_001
+- tool: get_invoice
+  args:
+    invoice_id: INV-1042
+    customer_id: cust_pro_001
+expect:
+  tool_completed:
+  - verify_customer
+  - get_invoice
+  response_contains_any:
+  - INV-1042
+  - '2900'
+  - duplicate

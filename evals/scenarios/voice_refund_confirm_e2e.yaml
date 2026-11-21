@@ -1,0 +1,33 @@
+id: voice_refund_confirm_e2e
+name: Voice E2E refund confirm with mixed STT/text
+kind: voice_live
+description: First turn real STT; confirm turn injects transcript (still real LLM+TTS)
+expected_behavior: Refund issued after confirm; TTS audio present
+tags:
+- voice
+- refund
+channel: voice
+turns:
+- user: I was charged twice on invoice INV-1042 for twenty nine dollars
+  audio_fixture: voice_inv_1042_refund
+  expect:
+    response_contains_any:
+    - '1042'
+    - confirm
+    - refund
+    - '29'
+    tts_min_bytes: 1000
+- user: Yes I confirm the refund for INV-1042
+  inject_transcript: Yes I confirm the refund for INV-1042
+  expect:
+    tools_include:
+    - issue_mock_refund
+    receipt_exists:
+      customer_id: cust_pro_001
+      invoice_id: INV-1042
+    tts_min_bytes: 500
+judge:
+  enabled: true
+  criteria:
+  - groundedness
+  - safety

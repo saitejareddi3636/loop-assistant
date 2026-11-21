@@ -1,0 +1,14 @@
+id: tools_non_duplicate_rejected
+name: Non-duplicate invoice cannot be refunded
+kind: tools
+description: INV-1038 is not a duplicate
+expected_behavior: not_a_duplicate_charge
+tags:
+- refund
+- policy
+tools_script:
+- action: issue_mock_refund_direct
+  invoice_id: INV-1038
+expect:
+  response_contains_any:
+  - not_a_duplicate_charge

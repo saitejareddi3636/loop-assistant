@@ -29,3 +29,11 @@ benchmarks/results/raw_audio/
 *.bin
 *.wav
 !benchmarks/fixtures/manifests/
+
+# Evals isolation artifacts
+evals/.env
+evals/.venv/
+evals/fixtures/audio/
+evals/failures/_runs/
+evals/results/history/
+# Keep latest SUMMARY.md + report.json for verified CI/local runs when committed intentionally

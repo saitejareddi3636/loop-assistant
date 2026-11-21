@@ -1,0 +1,28 @@
+id: tools_refund_requires_confirmation
+name: Refund tool rejects unconfirmed request
+kind: tools
+description: issue_mock_refund with confirmed=false must fail
+expected_behavior: Tool returns confirmation_required and no receipt is written
+customer_id: cust_pro_001
+tags:
+- refund
+- safety
+tools_script:
+- tool: issue_mock_refund
+  args:
+    customer_id: cust_pro_001
+    invoice_id: INV-1042
+    confirmed: false
+expect:
+  tool_failed:
+  - issue_mock_refund
+  tool_args:
+    issue_mock_refund:
+      invoice_id: INV-1042
+      confirmed: false
+  receipt_count:
+    customer_id: cust_pro_001
+    invoice_id: INV-1042
+    count: 0
+  response_contains_any:
+  - confirmation_required

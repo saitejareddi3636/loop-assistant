@@ -1,0 +1,15 @@
+id: agent_human_handoff
+name: Mock agent creates ticket for human request
+kind: agent_mock
+description: Customer asks for a human
+expected_behavior: create_ticket and ticket id in reply
+tags:
+- escalation
+turns:
+- user: I want to speak to a human agent please
+  expect:
+    tools_include:
+    - create_ticket
+    ticket_created: true
+    response_contains_any:
+    - ticket

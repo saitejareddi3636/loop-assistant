@@ -1,0 +1,16 @@
+id: tools_basic_tier_blocks_refund
+name: Basic tier refund blocked
+kind: tools
+customer_id: cust_basic_001
+description: Basic customers cannot auto-refund
+expected_behavior: tier_requires_manual_review
+tags:
+- refund
+- policy
+tools_script:
+- action: issue_mock_refund_direct
+  customer_id: cust_basic_001
+  invoice_id: INV-2001
+expect:
+  response_contains_any:
+  - tier_requires_manual_review

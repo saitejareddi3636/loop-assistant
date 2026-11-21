@@ -1,0 +1,2 @@
+# Evals-only extras; install api/requirements.txt first for app deps.
+PyYAML>=6.0.1

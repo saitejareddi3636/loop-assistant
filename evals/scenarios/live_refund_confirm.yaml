@@ -1,0 +1,40 @@
+id: live_refund_confirm
+name: Live LLM refund confirmation
+kind: agent_live
+description: Live LLM refund confirmation
+expected_behavior: Live agent requires confirmation then issues mock refund
+tags:
+- refund
+- live
+customer_id: cust_pro_001
+turns:
+- user: I was charged twice for my Pro plan on invoice INV-1042. Can I get a refund?
+  expect:
+    tools_include:
+    - get_invoice
+    - search_policy
+    response_contains_any:
+    - INV-1042
+    - '29'
+    - confirm
+    - refund
+- user: Yes, I confirm a refund of twenty-nine dollars for INV-1042.
+  expect:
+    tools_include:
+    - issue_mock_refund
+    tool_args:
+      issue_mock_refund:
+        confirmed: true
+    receipt_exists:
+      customer_id: cust_pro_001
+      invoice_id: INV-1042
+    response_contains_any:
+    - refund
+    - INV-1042
+judge:
+  enabled: true
+  criteria:
+  - relevance
+  - groundedness
+  - safety
+  - multi_turn_consistency

@@ -1,0 +1,20 @@
+id: tools_refund_idempotent
+name: Duplicate refund is idempotent
+kind: tools
+description: Second refund reuses the same mock receipt
+expected_behavior: Exactly one receipt; second call reused=true
+tags:
+- refund
+- idempotency
+tools_script:
+- action: issue_mock_refund_direct
+  invoice_id: INV-1042
+- action: issue_mock_refund_direct
+  invoice_id: INV-1042
+expect:
+  receipt_count:
+    customer_id: cust_pro_001
+    invoice_id: INV-1042
+    count: 1
+  response_contains_any:
+  - reused

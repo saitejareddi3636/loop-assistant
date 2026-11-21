@@ -1,0 +1,32 @@
+id: voice_stt_invoice_clear
+name: Voice E2E clear invoice utterance
+kind: voice_live
+description: Recorded/synth audio through STT → LangGraph → TTS
+expected_behavior: STT hears invoice; agent responds; TTS emits audio
+tags:
+- voice
+- stt
+- tts
+channel: voice
+turns:
+- user: I was charged twice on invoice INV-1042
+  audio_fixture: voice_inv_1042_clear
+  expect:
+    stt_contains_any:
+    - '1042'
+    - invoice
+    - charged
+    response_contains_any:
+    - '1042'
+    - refund
+    - Pro
+    - confirm
+    - invoice
+    tts_min_bytes: 1000
+    max_latency_ms:
+      tts_first_audio: 1500
+judge:
+  enabled: true
+  criteria:
+  - relevance
+  - safety

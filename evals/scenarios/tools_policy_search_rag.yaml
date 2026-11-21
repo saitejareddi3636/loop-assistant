@@ -1,0 +1,20 @@
+id: tools_policy_search_rag
+name: RAG policy search for refunds
+kind: tools
+description: search_policy returns Pro billing citation
+expected_behavior: Documents include PRO-BILL citation
+tags:
+- rag
+- policy
+tools_script:
+- tool: search_policy
+  args:
+    query: duplicate charge refund
+    tier: Pro
+expect:
+  tool_completed:
+  - search_policy
+  response_contains_any:
+  - PRO-BILL
+  - documents
+  - confident

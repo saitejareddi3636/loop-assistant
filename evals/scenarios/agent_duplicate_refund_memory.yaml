@@ -1,0 +1,34 @@
+id: agent_duplicate_refund_memory
+name: Mock agent remembers prior refund turn
+kind: agent_mock
+description: After issuing refund, second confirm reuses receipt path
+expected_behavior: Idempotent refund across turns
+tags:
+- refund
+- idempotency
+- memory
+turns:
+- user: I was charged twice on INV-1042
+  expect:
+    response_contains_any:
+    - INV-1042
+    - confirm
+- user: Yes, go ahead and approve the refund
+  expect:
+    tools_include:
+    - issue_mock_refund
+    receipt_exists:
+      customer_id: cust_pro_001
+      invoice_id: INV-1042
+- user: Yes, confirm again please
+  expect:
+    tools_include:
+    - issue_mock_refund
+    receipt_count:
+      customer_id: cust_pro_001
+      invoice_id: INV-1042
+      count: 1
+    response_contains_any:
+    - issued
+    - receipt
+    - INV-1042

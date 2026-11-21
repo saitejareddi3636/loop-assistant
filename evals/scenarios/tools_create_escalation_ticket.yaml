@@ -1,0 +1,20 @@
+id: tools_create_escalation_ticket
+name: Create human escalation ticket
+kind: tools
+description: create_ticket persists EscalationTicket
+expected_behavior: Ticket created with open status
+tags:
+- escalation
+tools_script:
+- tool: create_ticket
+  args:
+    reason: Customer requested specialist
+    customer_id: cust_pro_001
+    references:
+    - INV-1042
+expect:
+  tool_completed:
+  - create_ticket
+  ticket_created: true
+  response_contains_any:
+  - TCK-

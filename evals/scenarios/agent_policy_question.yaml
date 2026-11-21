@@ -1,0 +1,17 @@
+id: agent_policy_question
+name: Mock agent answers billing policy with citation
+kind: agent_mock
+description: Policy/RAG path for refund eligibility
+expected_behavior: Cites PRO-BILL after tool chain
+tags:
+- rag
+- policy
+turns:
+- user: What is the refund policy for a duplicate Pro charge on my invoice?
+  expect:
+    tools_include:
+    - search_policy
+    response_contains_any:
+    - PRO-BILL
+    - refund
+    - '30'

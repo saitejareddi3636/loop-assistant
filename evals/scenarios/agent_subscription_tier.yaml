@@ -1,0 +1,17 @@
+id: agent_subscription_tier
+name: Mock agent answers subscription tier
+kind: agent_mock
+description: Account tier via verify + get_account
+expected_behavior: Reports Pro tier
+tags:
+- billing
+- subscription
+turns:
+- user: What subscription tier is my account on?
+  expect:
+    tools_include:
+    - verify_customer
+    - get_account
+    response_contains_any:
+    - Pro
+    - tier
