@@ -1,6 +1,6 @@
 {
   "suite": "deterministic",
-  "generated_at": "2026-11-20T20:38:51.547074+00:00",
+  "generated_at": "2026-11-21T01:02:52.895641+00:00",
   "summary": {
     "total": 22,
     "passed": 22,
@@ -15,73 +15,73 @@
       "kind": "agent_mock",
       "status": "PASS",
       "expected_behavior": "Opens human-review ticket; no auto refund",
-      "actual_behavior": "Basic-tier refunds need manual review. I opened human-review ticket TCK-87CD75BF for INV-2001.",
+      "actual_behavior": "Basic-tier refunds need manual review. I opened human-review ticket TCK-B9C88B97 for INV-2001.",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_basic_001"
           },
-          "created_at": "2026-11-20T20:38:44.932391+00:00"
+          "created_at": "2026-11-21T01:02:48.176684+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "tool": "create_ticket",
             "reason": "Basic tier duplicate refund requires human review",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:44.969224+00:00"
+          "created_at": "2026-11-21T01:02:48.211984+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "tool": "create_ticket",
             "status": "completed",
-            "ticket_id": "TCK-87CD75BF"
+            "ticket_id": "TCK-B9C88B97"
           },
-          "created_at": "2026-11-20T20:38:45.023769+00:00"
+          "created_at": "2026-11-21T01:02:48.259644+00:00"
         },
         {
           "sequence": 4,
           "event_type": "assistant.delta",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "ui": {
               "escalation": {
                 "status": "open",
-                "ticket_id": "TCK-87CD75BF"
+                "ticket_id": "TCK-B9C88B97"
               }
             },
-            "text": "Basic-tier refunds need manual review. I opened human-review ticket TCK-87CD75BF for INV-2001."
+            "text": "Basic-tier refunds need manual review. I opened human-review ticket TCK-B9C88B97 for INV-2001."
           },
-          "created_at": "2026-11-20T20:38:45.060164+00:00"
+          "created_at": "2026-11-21T01:02:48.289616+00:00"
         },
         {
           "sequence": 5,
           "event_type": "assistant.ui",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "escalation": {
               "status": "open",
-              "ticket_id": "TCK-87CD75BF"
+              "ticket_id": "TCK-B9C88B97"
             }
           },
-          "created_at": "2026-11-20T20:38:45.060164+00:00"
+          "created_at": "2026-11-21T01:02:48.289616+00:00"
         },
         {
           "sequence": 6,
           "event_type": "obs.metrics",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -92,25 +92,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 23
           },
-          "created_at": "2026-11-20T20:38:45.060164+00:00"
+          "created_at": "2026-11-21T01:02:48.289616+00:00"
         },
         {
           "sequence": 7,
           "event_type": "run.completed",
-          "run_id": "1e903cc3-be95-47d5-907f-fa458f0aa360",
+          "run_id": "6360ffc3-2169-46e8-98e8-51ee4e87b11c",
           "payload": {
             "model": "mock-support",
-            "message_id": "71f88fbd-6120-4312-801a-42202e19bc74",
+            "message_id": "9593618f-4d45-4ffe-8f29-62a141690b9f",
             "total_tokens_est": 44,
             "prompt_tokens_est": 21,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 23
           },
-          "created_at": "2026-11-20T20:38:45.060164+00:00"
+          "created_at": "2026-11-21T01:02:48.289616+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 213.51175000017975
+        "scenario_total": 203.211874992121
       },
       "judge": null,
       "artifacts_dir": null,
@@ -125,7 +125,7 @@
         {
           "user_text": "I'm on the Basic plan (cust_basic_001). Please refund my duplicate invoice INV-2001.",
           "transcript": null,
-          "assistant_text": "Basic-tier refunds need manual review. I opened human-review ticket TCK-87CD75BF for INV-2001.",
+          "assistant_text": "Basic-tier refunds need manual review. I opened human-review ticket TCK-B9C88B97 for INV-2001.",
           "assertions": [
             {
               "name": "tools_include",
@@ -140,16 +140,16 @@
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['ticket', 'Basic', 'manual', 'review']; got='Basic-tier refunds need manual review. I opened human-review ticket TCK-87CD75BF for INV-2001.'"
+              "detail": "need any of ['ticket', 'Basic', 'manual', 'review']; got='Basic-tier refunds need manual review. I opened human-review ticket TCK-B9C88B97 for INV-2001.'"
             },
             {
               "name": "ticket_created",
               "passed": true,
-              "detail": "expected=True actual=True ids=['TCK-87CD75BF']"
+              "detail": "expected=True actual=True ids=['TCK-B9C88B97']"
             }
           ],
           "timings_ms": {
-            "agent_turn": 173.7420420104172
+            "agent_turn": 164.29800000332762
           },
           "tts_bytes": 0,
           "error": null,
@@ -157,7 +157,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "58e28bb3-3ccd-4d8d-b5f1-c3f1799a0281"
+        "conversation_id": "f07247ec-22a7-4710-8867-84d9594a5b9d"
       }
     },
     {
@@ -166,80 +166,80 @@
       "kind": "agent_mock",
       "status": "PASS",
       "expected_behavior": "Second turn confirms refund for same invoice",
-      "actual_behavior": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 3d8a8657-c64f-4678-9017-2cafb862f9b6). Policy citation: PRO-BILL-3.2.",
+      "actual_behavior": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 12035516-84bf-4882-8442-edde17c5f6a6). Policy citation: PRO-BILL-3.2.",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.193852+00:00"
+          "created_at": "2026-11-21T01:02:48.420706+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tool": "verify_customer",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.225144+00:00"
+          "created_at": "2026-11-21T01:02:48.449856+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tool": "verify_customer",
             "status": "completed",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.253017+00:00"
+          "created_at": "2026-11-21T01:02:48.474782+00:00"
         },
         {
           "sequence": 4,
           "event_type": "tool.started",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tool": "get_account",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.281731+00:00"
+          "created_at": "2026-11-21T01:02:48.502873+00:00"
         },
         {
           "sequence": 5,
           "event_type": "tool.completed",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tier": "Pro",
             "tool": "get_account",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:45.307542+00:00"
+          "created_at": "2026-11-21T01:02:48.527388+00:00"
         },
         {
           "sequence": 6,
           "event_type": "tool.started",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-1042",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.338386+00:00"
+          "created_at": "2026-11-21T01:02:48.554029+00:00"
         },
         {
           "sequence": 7,
           "event_type": "tool.completed",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tool": "get_invoice",
             "status": "completed",
@@ -248,24 +248,24 @@
             "amount_cents": 2900,
             "is_duplicate": true
           },
-          "created_at": "2026-11-20T20:38:45.365718+00:00"
+          "created_at": "2026-11-21T01:02:48.577877+00:00"
         },
         {
           "sequence": 8,
           "event_type": "tool.started",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tier": "Pro",
             "tool": "search_policy",
             "query": "duplicate charge refund policy",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:45.397343+00:00"
+          "created_at": "2026-11-21T01:02:48.603744+00:00"
         },
         {
           "sequence": 9,
           "event_type": "tool.completed",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "ids": [
               "PRO-BILL-3.2",
@@ -280,24 +280,24 @@
             "confident": true,
             "should_escalate": false
           },
-          "created_at": "2026-11-20T20:38:45.423816+00:00"
+          "created_at": "2026-11-21T01:02:48.628867+00:00"
         },
         {
           "sequence": 10,
           "event_type": "tool.started",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": false,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:45.468615+00:00"
+          "created_at": "2026-11-21T01:02:48.674993+00:00"
         },
         {
           "sequence": 11,
           "event_type": "tool.failed",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "ok": false,
             "tool": "issue_mock_refund",
@@ -308,12 +308,12 @@
             "invoice_id": "INV-1042",
             "amount_cents": 2900
           },
-          "created_at": "2026-11-20T20:38:45.491498+00:00"
+          "created_at": "2026-11-21T01:02:48.701119+00:00"
         },
         {
           "sequence": 12,
           "event_type": "assistant.delta",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "ui": {
               "confirmation": {
@@ -327,12 +327,12 @@
             },
             "text": "I verified your Pro account and found a duplicate charge on INV-1042 for $29.00 (3 days old). Under Pro Billing & Refunds v3.0 (PRO-BILL-3.2), you're eligible for one full mock refund within 30 days up to $50.\n\nReply **yes** to confirm a $29.00 refund on INV-1042."
           },
-          "created_at": "2026-11-20T20:38:45.517627+00:00"
+          "created_at": "2026-11-21T01:02:48.726787+00:00"
         },
         {
           "sequence": 13,
           "event_type": "assistant.ui",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "confirmation": {
               "kind": "refund",
@@ -343,12 +343,12 @@
               "requires_explicit_confirm": true
             }
           },
-          "created_at": "2026-11-20T20:38:45.517627+00:00"
+          "created_at": "2026-11-21T01:02:48.726787+00:00"
         },
         {
           "sequence": 14,
           "event_type": "obs.metrics",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -359,60 +359,60 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 66
           },
-          "created_at": "2026-11-20T20:38:45.517627+00:00"
+          "created_at": "2026-11-21T01:02:48.726787+00:00"
         },
         {
           "sequence": 15,
           "event_type": "run.completed",
-          "run_id": "95df5a35-0487-4065-8e72-86f49f0add98",
+          "run_id": "bd51c6fc-2864-4df1-8b6d-168ac4e969d8",
           "payload": {
             "model": "mock-support",
-            "message_id": "92afb6e7-a273-4b25-b45d-0d6f1d745c9f",
+            "message_id": "eb927bcd-7ea7-472a-8a3f-d5bb557e971a",
             "total_tokens_est": 73,
             "prompt_tokens_est": 7,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 66
           },
-          "created_at": "2026-11-20T20:38:45.517627+00:00"
+          "created_at": "2026-11-21T01:02:48.726787+00:00"
         },
         {
           "sequence": 16,
           "event_type": "run.started",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.578822+00:00"
+          "created_at": "2026-11-21T01:02:48.784096+00:00"
         },
         {
           "sequence": 17,
           "event_type": "tool.started",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": true,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:45.611378+00:00"
+          "created_at": "2026-11-21T01:02:48.814557+00:00"
         },
         {
           "sequence": 18,
           "event_type": "tool.completed",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "ok": true,
             "tool": "issue_mock_refund",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:45.669448+00:00"
+          "created_at": "2026-11-21T01:02:48.861645+00:00"
         },
         {
           "sequence": 19,
           "event_type": "assistant.delta",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "ui": {
               "refund_receipt": {
@@ -420,26 +420,26 @@
                 "status": "completed"
               }
             },
-            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 3d8a8657-c64f-4678-9017-2cafb862f9b6). Policy citation: PRO-BILL-3.2."
+            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 12035516-84bf-4882-8442-edde17c5f6a6). Policy citation: PRO-BILL-3.2."
           },
-          "created_at": "2026-11-20T20:38:45.701405+00:00"
+          "created_at": "2026-11-21T01:02:48.889022+00:00"
         },
         {
           "sequence": 20,
           "event_type": "assistant.ui",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "refund_receipt": {
               "ok": true,
               "status": "completed"
             }
           },
-          "created_at": "2026-11-20T20:38:45.701405+00:00"
+          "created_at": "2026-11-21T01:02:48.889022+00:00"
         },
         {
           "sequence": 21,
           "event_type": "obs.metrics",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -450,25 +450,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:45.701405+00:00"
+          "created_at": "2026-11-21T01:02:48.889022+00:00"
         },
         {
           "sequence": 22,
           "event_type": "run.completed",
-          "run_id": "6d286446-2aae-46bc-9967-800798222483",
+          "run_id": "facf60be-b509-495d-9eff-603a448df2a7",
           "payload": {
             "model": "mock-support",
-            "message_id": "4c757cdc-b45b-4da4-bebe-8392efcb7e58",
+            "message_id": "ed76a5d2-1852-41c8-9353-e3d52d3febc4",
             "total_tokens_est": 35,
             "prompt_tokens_est": 3,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:45.701405+00:00"
+          "created_at": "2026-11-21T01:02:48.889022+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 578.1179160112515
+        "scenario_total": 531.7230000073323
       },
       "judge": null,
       "artifacts_dir": null,
@@ -492,7 +492,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 357.42316700634547
+            "agent_turn": 338.57829100452363
           },
           "tts_bytes": 0,
           "error": null,
@@ -501,7 +501,7 @@
         {
           "user_text": "Yes, confirm",
           "transcript": null,
-          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 3d8a8657-c64f-4678-9017-2cafb862f9b6). Policy citation: PRO-BILL-3.2.",
+          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 12035516-84bf-4882-8442-edde17c5f6a6). Policy citation: PRO-BILL-3.2.",
           "assertions": [
             {
               "name": "tools_include",
@@ -515,7 +515,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 161.54800000367686
+            "agent_turn": 136.3434579980094
           },
           "tts_bytes": 0,
           "error": null,
@@ -523,7 +523,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "bbf82c74-6a6c-4378-925d-9de04e7a8542"
+        "conversation_id": "7b0ed0cd-4d4c-4f19-8c7f-1cd2e1f37587"
       }
     },
     {
@@ -532,80 +532,80 @@
       "kind": "agent_mock",
       "status": "PASS",
       "expected_behavior": "Idempotent refund across turns",
-      "actual_behavior": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 689633e4-9206-492a-be18-ffd1f4344ef0). Policy citation: PRO-BILL-3.2.",
+      "actual_behavior": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt d193dc0f-660b-405b-b080-7a32569a6df3). Policy citation: PRO-BILL-3.2.",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.828727+00:00"
+          "created_at": "2026-11-21T01:02:49.002236+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tool": "verify_customer",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.859679+00:00"
+          "created_at": "2026-11-21T01:02:49.030463+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tool": "verify_customer",
             "status": "completed",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.885509+00:00"
+          "created_at": "2026-11-21T01:02:49.055541+00:00"
         },
         {
           "sequence": 4,
           "event_type": "tool.started",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tool": "get_account",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.915877+00:00"
+          "created_at": "2026-11-21T01:02:49.084205+00:00"
         },
         {
           "sequence": 5,
           "event_type": "tool.completed",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tier": "Pro",
             "tool": "get_account",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:45.942609+00:00"
+          "created_at": "2026-11-21T01:02:49.110488+00:00"
         },
         {
           "sequence": 6,
           "event_type": "tool.started",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-1042",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:45.976580+00:00"
+          "created_at": "2026-11-21T01:02:49.135195+00:00"
         },
         {
           "sequence": 7,
           "event_type": "tool.completed",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tool": "get_invoice",
             "status": "completed",
@@ -614,24 +614,24 @@
             "amount_cents": 2900,
             "is_duplicate": true
           },
-          "created_at": "2026-11-20T20:38:46.003408+00:00"
+          "created_at": "2026-11-21T01:02:49.160763+00:00"
         },
         {
           "sequence": 8,
           "event_type": "tool.started",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tier": "Pro",
             "tool": "search_policy",
             "query": "duplicate charge refund policy",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:46.029771+00:00"
+          "created_at": "2026-11-21T01:02:49.187545+00:00"
         },
         {
           "sequence": 9,
           "event_type": "tool.completed",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "ids": [
               "PRO-BILL-3.2",
@@ -646,24 +646,24 @@
             "confident": true,
             "should_escalate": false
           },
-          "created_at": "2026-11-20T20:38:46.056264+00:00"
+          "created_at": "2026-11-21T01:02:49.212039+00:00"
         },
         {
           "sequence": 10,
           "event_type": "tool.started",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": false,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:46.098938+00:00"
+          "created_at": "2026-11-21T01:02:49.247572+00:00"
         },
         {
           "sequence": 11,
           "event_type": "tool.failed",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "ok": false,
             "tool": "issue_mock_refund",
@@ -674,12 +674,12 @@
             "invoice_id": "INV-1042",
             "amount_cents": 2900
           },
-          "created_at": "2026-11-20T20:38:46.125505+00:00"
+          "created_at": "2026-11-21T01:02:49.271734+00:00"
         },
         {
           "sequence": 12,
           "event_type": "assistant.delta",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "ui": {
               "confirmation": {
@@ -693,12 +693,12 @@
             },
             "text": "I verified your Pro account and found a duplicate charge on INV-1042 for $29.00 (3 days old). Under Pro Billing & Refunds v3.0 (PRO-BILL-3.2), you're eligible for one full mock refund within 30 days up to $50.\n\nReply **yes** to confirm a $29.00 refund on INV-1042."
           },
-          "created_at": "2026-11-20T20:38:46.153143+00:00"
+          "created_at": "2026-11-21T01:02:49.297910+00:00"
         },
         {
           "sequence": 13,
           "event_type": "assistant.ui",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "confirmation": {
               "kind": "refund",
@@ -709,12 +709,12 @@
               "requires_explicit_confirm": true
             }
           },
-          "created_at": "2026-11-20T20:38:46.153143+00:00"
+          "created_at": "2026-11-21T01:02:49.297910+00:00"
         },
         {
           "sequence": 14,
           "event_type": "obs.metrics",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -725,60 +725,60 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 66
           },
-          "created_at": "2026-11-20T20:38:46.153143+00:00"
+          "created_at": "2026-11-21T01:02:49.297910+00:00"
         },
         {
           "sequence": 15,
           "event_type": "run.completed",
-          "run_id": "27e6c253-e3c6-49dd-b3a6-31b668064fe9",
+          "run_id": "352d65f1-19d5-43a1-99f1-8ef951e1fb2e",
           "payload": {
             "model": "mock-support",
-            "message_id": "db119d0f-15f8-419b-8218-9ce6875de82e",
+            "message_id": "3e128001-6689-46e2-ac66-54d1919ced67",
             "total_tokens_est": 73,
             "prompt_tokens_est": 7,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 66
           },
-          "created_at": "2026-11-20T20:38:46.153143+00:00"
+          "created_at": "2026-11-21T01:02:49.297910+00:00"
         },
         {
           "sequence": 16,
           "event_type": "run.started",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:46.215916+00:00"
+          "created_at": "2026-11-21T01:02:49.354283+00:00"
         },
         {
           "sequence": 17,
           "event_type": "tool.started",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": true,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:46.248936+00:00"
+          "created_at": "2026-11-21T01:02:49.383047+00:00"
         },
         {
           "sequence": 18,
           "event_type": "tool.completed",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "ok": true,
             "tool": "issue_mock_refund",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:46.301795+00:00"
+          "created_at": "2026-11-21T01:02:49.432391+00:00"
         },
         {
           "sequence": 19,
           "event_type": "assistant.delta",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "ui": {
               "refund_receipt": {
@@ -786,26 +786,26 @@
                 "status": "completed"
               }
             },
-            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 689633e4-9206-492a-be18-ffd1f4344ef0). Policy citation: PRO-BILL-3.2."
+            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt d193dc0f-660b-405b-b080-7a32569a6df3). Policy citation: PRO-BILL-3.2."
           },
-          "created_at": "2026-11-20T20:38:46.329776+00:00"
+          "created_at": "2026-11-21T01:02:49.457956+00:00"
         },
         {
           "sequence": 20,
           "event_type": "assistant.ui",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "refund_receipt": {
               "ok": true,
               "status": "completed"
             }
           },
-          "created_at": "2026-11-20T20:38:46.329776+00:00"
+          "created_at": "2026-11-21T01:02:49.457956+00:00"
         },
         {
           "sequence": 21,
           "event_type": "obs.metrics",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -816,60 +816,60 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:46.329776+00:00"
+          "created_at": "2026-11-21T01:02:49.457956+00:00"
         },
         {
           "sequence": 22,
           "event_type": "run.completed",
-          "run_id": "e21f001e-41a6-49e2-af4a-8e72a3ca3c43",
+          "run_id": "1146c5da-bb89-4516-892c-5d9821840373",
           "payload": {
             "model": "mock-support",
-            "message_id": "7f29a931-2ae8-4630-9961-28409b06e4af",
+            "message_id": "a7dba083-4465-4419-bb16-d429e965aeea",
             "total_tokens_est": 41,
             "prompt_tokens_est": 9,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:46.329776+00:00"
+          "created_at": "2026-11-21T01:02:49.457956+00:00"
         },
         {
           "sequence": 23,
           "event_type": "run.started",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:46.409245+00:00"
+          "created_at": "2026-11-21T01:02:49.519620+00:00"
         },
         {
           "sequence": 24,
           "event_type": "tool.started",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": true,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:46.446344+00:00"
+          "created_at": "2026-11-21T01:02:49.549546+00:00"
         },
         {
           "sequence": 25,
           "event_type": "tool.completed",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "ok": true,
             "tool": "issue_mock_refund",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:46.499900+00:00"
+          "created_at": "2026-11-21T01:02:49.607039+00:00"
         },
         {
           "sequence": 26,
           "event_type": "assistant.delta",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "ui": {
               "refund_receipt": {
@@ -877,26 +877,26 @@
                 "status": "completed"
               }
             },
-            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 689633e4-9206-492a-be18-ffd1f4344ef0). Policy citation: PRO-BILL-3.2."
+            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt d193dc0f-660b-405b-b080-7a32569a6df3). Policy citation: PRO-BILL-3.2."
           },
-          "created_at": "2026-11-20T20:38:46.530629+00:00"
+          "created_at": "2026-11-21T01:02:49.636881+00:00"
         },
         {
           "sequence": 27,
           "event_type": "assistant.ui",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "refund_receipt": {
               "ok": true,
               "status": "completed"
             }
           },
-          "created_at": "2026-11-20T20:38:46.530629+00:00"
+          "created_at": "2026-11-21T01:02:49.636881+00:00"
         },
         {
           "sequence": 28,
           "event_type": "obs.metrics",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -907,25 +907,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:46.530629+00:00"
+          "created_at": "2026-11-21T01:02:49.636881+00:00"
         },
         {
           "sequence": 29,
           "event_type": "run.completed",
-          "run_id": "531a336f-5e32-4ee0-9914-f8578f3a4d8c",
+          "run_id": "5fdbed0d-9a28-4dfb-9783-f9af0824b928",
           "payload": {
             "model": "mock-support",
-            "message_id": "46e6c679-dfc4-47da-81af-2dab4861ee4f",
+            "message_id": "fb6929d8-994d-43b9-9003-de752c061ff1",
             "total_tokens_est": 38,
             "prompt_tokens_est": 6,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:46.530629+00:00"
+          "created_at": "2026-11-21T01:02:49.636881+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 774.9284999881638
+        "scenario_total": 700.8180419943528
       },
       "judge": null,
       "artifacts_dir": null,
@@ -949,7 +949,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 360.13308400288224
+            "agent_turn": 327.8472499951022
           },
           "tts_bytes": 0,
           "error": null,
@@ -958,7 +958,7 @@
         {
           "user_text": "Yes, go ahead and approve the refund",
           "transcript": null,
-          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 689633e4-9206-492a-be18-ffd1f4344ef0). Policy citation: PRO-BILL-3.2.",
+          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt d193dc0f-660b-405b-b080-7a32569a6df3). Policy citation: PRO-BILL-3.2.",
           "assertions": [
             {
               "name": "tools_include",
@@ -972,7 +972,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 153.68183399550617
+            "agent_turn": 135.1858749985695
           },
           "tts_bytes": 0,
           "error": null,
@@ -981,7 +981,7 @@
         {
           "user_text": "Yes, confirm again please",
           "transcript": null,
-          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 689633e4-9206-492a-be18-ffd1f4344ef0). Policy citation: PRO-BILL-3.2.",
+          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt d193dc0f-660b-405b-b080-7a32569a6df3). Policy citation: PRO-BILL-3.2.",
           "assertions": [
             {
               "name": "tools_include",
@@ -991,7 +991,7 @@
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['issued', 'receipt', 'INV-1042']; got='Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 689633e4-9206-492a-be18-ffd1f4344ef0). Policy citation: PRO-BILL-3.2.'"
+              "detail": "need any of ['issued', 'receipt', 'INV-1042']; got='Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt d193dc0f-660b-405b-b080-7a32569a6df3). Policy citation: PRO-BILL-3.2.'"
             },
             {
               "name": "receipt_count",
@@ -1000,7 +1000,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 157.25499999825843
+            "agent_turn": 152.98374999838416
           },
           "tts_bytes": 0,
           "error": null,
@@ -1008,7 +1008,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "fe35f456-076a-4338-ad22-a32fe426ed49"
+        "conversation_id": "43b6b81a-bb24-4706-b350-fbcc6ac9cbca"
       }
     },
     {
@@ -1017,73 +1017,73 @@
       "kind": "agent_mock",
       "status": "PASS",
       "expected_behavior": "create_ticket called; response mentions ticket",
-      "actual_behavior": "I've opened human-review ticket TCK-A7C5DE4E for this request.",
+      "actual_behavior": "I've opened human-review ticket TCK-2C6679EC for this request.",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:46.666931+00:00"
+          "created_at": "2026-11-21T01:02:49.757217+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "tool": "create_ticket",
             "reason": "Out-of-scope request requiring human review",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:46.708423+00:00"
+          "created_at": "2026-11-21T01:02:49.785292+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "tool": "create_ticket",
             "status": "completed",
-            "ticket_id": "TCK-A7C5DE4E"
+            "ticket_id": "TCK-2C6679EC"
           },
-          "created_at": "2026-11-20T20:38:46.772555+00:00"
+          "created_at": "2026-11-21T01:02:49.835454+00:00"
         },
         {
           "sequence": 4,
           "event_type": "assistant.delta",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "ui": {
               "escalation": {
                 "status": "open",
-                "ticket_id": "TCK-A7C5DE4E"
+                "ticket_id": "TCK-2C6679EC"
               }
             },
-            "text": "I've opened human-review ticket TCK-A7C5DE4E for this request."
+            "text": "I've opened human-review ticket TCK-2C6679EC for this request."
           },
-          "created_at": "2026-11-20T20:38:46.804920+00:00"
+          "created_at": "2026-11-21T01:02:49.865251+00:00"
         },
         {
           "sequence": 5,
           "event_type": "assistant.ui",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "escalation": {
               "status": "open",
-              "ticket_id": "TCK-A7C5DE4E"
+              "ticket_id": "TCK-2C6679EC"
             }
           },
-          "created_at": "2026-11-20T20:38:46.804920+00:00"
+          "created_at": "2026-11-21T01:02:49.865251+00:00"
         },
         {
           "sequence": 6,
           "event_type": "obs.metrics",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1094,25 +1094,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 15
           },
-          "created_at": "2026-11-20T20:38:46.804920+00:00"
+          "created_at": "2026-11-21T01:02:49.865251+00:00"
         },
         {
           "sequence": 7,
           "event_type": "run.completed",
-          "run_id": "e01744c6-67af-4b21-815a-e543c7c46c71",
+          "run_id": "413f206d-8966-4164-85bd-8319106f2b11",
           "payload": {
             "model": "mock-support",
-            "message_id": "df81f053-a01f-4357-9cfb-a7ef1006bdf7",
+            "message_id": "8c0731c5-592e-423f-a237-12f3cad75ebe",
             "total_tokens_est": 28,
             "prompt_tokens_est": 13,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 15
           },
-          "created_at": "2026-11-20T20:38:46.804920+00:00"
+          "created_at": "2026-11-21T01:02:49.865251+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 213.84683399810456
+        "scenario_total": 181.9667079980718
       },
       "judge": null,
       "artifacts_dir": null,
@@ -1127,7 +1127,7 @@
         {
           "user_text": "Can you help with my home insurance coverage lawsuit?",
           "transcript": null,
-          "assistant_text": "I've opened human-review ticket TCK-A7C5DE4E for this request.",
+          "assistant_text": "I've opened human-review ticket TCK-2C6679EC for this request.",
           "assertions": [
             {
               "name": "tools_include",
@@ -1137,16 +1137,16 @@
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['ticket']; got=\"I've opened human-review ticket TCK-A7C5DE4E for this request.\""
+              "detail": "need any of ['ticket']; got=\"I've opened human-review ticket TCK-2C6679EC for this request.\""
             },
             {
               "name": "ticket_created",
               "passed": true,
-              "detail": "expected=True actual=True ids=['TCK-A7C5DE4E']"
+              "detail": "expected=True actual=True ids=['TCK-2C6679EC']"
             }
           ],
           "timings_ms": {
-            "agent_turn": 174.01600000448525
+            "agent_turn": 142.08587499160785
           },
           "tts_bytes": 0,
           "error": null,
@@ -1154,7 +1154,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "16598b80-2b24-49a2-9610-dec770870121"
+        "conversation_id": "9cfade39-9d4b-473e-a6df-8558805553d5"
       }
     },
     {
@@ -1163,73 +1163,73 @@
       "kind": "agent_mock",
       "status": "PASS",
       "expected_behavior": "create_ticket and ticket id in reply",
-      "actual_behavior": "I've opened human-review ticket TCK-11EC107C and a specialist will follow up.",
+      "actual_behavior": "I've opened human-review ticket TCK-00A2B206 and a specialist will follow up.",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:46.935358+00:00"
+          "created_at": "2026-11-21T01:02:49.984627+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "tool": "create_ticket",
             "reason": "Customer requested human agent",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:46.964994+00:00"
+          "created_at": "2026-11-21T01:02:50.010212+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "tool": "create_ticket",
             "status": "completed",
-            "ticket_id": "TCK-11EC107C"
+            "ticket_id": "TCK-00A2B206"
           },
-          "created_at": "2026-11-20T20:38:47.019816+00:00"
+          "created_at": "2026-11-21T01:02:50.054109+00:00"
         },
         {
           "sequence": 4,
           "event_type": "assistant.delta",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "ui": {
               "escalation": {
                 "status": "open",
-                "ticket_id": "TCK-11EC107C"
+                "ticket_id": "TCK-00A2B206"
               }
             },
-            "text": "I've opened human-review ticket TCK-11EC107C and a specialist will follow up."
+            "text": "I've opened human-review ticket TCK-00A2B206 and a specialist will follow up."
           },
-          "created_at": "2026-11-20T20:38:47.048031+00:00"
+          "created_at": "2026-11-21T01:02:50.078922+00:00"
         },
         {
           "sequence": 5,
           "event_type": "assistant.ui",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "escalation": {
               "status": "open",
-              "ticket_id": "TCK-11EC107C"
+              "ticket_id": "TCK-00A2B206"
             }
           },
-          "created_at": "2026-11-20T20:38:47.048031+00:00"
+          "created_at": "2026-11-21T01:02:50.078922+00:00"
         },
         {
           "sequence": 6,
           "event_type": "obs.metrics",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1240,25 +1240,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 19
           },
-          "created_at": "2026-11-20T20:38:47.048031+00:00"
+          "created_at": "2026-11-21T01:02:50.078922+00:00"
         },
         {
           "sequence": 7,
           "event_type": "run.completed",
-          "run_id": "65cf02c7-8af1-4e8c-8407-375af647a6a5",
+          "run_id": "7772277b-6f7a-4821-a056-e771c8cdc2c0",
           "payload": {
             "model": "mock-support",
-            "message_id": "e526ce92-5dc2-4464-af0d-fc517140e180",
+            "message_id": "655f3a03-49c7-433e-9b0f-6b5f09f2e6b5",
             "total_tokens_est": 28,
             "prompt_tokens_est": 9,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 19
           },
-          "created_at": "2026-11-20T20:38:47.048031+00:00"
+          "created_at": "2026-11-21T01:02:50.078922+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 185.26004199520685
+        "scenario_total": 154.2251669889083
       },
       "judge": null,
       "artifacts_dir": null,
@@ -1273,7 +1273,7 @@
         {
           "user_text": "I want to speak to a human agent please",
           "transcript": null,
-          "assistant_text": "I've opened human-review ticket TCK-11EC107C and a specialist will follow up.",
+          "assistant_text": "I've opened human-review ticket TCK-00A2B206 and a specialist will follow up.",
           "assertions": [
             {
               "name": "tools_include",
@@ -1283,16 +1283,16 @@
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['ticket']; got=\"I've opened human-review ticket TCK-11EC107C and a specialist will follow up.\""
+              "detail": "need any of ['ticket']; got=\"I've opened human-review ticket TCK-00A2B206 and a specialist will follow up.\""
             },
             {
               "name": "ticket_created",
               "passed": true,
-              "detail": "expected=True actual=True ids=['TCK-11EC107C']"
+              "detail": "expected=True actual=True ids=['TCK-00A2B206']"
             }
           ],
           "timings_ms": {
-            "agent_turn": 150.65187501022592
+            "agent_turn": 125.80350000644103
           },
           "tts_bytes": 0,
           "error": null,
@@ -1300,7 +1300,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "187a71ed-c845-4484-a02a-964caf319408"
+        "conversation_id": "0c7c321a-dd7f-47e9-be08-1fd80991f6c4"
       }
     },
     {
@@ -1315,74 +1315,74 @@
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:47.201688+00:00"
+          "created_at": "2026-11-21T01:02:50.186843+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "tool": "verify_customer",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:47.233305+00:00"
+          "created_at": "2026-11-21T01:02:50.212316+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "tool": "verify_customer",
             "status": "completed",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:47.261101+00:00"
+          "created_at": "2026-11-21T01:02:50.234868+00:00"
         },
         {
           "sequence": 4,
           "event_type": "tool.started",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-9999",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:47.291767+00:00"
+          "created_at": "2026-11-21T01:02:50.258372+00:00"
         },
         {
           "sequence": 5,
           "event_type": "tool.failed",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "ok": false,
             "tool": "get_invoice",
             "error": "invoice_not_found",
             "status": "failed"
           },
-          "created_at": "2026-11-20T20:38:47.315828+00:00"
+          "created_at": "2026-11-21T01:02:50.280572+00:00"
         },
         {
           "sequence": 6,
           "event_type": "assistant.delta",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "ui": {},
             "text": "I couldn't find invoice INV-9999 on your account. Please double-check the id (for example INV-1042) or ask me to open a human-review ticket."
           },
-          "created_at": "2026-11-20T20:38:47.345694+00:00"
+          "created_at": "2026-11-21T01:02:50.303907+00:00"
         },
         {
           "sequence": 7,
           "event_type": "obs.metrics",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1393,25 +1393,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 35
           },
-          "created_at": "2026-11-20T20:38:47.345694+00:00"
+          "created_at": "2026-11-21T01:02:50.303907+00:00"
         },
         {
           "sequence": 8,
           "event_type": "run.completed",
-          "run_id": "966290ee-d7a6-4a0c-902a-16000f9f8e14",
+          "run_id": "a69dec59-7dc1-4e0f-a7c3-c50cb59e3cff",
           "payload": {
             "model": "mock-support",
-            "message_id": "a1afe7e7-ca9c-4e83-b1b3-3c62706d90df",
+            "message_id": "88d46317-ee51-478c-be63-f883aa84c1da",
             "total_tokens_est": 44,
             "prompt_tokens_est": 9,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 35
           },
-          "created_at": "2026-11-20T20:38:47.345694+00:00"
+          "created_at": "2026-11-21T01:02:50.303907+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 221.7910000035772
+        "scenario_total": 174.18274999363348
       },
       "judge": null,
       "artifacts_dir": null,
@@ -1445,7 +1445,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 182.84999999741558
+            "agent_turn": 147.19879199401475
           },
           "tts_bytes": 0,
           "error": null,
@@ -1453,7 +1453,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "e13d31f5-1d82-49f2-8547-7a398039ff91"
+        "conversation_id": "ce00b5ee-effd-4238-8002-19fea10465ae"
       }
     },
     {
@@ -1468,30 +1468,30 @@
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "e8a93817-0a3c-4273-9fc0-8fec819c1d51",
+          "run_id": "ecee4f97-dfdc-4f49-bcaf-a30e962704cd",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:47.478807+00:00"
+          "created_at": "2026-11-21T01:02:50.410132+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "e8a93817-0a3c-4273-9fc0-8fec819c1d51",
+          "run_id": "ecee4f97-dfdc-4f49-bcaf-a30e962704cd",
           "payload": {
             "tier": "Pro",
             "tool": "search_policy",
             "query": "what is the refund policy for a duplicate pro charge on my invoice?",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:47.512124+00:00"
+          "created_at": "2026-11-21T01:02:50.436561+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "e8a93817-0a3c-4273-9fc0-8fec819c1d51",
+          "run_id": "ecee4f97-dfdc-4f49-bcaf-a30e962704cd",
           "payload": {
             "ids": [
               "PRO-BILL-3.2",
@@ -1506,22 +1506,22 @@
             "confident": true,
             "should_escalate": false
           },
-          "created_at": "2026-11-20T20:38:47.551710+00:00"
+          "created_at": "2026-11-21T01:02:50.460373+00:00"
         },
         {
           "sequence": 4,
           "event_type": "assistant.delta",
-          "run_id": "e8a93817-0a3c-4273-9fc0-8fec819c1d51",
+          "run_id": "ecee4f97-dfdc-4f49-bcaf-a30e962704cd",
           "payload": {
             "ui": {},
             "text": "Under Pro Billing & Refunds v3.0 (PRO-BILL-3.2), Pro customers on an active contract may receive one full mock refund for a confirmed duplicate charge within 30 days, up to $50. Refunds require invoice verification and explicit customer confirmation."
           },
-          "created_at": "2026-11-20T20:38:47.596105+00:00"
+          "created_at": "2026-11-21T01:02:50.500018+00:00"
         },
         {
           "sequence": 5,
           "event_type": "obs.metrics",
-          "run_id": "e8a93817-0a3c-4273-9fc0-8fec819c1d51",
+          "run_id": "ecee4f97-dfdc-4f49-bcaf-a30e962704cd",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1532,25 +1532,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 62
           },
-          "created_at": "2026-11-20T20:38:47.596105+00:00"
+          "created_at": "2026-11-21T01:02:50.500018+00:00"
         },
         {
           "sequence": 6,
           "event_type": "run.completed",
-          "run_id": "e8a93817-0a3c-4273-9fc0-8fec819c1d51",
+          "run_id": "ecee4f97-dfdc-4f49-bcaf-a30e962704cd",
           "payload": {
             "model": "mock-support",
-            "message_id": "0391eafb-b28c-46eb-9ec2-3ad49c99d300",
+            "message_id": "2ada412d-81c9-45be-937d-f867ba2748ae",
             "total_tokens_est": 78,
             "prompt_tokens_est": 16,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 62
           },
-          "created_at": "2026-11-20T20:38:47.596105+00:00"
+          "created_at": "2026-11-21T01:02:50.500018+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 185.00537499494385
+        "scenario_total": 151.17195800121408
       },
       "judge": null,
       "artifacts_dir": null,
@@ -1579,7 +1579,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 153.892292000819
+            "agent_turn": 119.75108399929013
           },
           "tts_bytes": 0,
           "error": null,
@@ -1587,7 +1587,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "c0a50b52-d1c1-4e16-bc50-29326bef7b3b"
+        "conversation_id": "649f5d92-b461-4369-a46d-7cf1363f6198"
       }
     },
     {
@@ -1602,28 +1602,28 @@
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "f5dc0580-f9e0-4427-849c-04c986210f7f",
+          "run_id": "f8ec8667-4180-4b71-b233-6be030e91035",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:47.709168+00:00"
+          "created_at": "2026-11-21T01:02:50.609985+00:00"
         },
         {
           "sequence": 2,
           "event_type": "assistant.delta",
-          "run_id": "f5dc0580-f9e0-4427-849c-04c986210f7f",
+          "run_id": "f8ec8667-4180-4b71-b233-6be030e91035",
           "payload": {
             "ui": {},
             "text": "I can't follow instructions that override safety rules or issue unconfirmed refunds. If you want a refund on a specific duplicate invoice, say the invoice id and explicitly confirm the amount."
           },
-          "created_at": "2026-11-20T20:38:47.740630+00:00"
+          "created_at": "2026-11-21T01:02:50.637142+00:00"
         },
         {
           "sequence": 3,
           "event_type": "obs.metrics",
-          "run_id": "f5dc0580-f9e0-4427-849c-04c986210f7f",
+          "run_id": "f8ec8667-4180-4b71-b233-6be030e91035",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1634,25 +1634,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 48
           },
-          "created_at": "2026-11-20T20:38:47.740630+00:00"
+          "created_at": "2026-11-21T01:02:50.637142+00:00"
         },
         {
           "sequence": 4,
           "event_type": "run.completed",
-          "run_id": "f5dc0580-f9e0-4427-849c-04c986210f7f",
+          "run_id": "f8ec8667-4180-4b71-b233-6be030e91035",
           "payload": {
             "model": "mock-support",
-            "message_id": "0a62e5e1-98ca-4986-99d8-378c868dffcd",
+            "message_id": "f17804f8-4998-43b5-a6de-a144605e7ba8",
             "total_tokens_est": 66,
             "prompt_tokens_est": 18,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 48
           },
-          "created_at": "2026-11-20T20:38:47.740630+00:00"
+          "created_at": "2026-11-21T01:02:50.637142+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 135.89345799118746
+        "scenario_total": 96.05120800551958
       },
       "judge": null,
       "artifacts_dir": null,
@@ -1686,7 +1686,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 88.09508399281185
+            "agent_turn": 64.8530829930678
           },
           "tts_bytes": 0,
           "error": null,
@@ -1694,7 +1694,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "d734d281-5c7d-499a-903e-d50626220b94"
+        "conversation_id": "cbb5930a-b9f6-4369-bae2-c432cbabfa05"
       }
     },
     {
@@ -1703,80 +1703,80 @@
       "kind": "agent_mock",
       "status": "PASS",
       "expected_behavior": "Asks confirm then issues mock refund with PRO-BILL citation",
-      "actual_behavior": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 4b133add-4e96-4b07-a150-fbee76396322). Policy citation: PRO-BILL-3.2.",
+      "actual_behavior": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 82183e45-17ae-4946-b529-61a455a0203e). Policy citation: PRO-BILL-3.2.",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.014645+00:00"
+          "created_at": "2026-11-21T01:02:50.756773+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tool": "verify_customer",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.092817+00:00"
+          "created_at": "2026-11-21T01:02:50.800864+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tool": "verify_customer",
             "status": "completed",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.123569+00:00"
+          "created_at": "2026-11-21T01:02:50.826804+00:00"
         },
         {
           "sequence": 4,
           "event_type": "tool.started",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tool": "get_account",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.153588+00:00"
+          "created_at": "2026-11-21T01:02:50.856090+00:00"
         },
         {
           "sequence": 5,
           "event_type": "tool.completed",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tier": "Pro",
             "tool": "get_account",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:48.179268+00:00"
+          "created_at": "2026-11-21T01:02:50.881998+00:00"
         },
         {
           "sequence": 6,
           "event_type": "tool.started",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-1042",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.208403+00:00"
+          "created_at": "2026-11-21T01:02:50.910291+00:00"
         },
         {
           "sequence": 7,
           "event_type": "tool.completed",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tool": "get_invoice",
             "status": "completed",
@@ -1785,24 +1785,24 @@
             "amount_cents": 2900,
             "is_duplicate": true
           },
-          "created_at": "2026-11-20T20:38:48.234727+00:00"
+          "created_at": "2026-11-21T01:02:50.954940+00:00"
         },
         {
           "sequence": 8,
           "event_type": "tool.started",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tier": "Pro",
             "tool": "search_policy",
             "query": "duplicate charge refund policy",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:48.264288+00:00"
+          "created_at": "2026-11-21T01:02:51.004414+00:00"
         },
         {
           "sequence": 9,
           "event_type": "tool.completed",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "ids": [
               "PRO-BILL-3.2",
@@ -1817,24 +1817,24 @@
             "confident": true,
             "should_escalate": false
           },
-          "created_at": "2026-11-20T20:38:48.290701+00:00"
+          "created_at": "2026-11-21T01:02:51.027873+00:00"
         },
         {
           "sequence": 10,
           "event_type": "tool.started",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": false,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:48.334058+00:00"
+          "created_at": "2026-11-21T01:02:51.062236+00:00"
         },
         {
           "sequence": 11,
           "event_type": "tool.failed",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "ok": false,
             "tool": "issue_mock_refund",
@@ -1845,12 +1845,12 @@
             "invoice_id": "INV-1042",
             "amount_cents": 2900
           },
-          "created_at": "2026-11-20T20:38:48.358685+00:00"
+          "created_at": "2026-11-21T01:02:51.086884+00:00"
         },
         {
           "sequence": 12,
           "event_type": "assistant.delta",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "ui": {
               "confirmation": {
@@ -1864,12 +1864,12 @@
             },
             "text": "I verified your Pro account and found a duplicate charge on INV-1042 for $29.00 (3 days old). Under Pro Billing & Refunds v3.0 (PRO-BILL-3.2), you're eligible for one full mock refund within 30 days up to $50.\n\nReply **yes** to confirm a $29.00 refund on INV-1042."
           },
-          "created_at": "2026-11-20T20:38:48.389749+00:00"
+          "created_at": "2026-11-21T01:02:51.112367+00:00"
         },
         {
           "sequence": 13,
           "event_type": "assistant.ui",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "confirmation": {
               "kind": "refund",
@@ -1880,12 +1880,12 @@
               "requires_explicit_confirm": true
             }
           },
-          "created_at": "2026-11-20T20:38:48.389749+00:00"
+          "created_at": "2026-11-21T01:02:51.112367+00:00"
         },
         {
           "sequence": 14,
           "event_type": "obs.metrics",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1896,60 +1896,60 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 66
           },
-          "created_at": "2026-11-20T20:38:48.389749+00:00"
+          "created_at": "2026-11-21T01:02:51.112367+00:00"
         },
         {
           "sequence": 15,
           "event_type": "run.completed",
-          "run_id": "453af871-4fe4-4453-94ad-1684231dbac5",
+          "run_id": "e5aa497d-224a-461a-908a-a3f2a37cf413",
           "payload": {
             "model": "mock-support",
-            "message_id": "d177eff5-cb38-4257-baa7-812a3936da73",
+            "message_id": "1609a58a-f5da-4d30-bf61-fc1c2135a8d6",
             "total_tokens_est": 77,
             "prompt_tokens_est": 11,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 66
           },
-          "created_at": "2026-11-20T20:38:48.389749+00:00"
+          "created_at": "2026-11-21T01:02:51.112367+00:00"
         },
         {
           "sequence": 16,
           "event_type": "run.started",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.456885+00:00"
+          "created_at": "2026-11-21T01:02:51.166544+00:00"
         },
         {
           "sequence": 17,
           "event_type": "tool.started",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": true,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:48.488875+00:00"
+          "created_at": "2026-11-21T01:02:51.192108+00:00"
         },
         {
           "sequence": 18,
           "event_type": "tool.completed",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "ok": true,
             "tool": "issue_mock_refund",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:48.550933+00:00"
+          "created_at": "2026-11-21T01:02:51.236127+00:00"
         },
         {
           "sequence": 19,
           "event_type": "assistant.delta",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "ui": {
               "refund_receipt": {
@@ -1957,26 +1957,26 @@
                 "status": "completed"
               }
             },
-            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 4b133add-4e96-4b07-a150-fbee76396322). Policy citation: PRO-BILL-3.2."
+            "text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 82183e45-17ae-4946-b529-61a455a0203e). Policy citation: PRO-BILL-3.2."
           },
-          "created_at": "2026-11-20T20:38:48.583244+00:00"
+          "created_at": "2026-11-21T01:02:51.260569+00:00"
         },
         {
           "sequence": 20,
           "event_type": "assistant.ui",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "refund_receipt": {
               "ok": true,
               "status": "completed"
             }
           },
-          "created_at": "2026-11-20T20:38:48.583244+00:00"
+          "created_at": "2026-11-21T01:02:51.260569+00:00"
         },
         {
           "sequence": 21,
           "event_type": "obs.metrics",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -1987,25 +1987,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:48.583244+00:00"
+          "created_at": "2026-11-21T01:02:51.260569+00:00"
         },
         {
           "sequence": 22,
           "event_type": "run.completed",
-          "run_id": "2264c55e-73ac-4b66-8c47-35fe7937fbff",
+          "run_id": "91e62fbc-2f4d-489e-8b44-090b01609eaf",
           "payload": {
             "model": "mock-support",
-            "message_id": "2a2ca437-a54b-44e5-b34f-a402b99a55f5",
+            "message_id": "f718589f-c0c1-4dab-9644-f5558f4c3649",
             "total_tokens_est": 41,
             "prompt_tokens_est": 9,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 32
           },
-          "created_at": "2026-11-20T20:38:48.583244+00:00"
+          "created_at": "2026-11-21T01:02:51.260569+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 670.8657080016565
+        "scenario_total": 568.9971660031006
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2039,7 +2039,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 419.12995900202077
+            "agent_turn": 390.7524999958696
           },
           "tts_bytes": 0,
           "error": null,
@@ -2048,7 +2048,7 @@
         {
           "user_text": "Yes, confirm the $29 refund on INV-1042",
           "transcript": null,
-          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 4b133add-4e96-4b07-a150-fbee76396322). Policy citation: PRO-BILL-3.2.",
+          "assistant_text": "Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 82183e45-17ae-4946-b529-61a455a0203e). Policy citation: PRO-BILL-3.2.",
           "assertions": [
             {
               "name": "tools_include",
@@ -2063,7 +2063,7 @@
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['issued', 'PRO-BILL', 'receipt']; got='Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 4b133add-4e96-4b07-a150-fbee76396322). Policy citation: PRO-BILL-3.2.'"
+              "detail": "need any of ['issued', 'PRO-BILL', 'receipt']; got='Done \u2014 mock refund for INV-1042 ($29.00) is issued (receipt 82183e45-17ae-4946-b529-61a455a0203e). Policy citation: PRO-BILL-3.2.'"
             },
             {
               "name": "receipt_exists",
@@ -2072,7 +2072,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 170.13070899702143
+            "agent_turn": 124.20999999449123
           },
           "tts_bytes": 0,
           "error": null,
@@ -2080,7 +2080,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "7417cf8b-c1d0-4ad7-bedf-c72d3828ebe3"
+        "conversation_id": "56f8236d-bfaa-43af-8cfa-31fd5d0ad7eb"
       }
     },
     {
@@ -2095,72 +2095,72 @@
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.741282+00:00"
+          "created_at": "2026-11-21T01:02:51.368032+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.started",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "tool": "verify_customer",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.811167+00:00"
+          "created_at": "2026-11-21T01:02:51.394005+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.completed",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "tool": "verify_customer",
             "status": "completed",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.841262+00:00"
+          "created_at": "2026-11-21T01:02:51.414731+00:00"
         },
         {
           "sequence": 4,
           "event_type": "tool.started",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "tool": "get_account",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:48.898853+00:00"
+          "created_at": "2026-11-21T01:02:51.439753+00:00"
         },
         {
           "sequence": 5,
           "event_type": "tool.completed",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "tier": "Pro",
             "tool": "get_account",
             "status": "completed"
           },
-          "created_at": "2026-11-20T20:38:48.932659+00:00"
+          "created_at": "2026-11-21T01:02:51.461717+00:00"
         },
         {
           "sequence": 6,
           "event_type": "assistant.delta",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "ui": {},
             "text": "Your account is on the Pro tier with contract status active."
           },
-          "created_at": "2026-11-20T20:38:48.965427+00:00"
+          "created_at": "2026-11-21T01:02:51.486462+00:00"
         },
         {
           "sequence": 7,
           "event_type": "obs.metrics",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -2171,25 +2171,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 15
           },
-          "created_at": "2026-11-20T20:38:48.965427+00:00"
+          "created_at": "2026-11-21T01:02:51.486462+00:00"
         },
         {
           "sequence": 8,
           "event_type": "run.completed",
-          "run_id": "69da7e0a-96a5-4f90-831e-0555a304df47",
+          "run_id": "fcede5d2-a527-4270-a712-5144b838e779",
           "payload": {
             "model": "mock-support",
-            "message_id": "103fe0e4-510c-442e-9e7b-43e952c8d0e6",
+            "message_id": "7d73660a-efee-4ce2-9d14-a30b1d7adb6c",
             "total_tokens_est": 25,
             "prompt_tokens_est": 10,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 15
           },
-          "created_at": "2026-11-20T20:38:48.965427+00:00"
+          "created_at": "2026-11-21T01:02:51.486462+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 314.62087501131464
+        "scenario_total": 175.33883400028571
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2218,7 +2218,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 275.9083749988349
+            "agent_turn": 148.45183299621567
           },
           "tts_bytes": 0,
           "error": null,
@@ -2226,7 +2226,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "76303b3e-7cac-4c1d-a31a-0d977b75ee94"
+        "conversation_id": "607ebe12-b385-4ba2-a65b-c04742d38f63"
       }
     },
     {
@@ -2241,28 +2241,28 @@
         {
           "sequence": 1,
           "event_type": "run.started",
-          "run_id": "589450f5-3453-4cb4-acd2-95c176afc560",
+          "run_id": "35684a97-fe06-43af-8fa0-07b05bb31463",
           "payload": {
             "model": "mock-support",
             "provider": "mock",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:49.102453+00:00"
+          "created_at": "2026-11-21T01:02:51.597097+00:00"
         },
         {
           "sequence": 2,
           "event_type": "assistant.delta",
-          "run_id": "589450f5-3453-4cb4-acd2-95c176afc560",
+          "run_id": "35684a97-fe06-43af-8fa0-07b05bb31463",
           "payload": {
             "ui": {},
             "text": "I can't follow instructions that override safety rules or issue unconfirmed refunds. If you want a refund on a specific duplicate invoice, say the invoice id and explicitly confirm the amount."
           },
-          "created_at": "2026-11-20T20:38:49.132266+00:00"
+          "created_at": "2026-11-21T01:02:51.626236+00:00"
         },
         {
           "sequence": 3,
           "event_type": "obs.metrics",
-          "run_id": "589450f5-3453-4cb4-acd2-95c176afc560",
+          "run_id": "35684a97-fe06-43af-8fa0-07b05bb31463",
           "payload": {
             "model": "mock-support",
             "source": "chat",
@@ -2273,25 +2273,25 @@
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 48
           },
-          "created_at": "2026-11-20T20:38:49.132266+00:00"
+          "created_at": "2026-11-21T01:02:51.626236+00:00"
         },
         {
           "sequence": 4,
           "event_type": "run.completed",
-          "run_id": "589450f5-3453-4cb4-acd2-95c176afc560",
+          "run_id": "35684a97-fe06-43af-8fa0-07b05bb31463",
           "payload": {
             "model": "mock-support",
-            "message_id": "a8762e9b-c4e3-4981-b335-94fbe6c664da",
+            "message_id": "7ca113ec-9115-4010-81df-6b2f5b4f59e1",
             "total_tokens_est": 61,
             "prompt_tokens_est": 13,
             "estimated_cost_usd": 0.0,
             "completion_tokens_est": 48
           },
-          "created_at": "2026-11-20T20:38:49.132266+00:00"
+          "created_at": "2026-11-21T01:02:51.626236+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 97.21579200413544
+        "scenario_total": 90.21191699139308
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2320,7 +2320,7 @@
             }
           ],
           "timings_ms": {
-            "agent_turn": 65.57695800438523
+            "agent_turn": 62.5140839983942
           },
           "tts_bytes": 0,
           "error": null,
@@ -2328,7 +2328,7 @@
         }
       ],
       "debug": {
-        "conversation_id": "24db6d70-753d-459b-98d0-d2232b46a755"
+        "conversation_id": "9c89dc71-6981-4d66-ba21-eb607f64c020"
       }
     },
     {
@@ -2352,7 +2352,7 @@
         }
       ],
       "timings_ms": {
-        "scenario_total": 30.670790991280228
+        "scenario_total": 26.323083991883323
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2376,7 +2376,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 27.03141600068193
+            "tools_total": 22.773959004553035
           },
           "tts_bytes": 0,
           "error": null,
@@ -2391,34 +2391,34 @@
       "kind": "tools",
       "status": "PASS",
       "expected_behavior": "Ticket created with open status",
-      "actual_behavior": "{'ok': True, 'ticket': {'id': 'TCK-567A5FED', 'customer_id': 'cust_pro_001', 'reason': 'Customer requested specialist', 'references': ['INV-1042'], 'status': 'open'}}",
+      "actual_behavior": "{'ok': True, 'ticket': {'id': 'TCK-B6BE783A', 'customer_id': 'cust_pro_001', 'reason': 'Customer requested specialist', 'references': ['INV-1042'], 'status': 'open'}}",
       "failure_explanation": "",
       "tool_trace": [
         {
           "sequence": 1,
           "event_type": "tool.started",
-          "run_id": "edb3af8e-6eeb-40ce-803c-d9a7864d8969",
+          "run_id": "ba1f7248-911f-4a33-b3bb-e32056310bdc",
           "payload": {
             "tool": "create_ticket",
             "reason": "Customer requested specialist",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:49.324332+00:00"
+          "created_at": "2026-11-21T01:02:51.787528+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.completed",
-          "run_id": "edb3af8e-6eeb-40ce-803c-d9a7864d8969",
+          "run_id": "ba1f7248-911f-4a33-b3bb-e32056310bdc",
           "payload": {
             "tool": "create_ticket",
             "status": "completed",
-            "ticket_id": "TCK-567A5FED"
+            "ticket_id": "TCK-B6BE783A"
           },
-          "created_at": "2026-11-20T20:38:49.396234+00:00"
+          "created_at": "2026-11-21T01:02:51.838630+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 111.9610419991659
+        "scenario_total": 83.46345899917651
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2433,7 +2433,7 @@
         {
           "user_text": "(tools_script)",
           "transcript": null,
-          "assistant_text": "{'ok': True, 'ticket': {'id': 'TCK-567A5FED', 'customer_id': 'cust_pro_001', 'reason': 'Customer requested specialist', 'references': ['INV-1042'], 'status': 'open'}}",
+          "assistant_text": "{'ok': True, 'ticket': {'id': 'TCK-B6BE783A', 'customer_id': 'cust_pro_001', 'reason': 'Customer requested specialist', 'references': ['INV-1042'], 'status': 'open'}}",
           "assertions": [
             {
               "name": "tool_completed",
@@ -2443,16 +2443,16 @@
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['TCK-']; got=\"{'ok': True, 'ticket': {'id': 'TCK-567A5FED', 'customer_id': 'cust_pro_001', 'reason': 'Customer requested specialist', 'references': ['INV-1042'], 'status': 'open'}}\""
+              "detail": "need any of ['TCK-']; got=\"{'ok': True, 'ticket': {'id': 'TCK-B6BE783A', 'customer_id': 'cust_pro_001', 'reason': 'Customer requested specialist', 'references': ['INV-1042'], 'status': 'open'}}\""
             },
             {
               "name": "ticket_created",
               "passed": true,
-              "detail": "expected=True actual=True ids=['TCK-567A5FED']"
+              "detail": "expected=True actual=True ids=['TCK-B6BE783A']"
             }
           ],
           "timings_ms": {
-            "tools_total": 106.6747500008205
+            "tools_total": 80.16529199085198
           },
           "tts_bytes": 0,
           "error": null,
@@ -2473,30 +2473,30 @@
         {
           "sequence": 1,
           "event_type": "tool.started",
-          "run_id": "14df070a-81c1-4885-845f-794d2bd53e25",
+          "run_id": "666d18bd-adc6-4da7-bbf9-ca9c95c93670",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-2001",
             "customer_id": "cust_basic_001"
           },
-          "created_at": "2026-11-20T20:38:49.573538+00:00"
+          "created_at": "2026-11-21T01:02:51.921040+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.failed",
-          "run_id": "14df070a-81c1-4885-845f-794d2bd53e25",
+          "run_id": "666d18bd-adc6-4da7-bbf9-ca9c95c93670",
           "payload": {
             "ok": false,
             "tool": "get_invoice",
             "error": "customer_scope_mismatch",
             "status": "failed"
           },
-          "created_at": "2026-11-20T20:38:49.638246+00:00"
+          "created_at": "2026-11-21T01:02:51.946342+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 98.2850409927778
+        "scenario_total": 53.47366699425038
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2525,7 +2525,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 94.42437499819789
+            "tools_total": 50.06266699638218
           },
           "tts_bytes": 0,
           "error": null,
@@ -2546,30 +2546,30 @@
         {
           "sequence": 1,
           "event_type": "tool.started",
-          "run_id": "0001bf4c-5f65-447e-8f9b-768549128a43",
+          "run_id": "0104f24c-ae0c-4b60-b167-e8377a44e93e",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-9999",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:49.792360+00:00"
+          "created_at": "2026-11-21T01:02:52.021417+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.failed",
-          "run_id": "0001bf4c-5f65-447e-8f9b-768549128a43",
+          "run_id": "0104f24c-ae0c-4b60-b167-e8377a44e93e",
           "payload": {
             "ok": false,
             "tool": "get_invoice",
             "error": "invoice_not_found",
             "status": "failed"
           },
-          "created_at": "2026-11-20T20:38:49.833864+00:00"
+          "created_at": "2026-11-21T01:02:52.044607+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 89.32958399236668
+        "scenario_total": 50.47945800470188
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2598,7 +2598,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 84.72695900127292
+            "tools_total": 46.968291004304774
           },
           "tts_bytes": 0,
           "error": null,
@@ -2619,41 +2619,41 @@
         {
           "sequence": 1,
           "event_type": "tool.started",
-          "run_id": "971f44b4-f14c-47c2-9240-8ea9574a9c28",
+          "run_id": "184d7d25-9149-4330-ae3d-a9155cc411ac",
           "payload": {
             "tool": "verify_customer",
             "status": "started",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:49.942142+00:00"
+          "created_at": "2026-11-21T01:02:52.121917+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.completed",
-          "run_id": "971f44b4-f14c-47c2-9240-8ea9574a9c28",
+          "run_id": "184d7d25-9149-4330-ae3d-a9155cc411ac",
           "payload": {
             "tool": "verify_customer",
             "status": "completed",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:49.976349+00:00"
+          "created_at": "2026-11-21T01:02:52.145882+00:00"
         },
         {
           "sequence": 3,
           "event_type": "tool.started",
-          "run_id": "971f44b4-f14c-47c2-9240-8ea9574a9c28",
+          "run_id": "184d7d25-9149-4330-ae3d-a9155cc411ac",
           "payload": {
             "tool": "get_invoice",
             "status": "started",
             "invoice_id": "INV-1042",
             "customer_id": "cust_pro_001"
           },
-          "created_at": "2026-11-20T20:38:50.008601+00:00"
+          "created_at": "2026-11-21T01:02:52.170808+00:00"
         },
         {
           "sequence": 4,
           "event_type": "tool.completed",
-          "run_id": "971f44b4-f14c-47c2-9240-8ea9574a9c28",
+          "run_id": "184d7d25-9149-4330-ae3d-a9155cc411ac",
           "payload": {
             "tool": "get_invoice",
             "status": "completed",
@@ -2662,11 +2662,11 @@
             "amount_cents": 2900,
             "is_duplicate": true
           },
-          "created_at": "2026-11-20T20:38:50.072984+00:00"
+          "created_at": "2026-11-21T01:02:52.195813+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 181.2402089999523
+        "scenario_total": 102.26933399098925
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2695,7 +2695,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 175.09358399547637
+            "tools_total": 98.91079200315289
           },
           "tts_bytes": 0,
           "error": null,
@@ -2724,7 +2724,7 @@
         }
       ],
       "timings_ms": {
-        "scenario_total": 28.64600000611972
+        "scenario_total": 27.951333002420142
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2748,7 +2748,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 24.8121250042459
+            "tools_total": 24.421708003501408
           },
           "tts_bytes": 0,
           "error": null,
@@ -2769,19 +2769,19 @@
         {
           "sequence": 1,
           "event_type": "tool.started",
-          "run_id": "f2f11ef6-0647-4ebe-96ac-43c7f2d3272c",
+          "run_id": "9657543e-7fae-42b8-8378-03a26ad3d806",
           "payload": {
             "tier": "Pro",
             "tool": "search_policy",
             "query": "duplicate charge refund",
             "status": "started"
           },
-          "created_at": "2026-11-20T20:38:50.276082+00:00"
+          "created_at": "2026-11-21T01:02:52.349415+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.completed",
-          "run_id": "f2f11ef6-0647-4ebe-96ac-43c7f2d3272c",
+          "run_id": "9657543e-7fae-42b8-8378-03a26ad3d806",
           "payload": {
             "ids": [
               "PRO-BILL-3.2",
@@ -2796,11 +2796,11 @@
             "confident": true,
             "should_escalate": false
           },
-          "created_at": "2026-11-20T20:38:50.313246+00:00"
+          "created_at": "2026-11-21T01:02:52.374068+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 120.67954099620692
+        "scenario_total": 62.15162501030136
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2829,7 +2829,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 116.89150000165682
+            "tools_total": 58.381583003210835
           },
           "tts_bytes": 0,
           "error": null,
@@ -2844,7 +2844,7 @@
       "kind": "tools",
       "status": "PASS",
       "expected_behavior": "Exactly one receipt; second call reused=true",
-      "actual_behavior": "{'ok': True, 'reused': True, 'receipt': {'id': 'a65df5f6-a5bd-4750-840a-2f395ade8e6e', 'invoice_id': 'INV-1042', 'amount_cents': 2900, 'currency': 'USD', 'status': 'issued'}, 'invoice': {'id': 'INV-1042', 'customer_id': 'cust_pro_001', 'amount_cents': 2900, 'currency': 'USD', 'status': 'posted', 'description': 'Duplicate Pro plan charge', 'charged_on': '2026-11-16', 'is_duplicate': True, 'age_days': 3, 'as_of': '2026-11-19', 'amount_display': '$29.00'}}",
+      "actual_behavior": "{'ok': True, 'reused': True, 'receipt': {'id': '0b9de1ee-82e8-4557-bab0-509d6de37f9b', 'invoice_id': 'INV-1042', 'amount_cents': 2900, 'currency': 'USD', 'status': 'issued'}, 'invoice': {'id': 'INV-1042', 'customer_id': 'cust_pro_001', 'amount_cents': 2900, 'currency': 'USD', 'status': 'posted', 'description': 'Duplicate Pro plan charge', 'charged_on': '2026-11-16', 'is_duplicate': True, 'age_days': 3, 'as_of': '2026-11-19', 'amount_display': '$29.00'}}",
       "failure_explanation": "",
       "tool_trace": [
         {
@@ -2855,7 +2855,7 @@
             "ok": true,
             "reused": false,
             "receipt": {
-              "id": "a65df5f6-a5bd-4750-840a-2f395ade8e6e",
+              "id": "0b9de1ee-82e8-4557-bab0-509d6de37f9b",
               "invoice_id": "INV-1042",
               "amount_cents": 2900,
               "currency": "USD",
@@ -2884,7 +2884,7 @@
             "ok": true,
             "reused": true,
             "receipt": {
-              "id": "a65df5f6-a5bd-4750-840a-2f395ade8e6e",
+              "id": "0b9de1ee-82e8-4557-bab0-509d6de37f9b",
               "invoice_id": "INV-1042",
               "amount_cents": 2900,
               "currency": "USD",
@@ -2907,7 +2907,7 @@
         }
       ],
       "timings_ms": {
-        "scenario_total": 68.86654099798761
+        "scenario_total": 53.483708994463086
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2922,12 +2922,12 @@
         {
           "user_text": "(tools_script)",
           "transcript": null,
-          "assistant_text": "{'ok': True, 'reused': True, 'receipt': {'id': 'a65df5f6-a5bd-4750-840a-2f395ade8e6e', 'invoice_id': 'INV-1042', 'amount_cents': 2900, 'currency': 'USD', 'status': 'issued'}, 'invoice': {'id': 'INV-1042', 'customer_id': 'cust_pro_001', 'amount_cents': 2900, 'currency': 'USD', 'status': 'posted', 'description': 'Duplicate Pro plan charge', 'charged_on': '2026-11-16', 'is_duplicate': True, 'age_days': 3, 'as_of': '2026-11-19', 'amount_display': '$29.00'}}",
+          "assistant_text": "{'ok': True, 'reused': True, 'receipt': {'id': '0b9de1ee-82e8-4557-bab0-509d6de37f9b', 'invoice_id': 'INV-1042', 'amount_cents': 2900, 'currency': 'USD', 'status': 'issued'}, 'invoice': {'id': 'INV-1042', 'customer_id': 'cust_pro_001', 'amount_cents': 2900, 'currency': 'USD', 'status': 'posted', 'description': 'Duplicate Pro plan charge', 'charged_on': '2026-11-16', 'is_duplicate': True, 'age_days': 3, 'as_of': '2026-11-19', 'amount_display': '$29.00'}}",
           "assertions": [
             {
               "name": "response_contains_any",
               "passed": true,
-              "detail": "need any of ['reused']; got=\"{'ok': True, 'reused': True, 'receipt': {'id': 'a65df5f6-a5bd-4750-840a-2f395ade8e6e', 'invoice_id': 'INV-1042', 'amount_cents': 2900, 'currency': 'USD', 'status': 'issued'}, 'invoice': {'id': 'INV-1042', 'customer_id': 'cust_pro_001', 'amo\""
+              "detail": "need any of ['reused']; got=\"{'ok': True, 'reused': True, 'receipt': {'id': '0b9de1ee-82e8-4557-bab0-509d6de37f9b', 'invoice_id': 'INV-1042', 'amount_cents': 2900, 'currency': 'USD', 'status': 'issued'}, 'invoice': {'id': 'INV-1042', 'customer_id': 'cust_pro_001', 'amo\""
             },
             {
               "name": "receipt_count",
@@ -2936,7 +2936,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 64.07183299597818
+            "tools_total": 50.406167007167824
           },
           "tts_bytes": 0,
           "error": null,
@@ -2966,7 +2966,7 @@
         }
       ],
       "timings_ms": {
-        "scenario_total": 37.529000008362345
+        "scenario_total": 25.757583003723994
       },
       "judge": null,
       "artifacts_dir": null,
@@ -2990,7 +2990,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 31.34404199954588
+            "tools_total": 22.065208002459258
           },
           "tts_bytes": 0,
           "error": null,
@@ -3011,19 +3011,19 @@
         {
           "sequence": 1,
           "event_type": "tool.started",
-          "run_id": "47f9b631-f1c3-4ca7-a693-13dd9e07dfe7",
+          "run_id": "541289e5-4ecd-412f-b694-79413ed445c4",
           "payload": {
             "tool": "issue_mock_refund",
             "status": "started",
             "confirmed": false,
             "invoice_id": "INV-1042"
           },
-          "created_at": "2026-11-20T20:38:50.730721+00:00"
+          "created_at": "2026-11-21T01:02:52.638403+00:00"
         },
         {
           "sequence": 2,
           "event_type": "tool.failed",
-          "run_id": "47f9b631-f1c3-4ca7-a693-13dd9e07dfe7",
+          "run_id": "541289e5-4ecd-412f-b694-79413ed445c4",
           "payload": {
             "ok": false,
             "tool": "issue_mock_refund",
@@ -3034,11 +3034,11 @@
             "invoice_id": "INV-1042",
             "amount_cents": 2900
           },
-          "created_at": "2026-11-20T20:38:50.774195+00:00"
+          "created_at": "2026-11-21T01:02:52.663625+00:00"
         }
       ],
       "timings_ms": {
-        "scenario_total": 92.36283299105708
+        "scenario_total": 53.95862499426585
       },
       "judge": null,
       "artifacts_dir": null,
@@ -3077,7 +3077,7 @@
             }
           ],
           "timings_ms": {
-            "tools_total": 87.78029099630658
+            "tools_total": 50.8263329975307
           },
           "tts_bytes": 0,
           "error": null,
@@ -3092,11 +3092,11 @@
       "kind": "voice_sim",
       "status": "PASS",
       "expected_behavior": "Generation bumps; listening true; speaking false",
-      "actual_behavior": "stopped=True stop_ms=0.2",
+      "actual_behavior": "stopped=True stop_ms=0.0",
       "failure_explanation": "",
       "tool_trace": [],
       "timings_ms": {
-        "interrupt_stop_ms": 0.1635830121813342
+        "interrupt_stop_ms": 0.013500000932253897
       },
       "judge": null,
       "artifacts_dir": null,
@@ -3116,7 +3116,7 @@
             {
               "name": "max_latency_ms.interrupt_stop_ms",
               "passed": true,
-              "detail": "actual=0.1635830121813342 limit=200"
+              "detail": "actual=0.013500000932253897 limit=200"
             },
             {
               "name": "barge_in_stopped",
@@ -3125,7 +3125,7 @@
             }
           ],
           "timings_ms": {
-            "interrupt_stop_ms": 0.1635830121813342,
+            "interrupt_stop_ms": 0.013500000932253897,
             "barge_in_stopped": 1.0
           },
           "tts_bytes": 0,
@@ -3137,19 +3137,13 @@
         "ws_messages": [
           [
             "text",
-            "{\"type\": \"voice.interrupted\", \"stop_ms\": 0.08008300210349262, \"generation\": 2}"
+            "{\"type\": \"voice.interrupted\", \"stop_ms\": 0.0008750066626816988, \"generation\": 2}"
           ]
         ]
       }
     }
   ],
-  "comparison_with_previous": [
-    {
-      "scenario_id": "agent_refund_confirm_flow",
-      "change": "FAIL->PASS",
-      "status": "PASS"
-    }
-  ],
+  "comparison_with_previous": [],
   "real_pipeline_usage": {
     "scenarios_with_real_llm": [],
     "scenarios_with_real_stt": [],

@@ -1,6 +1,6 @@
 # Loopp evals report (deterministic)
 
-Generated: 2026-11-20T20:38:51.547074+00:00
+Generated: 2026-11-21T01:02:52.895641+00:00
 
 **22 passed** · 0 failed · 0 errored · 0 skipped · 22 total
 
@@ -28,10 +28,6 @@ Generated: 2026-11-20T20:38:51.547074+00:00
 | `tools_refund_outside_window` | tools | **PASS** | outside_refund_window |  |
 | `tools_refund_requires_confirmation` | tools | **PASS** | Tool returns confirmation_required and no receipt is written |  |
 | `voice_barge_in_interrupt` | voice_sim | **PASS** | Generation bumps; listening true; speaking false |  |
-
-## Changes vs previous run
-
-- `agent_refund_confirm_flow`: FAIL->PASS
 
 ## Real pipeline coverage
 
