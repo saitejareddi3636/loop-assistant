@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Composer } from "./components/Composer";
-import { LiveVoiceModal } from "./components/LiveVoiceModal";
 import { MessageList } from "./components/MessageList";
 import { ObservabilityDrawer } from "./components/ObservabilityDrawer";
 import { ToolStatus } from "./components/ToolStatus";
+import { VoiceControls } from "./components/VoiceControls";
 import {
   cancelPendingConfirmation,
   createConversation,
@@ -52,7 +52,6 @@ export default function App() {
   const [obsOpen, setObsOpen] = useState(false);
   const [traces, setTraces] = useState<string[]>([]);
   const [metrics, setMetrics] = useState<ObsMetric[]>([]);
-  const [liveVoiceOpen, setLiveVoiceOpen] = useState(false);
   const lastSequence = useRef(0);
   const eventSourceRef = useRef<EventSource | null>(null);
   const retryInFlight = useRef(false);
@@ -98,8 +97,7 @@ export default function App() {
         }
 
         if (event.event_type === "assistant.delta") {
-          const text = String(event.payload.text ?? "");
-          setStreamingText(text);
+          setStreamingText(String(event.payload.text ?? ""));
         }
 
         if (event.event_type === "assistant.ui") {
@@ -128,9 +126,7 @@ export default function App() {
           setError(null);
           retryInFlight.current = false;
           activeRetryId.current = null;
-          void getConversation(id).then((detail) => {
-            setMessages(detail.messages);
-          });
+          void getConversation(id).then((detail) => setMessages(detail.messages));
         }
 
         if (event.event_type === "run.failed") {
@@ -142,11 +138,7 @@ export default function App() {
           const wait = event.payload.retry_after_seconds;
           const waitRequired = Boolean(event.payload.wait_required);
           setError(
-            String(
-              event.payload.user_message ??
-                event.payload.error ??
-                "Agent run failed",
-            ),
+            String(event.payload.user_message ?? event.payload.error ?? "Agent run failed"),
           );
           if (retry && event.run_id) {
             setFailedOp({
@@ -158,9 +150,7 @@ export default function App() {
           } else {
             setFailedOp(null);
           }
-          void getConversation(id).then((detail) => {
-            setMessages(detail.messages);
-          });
+          void getConversation(id).then((detail) => setMessages(detail.messages));
         }
       } catch {
         // ignore malformed ping/payloads
@@ -231,14 +221,16 @@ export default function App() {
       setStreamingText("");
 
       const turnId = newTurnId();
-      const optimistic: ChatMessage = {
-        id: `local-${turnId}`,
-        role: "user",
-        content: text,
-        client_turn_id: turnId,
-        created_at: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, optimistic]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `local-${turnId}`,
+          role: "user",
+          content: text,
+          client_turn_id: turnId,
+          created_at: new Date().toISOString(),
+        },
+      ]);
 
       try {
         await createTurn(conversationId, text, turnId);
@@ -257,7 +249,6 @@ export default function App() {
     setError(null);
     setToolItems([]);
     setStreamingText("");
-    // Stable id for this click burst — duplicate clicks reuse the same retry run.
     if (!activeRetryId.current) {
       activeRetryId.current = newTurnId();
     }
@@ -267,7 +258,6 @@ export default function App() {
       if (result.reused) {
         setTraces((prev) => [`retry reused · ${result.run_id}`, ...prev].slice(0, 40));
       }
-      // Keep failedOp until run.completed/failed so a second click hits the same client_retry_id.
     } catch (err) {
       setBusy(false);
       retryInFlight.current = false;
@@ -279,7 +269,6 @@ export default function App() {
     if (!conversationId) return;
     try {
       await cancelPendingConfirmation(conversationId);
-      // Strip confirmation cards locally; persisted message meta may still carry ui until refresh.
       setMessages((prev) =>
         prev.map((m) => {
           const ui = m.meta?.ui;
@@ -294,8 +283,7 @@ export default function App() {
     }
   }, [conversationId]);
 
-  const retryLabel =
-    failedOp?.source === "voice" ? "Retry voice turn" : "Retry last turn";
+  const retryLabel = failedOp?.source === "voice" ? "Retry voice turn" : "Retry last turn";
 
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col">
@@ -316,9 +304,7 @@ export default function App() {
             title={healthLabel}
           >
             <span
-              className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                healthOk ? "bg-accent" : "bg-coral"
-              }`}
+              className={`h-1.5 w-1.5 shrink-0 rounded-full ${healthOk ? "bg-accent" : "bg-coral"}`}
             />
             <span className="truncate">{healthLabel}</span>
           </div>
@@ -347,6 +333,40 @@ export default function App() {
 
         <div className="dock sticky bottom-0 z-20 border-t border-ink-200/50 pt-2">
           <ToolStatus items={toolItems} />
+          <VoiceControls
+            conversationId={conversationId}
+            sessionToken={sessionToken}
+            disabled={busy || booting}
+            onUserTranscript={(text) => {
+              if (!text) return;
+              setFailedOp(null);
+              setError(null);
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: `voice-user-${Date.now()}`,
+                  role: "user",
+                  content: text,
+                  created_at: new Date().toISOString(),
+                },
+              ]);
+            }}
+            onAssistantText={(text) => {
+              if (!text) return;
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: `voice-asst-${Date.now()}`,
+                  role: "assistant",
+                  content: text,
+                  created_at: new Date().toISOString(),
+                },
+              ]);
+              setBusy(false);
+            }}
+            onError={setError}
+            onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
+          />
           {error ? (
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 pb-2">
               <div className="flex items-start justify-between gap-3 rounded-xl border border-coral/20 bg-coral-soft/80 px-3 py-2">
@@ -388,16 +408,7 @@ export default function App() {
               ) : null}
             </div>
           ) : null}
-          <Composer
-            conversationId={conversationId}
-            sessionToken={sessionToken}
-            disabled={!conversationId || booting}
-            busy={busy}
-            onSend={onSend}
-            onError={setError}
-            onOpenLiveVoice={() => setLiveVoiceOpen(true)}
-            liveVoiceDisabled={busy || booting || liveVoiceOpen}
-          />
+          <Composer disabled={!conversationId || booting} busy={busy} onSend={onSend} />
           <ObservabilityDrawer
             open={obsOpen}
             onToggle={() => setObsOpen((v) => !v)}
@@ -406,42 +417,6 @@ export default function App() {
           />
         </div>
       </main>
-
-      <LiveVoiceModal
-        open={liveVoiceOpen}
-        conversationId={conversationId}
-        sessionToken={sessionToken}
-        onClose={() => setLiveVoiceOpen(false)}
-        onUserTranscript={(text) => {
-          if (!text) return;
-          // Live utterance supersedes any pending typed-chat retry target.
-          setFailedOp(null);
-          setError(null);
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: `voice-user-${Date.now()}`,
-              role: "user",
-              content: text,
-              created_at: new Date().toISOString(),
-            },
-          ]);
-        }}
-        onAssistantText={(text) => {
-          if (!text) return;
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: `voice-asst-${Date.now()}`,
-              role: "assistant",
-              content: text,
-              created_at: new Date().toISOString(),
-            },
-          ]);
-        }}
-        onError={setError}
-        onMetric={(metric) => setMetrics((prev) => [...prev, metric as ObsMetric])}
-      />
     </div>
   );
 }
